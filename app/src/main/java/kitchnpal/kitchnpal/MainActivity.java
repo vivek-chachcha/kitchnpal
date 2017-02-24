@@ -4,10 +4,11 @@ import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -18,7 +19,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -94,6 +98,116 @@ public class MainActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
+    public static class FridgeFragment extends ListFragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public FridgeFragment() {
+        }
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static FridgeFragment newInstance(int sectionNumber) {
+            FridgeFragment fragment = new FridgeFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_fridge, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText(getString(R.string.fridge_tab_body));
+            return rootView;
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            ListView list = getListView();
+
+            //Fridge List Contents
+            String array[] = { "Carrot", "Butter", "3 Eggs" };
+            list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
+        }
+
+        @Override
+        public void onListItemClick(ListView l, View v, int position, long id) {
+            super.onListItemClick(l, v, position, id);
+
+            //Recipes List Item Functionality
+            Object o = getListAdapter().getItem(position);
+            String pen = o.toString();
+            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    public static class RecipesFragment extends ListFragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        public RecipesFragment() {
+        }
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static RecipesFragment newInstance(int sectionNumber) {
+            RecipesFragment fragment = new RecipesFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_recipes, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText(getString(R.string.recipe_tab_body));
+            return rootView;
+        }
+
+        @Override
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            ListView list = getListView();
+
+            //Recipe List Contents
+            String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
+            list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
+        }
+
+        @Override
+        public void onListItemClick(ListView l, View v, int position, long id) {
+            super.onListItemClick(l, v, position, id);
+
+            //Recipes List Item Functionality
+            Object o = getListAdapter().getItem(position);
+            String pen = o.toString();
+            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
+
+        }
+    }
+
+    /**
+     * A placeholder fragment containing a simple view.
+     */
     public static class PlaceholderFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
@@ -121,7 +235,24 @@ public class MainActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
+                case 1:
+                    // Search Tab
+                    textView.setText(getString(R.string.search_tab_body));
+                    break;
+                case 2:
+                    // Recipe Tab
+                    textView.setText(getString(R.string.recipe_tab_body));
+                    break;
+                case 3:
+                    // Fridge Tab
+                    textView.setText(getString(R.string.fridge_tab_body));
+                    break;
+                default:
+                    textView.setText(getString(R.string.search_tab_body));
+                    break;
+            }
+            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }
@@ -140,6 +271,12 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            if (position + 1 == 3) {
+                return FridgeFragment.newInstance(position + 1);
+            }
+            else if (position + 1 == 2) {
+                return RecipesFragment.newInstance(position + 1);
+            }
             return PlaceholderFragment.newInstance(position + 1);
         }
 
@@ -153,11 +290,11 @@ public class MainActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "SECTION 1";
+                    return "Search";
                 case 1:
-                    return "SECTION 2";
+                    return "Recipes";
                 case 2:
-                    return "SECTION 3";
+                    return "Fridge";
             }
             return null;
         }
