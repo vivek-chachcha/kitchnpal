@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        String array[] = { "Carrot", "Butter", "3 Eggs" };
 
         public FridgeFragment() {
         }
@@ -134,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             ListView list = getListView();
 
             //Fridge List Contents
-            String array[] = { "Carrot", "Butter", "3 Eggs" };
+
             list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
         }
 
@@ -142,8 +143,8 @@ public class MainActivity extends AppCompatActivity {
         public void onListItemClick(ListView l, View v, int position, long id) {
             super.onListItemClick(l, v, position, id);
 
-            //Recipes List Item Functionality
-            Object o = getListAdapter().getItem(position);
+            //FRIDGE LIST ITEM FUNCTIONALITY HERE
+            Object o = array[position];
             String pen = o.toString();
             Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
 
@@ -159,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+
+        String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
 
         public RecipesFragment() {
         }
@@ -189,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
             ListView list = getListView();
 
             //Recipe List Contents
-            String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
+
             list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
         }
 
@@ -197,8 +200,8 @@ public class MainActivity extends AppCompatActivity {
         public void onListItemClick(ListView l, View v, int position, long id) {
             super.onListItemClick(l, v, position, id);
 
-            //Recipes List Item Functionality
-            Object o = getListAdapter().getItem(position);
+            //RECIPE LIST ITEM FUNCTIONALITY HERE
+            Object o = array[position];
             String pen = o.toString();
             Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
 
