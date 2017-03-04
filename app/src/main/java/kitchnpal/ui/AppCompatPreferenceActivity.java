@@ -1,4 +1,4 @@
-package kitchnpal.kitchnpal;
+package kitchnpal.ui;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

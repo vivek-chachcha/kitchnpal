@@ -1,4 +1,4 @@
-package kitchnpal.kitchnpal;
+package kitchnpal.ui;
 
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
@@ -23,6 +23,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import kitchnpal.kitchnpal.R;
 
 public class MainActivity extends AppCompatActivity {
 

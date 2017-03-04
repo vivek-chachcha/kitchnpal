@@ -1,5 +1,6 @@
 package kitchnpal.kitchnpal;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -8,25 +9,26 @@ import java.util.List;
 
 public class User {
 
+    private static User user;
     private String name;
     private String password;
     private String email;
-    private List<Diet> dietRestrictions;
-    private int numCalPerDay;
-    private List<String> preferences;
-    private List<Recipe> favourites;
-    private List<Intolerance> allergies;
+    private List<Diet> dietRestrictions = new ArrayList<>();
+    private Integer numCalPerDay;
+    private String preference;
+    private List<Recipe> favourites = new ArrayList<>();
+    private List<Intolerance> allergies = new ArrayList<>();
 
-    public User(String name, String password, String email, List<Diet> dietRestrictions,
-                int numCalPerDay, List<String> preferences, List<Recipe> favourites, List<Intolerance> allergies) {
-        this.name = name;
-        this.password = password;
-        this.email = email;
-        this.dietRestrictions = dietRestrictions;
-        this.numCalPerDay = numCalPerDay;
-        this.preferences = preferences;
-        this.favourites = favourites;
-        this.allergies = allergies;
+    private User() {
+        // make constructor private for singleton
+    }
+
+    public static User getInstance() {
+        if (user == null) {
+            user = new User();
+            return user;
+        }
+        return user;
     }
 
     public String getName() {
@@ -34,7 +36,7 @@ public class User {
     }
 
     public String getPassword() {
-        return name;
+        return password;
     }
 
     public String getEmail() {
@@ -45,12 +47,12 @@ public class User {
         return dietRestrictions;
     }
 
-    public int getNumCalPerDay() {
+    public Integer getNumCalPerDay() {
         return numCalPerDay;
     }
 
-    public List<String> getPreferences() {
-        return preferences;
+    public String getPreference() {
+        return preference;
     }
 
     public List<Recipe> getFavourites() {
@@ -77,12 +79,12 @@ public class User {
         this.dietRestrictions.add(dietRestriction);
     }
 
-    public void setNumCalPerDay(int numCalPerDay) {
+    public void setNumCalPerDay(Integer numCalPerDay) {
         this.numCalPerDay = numCalPerDay;
     }
 
-    public void addPreference(String preference) {
-        this.preferences.add(preference);
+    public void setPreference(String preference) {
+        this.preference = preference;
     }
 
     public void addFavourite(Recipe favourite) {

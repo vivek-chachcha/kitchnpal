@@ -1,4 +1,4 @@
-package kitchnpal.kitchnpal;
+package kitchnpal.ui;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -33,6 +33,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import kitchnpal.kitchnpal.R;
+import kitchnpal.kitchnpal.User;
+import kitchnpal.sql.UserDatabaseHelper;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
@@ -46,13 +50,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
 
     /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
@@ -62,11 +59,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private UserDatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        // Initialize database helper
+        dbHelper = new UserDatabaseHelper(this);
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -316,15 +316,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 return false;
             }
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
+            // Check if user exists on local db
+            if (dbHelper.checkUser(mEmail)) {
+                return dbHelper.checkUserPassword(mEmail, mPassword);
             }
 
-            // TODO: register the new account here.
             return true;
         }
 
@@ -336,6 +332,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 finish();
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                if (!dbHelper.checkUser(mEmail)) {
+                    User user = User.getInstance();
+                    user.setEmail(mEmail);
+                    user.setPassword(mPassword);
+                    dbHelper.addUser(user);
+                    i = new Intent(getApplicationContext(), UserPreferenceActivity.class);
+                }
                 startActivity(i);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
