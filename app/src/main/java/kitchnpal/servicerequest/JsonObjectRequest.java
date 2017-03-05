@@ -21,11 +21,42 @@ import kitchnpal.kitchnpal.R;
 /**
  * Created by linhphan on 17-03-05.
  */
-public class JsonObjectRequest {
+public class MakeRequest {
 
     TextView mTxtDisplay;
     ImageView mImageView;
-    mTxtDisplay = (TextView) findViewById(R.id.txtDisplay);
+    
+    private String type;
+    private String recipe;
+    
+    public MakeRequest(String type, String recipe, int textViewId) {
+        this.type = type;
+        this.recipe = recipe;
+        mTxtDisplay = (TextView) findViewById(textViewId);
+    }
+    
+    public sendRequest() {
+        // Instantiate the RequestQueue.
+        RequestQueue queue = ApplicationController.getInstance().getRequestQueue();
+        String url ="http://www.google.com";
+
+        // Request a string response from the provided URL.
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url,
+                    null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+            // Display the first 500 characters of the response string.
+            mTextDisplay.setText("Response is: "+ response.toString());
+            }
+            }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            mTextDisplay.setText("That didn't work!");
+            }
+        });
+        // Add the request to the RequestQueue.
+        queue.add(jsonRequest);
+    }
     
 
 
