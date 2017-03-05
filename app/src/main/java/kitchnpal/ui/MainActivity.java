@@ -24,7 +24,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import kitchnpal.kitchnpal.R;
+import kitchnpal.kitchnpal.Recipe;
+import kitchnpal.kitchnpal.User;
+import kitchnpal.sql.UserDatabaseHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -164,8 +169,14 @@ public class MainActivity extends AppCompatActivity {
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
+        String[] myFavs;
+        List<Recipe> myRecipes;
 
         public RecipesFragment() {
+            UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
+            User user = User.getInstance();
+            myFavs = helper.getFavourites(user.getEmail());
+            myRecipes = user.getFavourites();
         }
 
         /**
@@ -194,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
             ListView list = getListView();
 
             //Recipe List Contents
-
             list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
         }
 
@@ -206,6 +216,15 @@ public class MainActivity extends AppCompatActivity {
             Object o = array[position];
             String pen = o.toString();
             Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
+
+            //REAL LIST ITEM FUNCTIONALITY
+            Object p = myFavs[position];
+            String name = p.toString();
+            for (Recipe r : myRecipes) {
+                if (r.getName().equalsIgnoreCase(name.trim())) {
+
+                }
+            }
 
         }
     }
@@ -262,6 +281,39 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public static class RecipeDisplayFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+        private static final String ARG_RECIPE_TO_DISPLAY = "recipe";
+
+        public RecipeDisplayFragment() {
+        }
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static RecipeDisplayFragment newInstance(Recipe r) {
+            RecipeDisplayFragment fragment = new RecipeDisplayFragment();
+            Bundle args = new Bundle();
+            args.putString(ARG_RECIPE_TO_DISPLAY, r.getName());
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_recipes, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText(this.getArguments().getString(ARG_RECIPE_TO_DISPLAY));
+            return rootView;
+        }
+    }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -297,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return "Search";
                 case 1:
-                    return "Recipes";
+                    return "Favourites";
                 case 2:
                     return "Fridge";
             }
