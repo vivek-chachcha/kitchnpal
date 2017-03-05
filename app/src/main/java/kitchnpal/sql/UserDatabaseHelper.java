@@ -139,8 +139,14 @@ public class UserDatabaseHelper extends DatabaseHelper {
     }
 
     private String convertFavourites(List<Recipe> favourites) {
-        // TODO: Convert list of recipes into something that db can handle
-        return null;
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < favourites.size(); i++) {
+            stringBuilder.append(favourites.get(i).getName());
+            if (i != favourites.size() - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private String convertDietRestrictions(List<Diet> diets) {
@@ -241,7 +247,7 @@ public class UserDatabaseHelper extends DatabaseHelper {
     }
 
     private String retrieveDataInColumn(String columnName, String email) {
-        String[] columns = { columnName };
+        String[] columns = {columnName};
         SQLiteDatabase db = this.getReadableDatabase();
         String selection = COLUMN_USER_EMAIL + " = ?";
         String[] selectionArgs = {email};
@@ -254,12 +260,30 @@ public class UserDatabaseHelper extends DatabaseHelper {
                 null);                       // sort order
         String value = "";
         System.out.println(cursor.getCount());
-        if (cursor !=  null) {
+        if (cursor != null) {
             cursor.moveToFirst();
             value = cursor.getString(0);
         }
         cursor.close();
         db.close();
         return value;
+    }
+
+    public String[] getFavourites(String email) {
+        String[] columns = { COLUMN_FAVOURITES };
+        String selection = COLUMN_USER_EMAIL;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] selectionArgs = {email};
+        Cursor cursor = db.query(TABLE_USER,  // table to query
+                columns,                      // columns to return
+                selection,                    // columns for the WHERE clause
+                selectionArgs,                // values for the WHERE clause
+                null,                         // group the rows
+                null,                         // filter by row groups
+                null);                        // sort order
+        String[] results = cursor.getString(0).split(",");
+        cursor.close();
+        db.close();
+        return results;
     }
 }

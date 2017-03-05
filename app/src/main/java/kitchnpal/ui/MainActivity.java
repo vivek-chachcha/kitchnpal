@@ -1,10 +1,12 @@
 package kitchnpal.ui;
 
+
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,7 +26,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import kitchnpal.kitchnpal.R;
+import kitchnpal.kitchnpal.Recipe;
+import kitchnpal.kitchnpal.User;
+import kitchnpal.sql.UserDatabaseHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -164,8 +171,12 @@ public class MainActivity extends AppCompatActivity {
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
+        String[] myFavs;
 
         public RecipesFragment() {
+//            UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
+//            User user = User.getInstance();
+//            myFavs = helper.getFavourites(user.getEmail());
         }
 
         /**
@@ -194,7 +205,6 @@ public class MainActivity extends AppCompatActivity {
             ListView list = getListView();
 
             //Recipe List Contents
-
             list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
         }
 
@@ -203,10 +213,17 @@ public class MainActivity extends AppCompatActivity {
             super.onListItemClick(l, v, position, id);
 
             //RECIPE LIST ITEM FUNCTIONALITY HERE
-            Object o = array[position];
-            String pen = o.toString();
-            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
+//            Object o = array[position];
+//            String pen = o.toString();
+//            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
 
+            //REAL LIST ITEM FUNCTIONALITY
+            //Object p = myFavs[position];
+            Object p = array[position];
+            String name = p.toString();
+            Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
+            i.putExtra("recipe_name", name);
+            startActivity(i);
         }
     }
 
@@ -297,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return "Search";
                 case 1:
-                    return "Recipes";
+                    return "Favourites";
                 case 2:
                     return "Fridge";
             }

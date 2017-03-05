@@ -28,10 +28,14 @@
         <activity
             android:name="kitchnpal.ui.MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name="kitchnpal.ui.UserPreferenceActivity"
-            android:label="@string/title_activity_user_preference"/>
+            android:label="@string/title_activity_user_preference" />
+        <activity
+            android:name="kitchnpal.ui.RecipeDisplayActivity"
+            android:label="@string/title_activity_recipe_display"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
