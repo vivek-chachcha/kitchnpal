@@ -1,10 +1,12 @@
 package kitchnpal.ui;
 
+
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -170,13 +172,11 @@ public class MainActivity extends AppCompatActivity {
 
         String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
         String[] myFavs;
-        List<Recipe> myRecipes;
 
         public RecipesFragment() {
-            UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
-            User user = User.getInstance();
-            myFavs = helper.getFavourites(user.getEmail());
-            myRecipes = user.getFavourites();
+//            UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
+//            User user = User.getInstance();
+//            myFavs = helper.getFavourites(user.getEmail());
         }
 
         /**
@@ -213,19 +213,17 @@ public class MainActivity extends AppCompatActivity {
             super.onListItemClick(l, v, position, id);
 
             //RECIPE LIST ITEM FUNCTIONALITY HERE
-            Object o = array[position];
-            String pen = o.toString();
-            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
+//            Object o = array[position];
+//            String pen = o.toString();
+//            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
 
             //REAL LIST ITEM FUNCTIONALITY
-            Object p = myFavs[position];
+            //Object p = myFavs[position];
+            Object p = array[position];
             String name = p.toString();
-            for (Recipe r : myRecipes) {
-                if (r.getName().equalsIgnoreCase(name.trim())) {
-
-                }
-            }
-
+            Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
+            i.putExtra("recipe_name", name);
+            startActivity(i);
         }
     }
 
@@ -277,39 +275,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
             //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
-        }
-    }
-
-    public static class RecipeDisplayFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-        private static final String ARG_RECIPE_TO_DISPLAY = "recipe";
-
-        public RecipeDisplayFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static RecipeDisplayFragment newInstance(Recipe r) {
-            RecipeDisplayFragment fragment = new RecipeDisplayFragment();
-            Bundle args = new Bundle();
-            args.putString(ARG_RECIPE_TO_DISPLAY, r.getName());
-            fragment.setArguments(args);
-            return fragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_recipes, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(this.getArguments().getString(ARG_RECIPE_TO_DISPLAY));
             return rootView;
         }
     }
