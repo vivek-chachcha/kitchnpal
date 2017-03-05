@@ -76,7 +76,13 @@ public class User {
     }
 
     public void addDietRestriction(Diet dietRestriction) {
-        this.dietRestrictions.add(dietRestriction);
+        if (!this.dietRestrictions.contains(dietRestriction)) {
+            this.dietRestrictions.add(dietRestriction);
+        }
+    }
+
+    public void clearDietRestrictions() {
+        this.dietRestrictions = new ArrayList<>();
     }
 
     public void setNumCalPerDay(Integer numCalPerDay) {
@@ -88,10 +94,22 @@ public class User {
     }
 
     public void addFavourite(Recipe favourite) {
-        this.favourites.add(favourite);
+        if (!this.favourites.contains(favourite)) {
+            this.favourites.add(favourite);
+        }
+    }
+
+    public void clearFavourites() {
+        this.favourites = new ArrayList<>();
     }
 
     public void addAllergy(Intolerance allergy) {
-        this.allergies.add(allergy);
+        if (!this.allergies.contains(allergy)) {
+            this.allergies.add(allergy);
+        }
+    }
+
+    public void clearAllergies() {
+        this.allergies = new ArrayList<>();
     }
 }

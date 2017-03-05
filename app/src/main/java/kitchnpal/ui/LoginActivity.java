@@ -332,10 +332,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             if (success) {
                 finish();
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                if (!dbHelper.checkUser(mEmail)) {
-                    User user = User.getInstance();
-                    user.setEmail(mEmail);
-                    user.setPassword(mPassword);
+                User user = User.getInstance();
+                user.setEmail(mEmail);
+                user.setPassword(mPassword);
+                if (!dbHelper.checkUser(mEmail)) {;
                     dbHelper.addUser(user);
                     i = new Intent(getApplicationContext(), UserPreferenceActivity.class);
                 }
