@@ -15,6 +15,7 @@ import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
+import kitchnpal.servicerequest.MakeRequest;
 import kitchnpal.sql.UserDatabaseHelper;
 
 public class RecipeDisplayActivity extends AppCompatActivity {
@@ -30,7 +31,7 @@ public class RecipeDisplayActivity extends AppCompatActivity {
 
         UserDatabaseHelper helper = new UserDatabaseHelper(this);
         User user = User.getInstance();
-        List<Recipe> myFavs = user.getFavourites();
+        ArrayList<Recipe> myFavs = helper.getFavourites(user.getEmail());
         Recipe toDisplay = null;
         for (Recipe r: myFavs) {
             if (r.getName().equalsIgnoreCase(recipeName)) {
@@ -38,14 +39,10 @@ public class RecipeDisplayActivity extends AppCompatActivity {
             }
         }
         if (toDisplay == null) {
-            //TODO: Get Recipe from Server
-            String name = "Cookies";
-            ArrayList<Ingredient> ingreds = new ArrayList<Ingredient>();
-            int id = 11221;
-            ArrayList<String> steps = new ArrayList<String>();
-            steps.add("Mix eggs");
-            steps.add("Put in oven");
-            toDisplay = new Recipe(name, id, ingreds, steps);
+//            MakeRequest mr = new MakeRequest();
+//            mr.getRecipeDetails(mr.cache.get(recipeName).getId());
+//            toDisplay = user.getRecipe();
+            toDisplay = new Recipe("Cookies", 11012);
         }
 
         TextView myTextView = (TextView)findViewById(R.id.recipe_contents);
@@ -86,6 +83,4 @@ public class RecipeDisplayActivity extends AppCompatActivity {
             }
         });
     }
-
-
 }
