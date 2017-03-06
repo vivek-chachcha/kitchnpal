@@ -293,7 +293,7 @@ public class UserDatabaseHelper extends DatabaseHelper {
         return value;
     }
 
-    public String[] getFavourites(String email) {
+    public ArrayList<Recipe> getFavourites(String email) {
         String[] columns = { COLUMN_FAVOURITES };
         String selection = COLUMN_USER_EMAIL;
         SQLiteDatabase db = this.getReadableDatabase();
@@ -306,9 +306,14 @@ public class UserDatabaseHelper extends DatabaseHelper {
                 null,                         // filter by row groups
                 null);                        // sort order
         String[] results = cursor.getString(0).split(",");
+        ArrayList<Recipe> array = new ArrayList<>();
+        MakeRequest mr = new MakeRequest();
+        for (String r : results) {
+            array.add(mr.cache.get(r));
+        }
         cursor.close();
         db.close();
-        return results;
+        return array;
     }
 
     public String[] getFridgeIngredients(String email) {
