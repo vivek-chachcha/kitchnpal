@@ -19,6 +19,7 @@ public class User {
     private List<Recipe> favourites = new ArrayList<>();
     private List<Intolerance> allergies = new ArrayList<>();
     private List<Ingredient> ingredients = new ArrayList<>();
+    private Recipe currentRecipe;
 
     private User() {
         // make constructor private for singleton
@@ -79,6 +80,8 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+    
+    public Recipe getRecipe() { return this.currentRecipe; }
 
     public void addDietRestriction(Diet dietRestriction) {
         if (!this.dietRestrictions.contains(dietRestriction)) {
@@ -116,5 +119,9 @@ public class User {
 
     public void clearAllergies() {
         this.allergies = new ArrayList<>();
+    }
+    
+    public void setCurrentRecipe(Recipe r) {
+        this.currentRecipe = r;        
     }
 }
