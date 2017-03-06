@@ -35,6 +35,7 @@ public class UserPreferenceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_preferences);
+        final User user = User.getInstance();
 
         List<String> dietRestrictions = Diet.stringValues();
         dietRestrictionsBtn = (Button) findViewById(R.id.user_diet_restrictions);
@@ -56,27 +57,60 @@ public class UserPreferenceActivity extends AppCompatActivity {
 
         dbHelper = new UserDatabaseHelper(this);
 
+        if (dbHelper.checkUser(user.getEmail())) {
+            setDefaultValues(user);
+        }
         Button savePreferenceBtn = (Button) findViewById(R.id.save_preferences_btn);
         savePreferenceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                User user = User.getInstance();
                 user.setName(userNameView.getText().toString().trim());
-                for (CharSequence s : dietBtnListener.getSelectedOptions()) {
-                    user.addDietRestriction(Diet.stringToDiet(s.toString().trim()));
+                dbHelper.updateUserName(user);
+                user.clearDietRestrictions();
+                for (String s : convertToList(dietRestrictionsBtn.getText().toString())) {
+                    user.addDietRestriction(Diet.stringToDiet(s.trim()));
                 }
-                for (CharSequence s : allergyBtnListener.getSelectedOptions()) {
-                    user.addAllergy(Intolerance.stringToIntolerance(s.toString().trim()));
+                dbHelper.updateUserDietRestrictions(user);
+                user.clearAllergies();
+                for (String s : convertToList(allergiesBtn.getText().toString())) {
+                    user.addAllergy(Intolerance.stringToIntolerance(s.trim()));
                 }
-                for (CharSequence s : preferenceBtnListener.getSelectedOptions()) {
-                    user.setPreference(s.toString().trim());
+                dbHelper.updateUserAllergies(user);
+                user.setPreference(userPreferencesBtn.getText().toString().trim());
+                dbHelper.updateUserPreference(user);
+                Integer i = null;
+                try {
+                    i = Integer.parseInt(userCaloriesView.getText().toString().trim());
+                } catch (Exception e) {
+                    // do nothing
                 }
-                user.setNumCalPerDay(Integer.parseInt(userCaloriesView.getText().toString().trim()));
-                dbHelper.updateUser(user);
+                user.setNumCalPerDay(i);
+                dbHelper.updateUserCalories(user);
 
                 nextPage();
             }
         });
+    }
+
+    private List<String> convertToList(String s){
+        return Arrays.asList(s.split(","));
+    }
+
+    private void setDefaultValues(User user) {
+        String dietRestrictions = dbHelper.getDietRestrictions(user.getEmail());
+        String allergies = dbHelper.getAllergies(user.getEmail());
+        String userPreferences = dbHelper.getUserPreferences(user.getEmail());
+        String userName = dbHelper.getUserName(user.getEmail());
+        Integer calories = dbHelper.getUserCalories(user.getEmail());
+        String userCalories = "";
+        if (calories != null) {
+            userCalories = calories.toString();
+        }
+        dietRestrictionsBtn.setText(dietRestrictions);
+        allergiesBtn.setText(allergies);
+        userPreferencesBtn.setText(userPreferences);
+        userNameView.setText(userName);
+        userCaloriesView.setText(userCalories);
     }
 
     private void nextPage() {
