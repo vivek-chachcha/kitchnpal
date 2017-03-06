@@ -7,9 +7,7 @@ package kitchnpal.kitchnpal;
 public class Ingredient {
     private String ingredientName;
     private float ingredientAmount;
-    private enum QuantityType {
-        UNIT, LBS, CUP, OUNCES, GRAMS
-    }
+
     private QuantityType quantityType;
 
     public Ingredient(String name, float amount, QuantityType type) {

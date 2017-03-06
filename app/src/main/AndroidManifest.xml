@@ -33,6 +33,9 @@
             android:name="kitchnpal.ui.UserPreferenceActivity"
             android:label="@string/title_activity_user_preference" />
         <activity
+            android:name="kitchnpal.ui.FridgeActivity"
+            android:label="@string/title_activity_add_ingredient" />
+        <activity
             android:name="kitchnpal.ui.RecipeDisplayActivity"
             android:label="@string/title_activity_recipe_display"
             android:theme="@style/AppTheme.NoActionBar"></activity>

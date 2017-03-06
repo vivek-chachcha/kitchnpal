@@ -124,4 +124,8 @@ public class User {
     public void setCurrentRecipe(Recipe r) {
         this.currentRecipe = r;        
     }
+
+    public void addIngredientToFridge(Ingredient i) {
+        this.ingredients.add(i);
+    }
 }
