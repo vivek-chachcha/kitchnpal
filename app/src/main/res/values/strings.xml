@@ -178,4 +178,8 @@
         "For example, position the FAB to one side of stream of a cards so the FAB won’t interfere "
         "when a user tries to pick up one of cards.\n\n"
     </string>
+
+    <string name="name_search">Search by Name</string>
+    <string name="ingredient_search">Search by Ingredients</string>
+    <string name="all_search">Search All</string>
 </resources>

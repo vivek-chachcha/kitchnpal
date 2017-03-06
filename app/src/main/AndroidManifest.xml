@@ -36,6 +36,9 @@
             android:name="kitchnpal.ui.RecipeDisplayActivity"
             android:label="@string/title_activity_recipe_display"
             android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name="kitchnpal.ui.SearchResultActivity"
+            android:label="Search Results"/>
     </application>
 
 </manifest>

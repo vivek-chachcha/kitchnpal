@@ -1,6 +1,7 @@
 package kitchnpal.ui;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -8,6 +9,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -22,14 +24,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
+import kitchnpal.kitchnpal.RecipeSearch;
 import kitchnpal.kitchnpal.User;
 import kitchnpal.sql.UserDatabaseHelper;
 
@@ -227,6 +233,113 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public static class SearchFragment extends Fragment {
+        /**
+         * The fragment argument representing the section number for this
+         * fragment.
+         */
+        private static final String ARG_SECTION_NUMBER = "section_number";
+
+        String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
+        String[] myFavs;
+
+        public SearchFragment() {
+
+        }
+
+        /**
+         * Returns a new instance of this fragment for the given section
+         * number.
+         */
+        public static SearchFragment newInstance(int sectionNumber) {
+            SearchFragment fragment = new SearchFragment();
+            Bundle args = new Bundle();
+            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            fragment.setArguments(args);
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_search, container, false);
+
+            Button nameSearchBtn = (Button) rootView.findViewById(R.id.name_search);
+            Button ingredientSearchBtn = (Button) rootView.findViewById(R.id.ingredient_search);
+            Button allSearchBtn = (Button) rootView.findViewById(R.id.all_search);
+
+            nameSearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    final EditText input = new EditText(getActivity());
+                    builder.setMessage("Enter the name of the recipe: ")
+                            .setTitle("Search by Name")
+                            .setView(input)
+                            .setPositiveButton("Search", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                    ArrayList<String> recipeNames = new ArrayList<>();
+                                    List<Recipe> recipes = new RecipeSearch().searchByName(input.getText().toString());
+                                    if (recipes != null) {
+                                        for (Recipe r : recipes) {
+                                            recipeNames.add(r.getName());
+                                        }
+                                    }
+                                    Intent i = new Intent(getContext(), SearchResultActivity.class);
+                                    i.putStringArrayListExtra("recipe_names", recipeNames);
+                                    startActivity(i);
+                                }})
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                     dialog.cancel();
+                                }});
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
+
+            ingredientSearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ArrayList<String> recipeNames = new ArrayList<>();
+                    //TODO: get ingredients from the fridge
+                    List<Recipe> recipes = new RecipeSearch().searchByIngredient("REPLACE_ME");
+                    if (recipes != null) {
+                        for (Recipe r : recipes) {
+                            recipeNames.add(r.getName());
+                        }
+                    }
+                    Intent i = new Intent(getContext(), SearchResultActivity.class);
+                    i.putStringArrayListExtra("recipe_names", recipeNames);
+                    startActivity(i);
+                }
+            });
+
+            allSearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    User user = User.getInstance();
+                    UserDatabaseHelper dbHelper = new UserDatabaseHelper(getContext());
+                    String preference = dbHelper.getUserPreferences(user.getEmail());
+                    ArrayList<String> recipeNames = new ArrayList<>();
+                    List<Recipe> recipes = new RecipeSearch().searchByPreference(preference);
+                    if (recipes != null) {
+                        for (Recipe r : recipes) {
+                            recipeNames.add(r.getName());
+                        }
+                    }
+                    Intent i = new Intent(getContext(), SearchResultActivity.class);
+                    i.putStringArrayListExtra("recipe_names", recipeNames);
+                    startActivity(i);
+                }
+            });
+
+            return rootView;
+        }
+    }
+
     /**
      * A placeholder fragment containing a simple view.
      */
@@ -295,9 +408,10 @@ public class MainActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             if (position + 1 == 3) {
                 return FridgeFragment.newInstance(position + 1);
-            }
-            else if (position + 1 == 2) {
+            } else if (position + 1 == 2) {
                 return RecipesFragment.newInstance(position + 1);
+            } else if (position + 1 == 1) {
+                return SearchFragment.newInstance(position + 1);
             }
             return PlaceholderFragment.newInstance(position + 1);
         }
@@ -317,6 +431,41 @@ public class MainActivity extends AppCompatActivity {
                     return "Favourites";
                 case 2:
                     return "Fridge";
+            }
+            return null;
+        }
+    }
+
+    public class SearchSectionPagerAdapter extends FragmentPagerAdapter {
+
+        public SearchSectionPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
+            if (position + 1 == 2) {
+                return FridgeFragment.newInstance(position + 1);
+            } else if (position + 1 == 1) {
+                return RecipesFragment.newInstance(position + 1);
+            }
+            return PlaceholderFragment.newInstance(position + 1);
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0:
+                    return "Search";
+                case 1:
+                    return "Results";
             }
             return null;
         }
