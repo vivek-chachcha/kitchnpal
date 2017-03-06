@@ -21,5 +21,14 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/section_label"
         android:textAlignment="center" />
+	
+	<android.support.design.widget.FloatingActionButton
+        android:id="@+id/addIngredient"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_btn_speak_now"
+        android:focusableInTouchMode="false" />
 
 </RelativeLayout>

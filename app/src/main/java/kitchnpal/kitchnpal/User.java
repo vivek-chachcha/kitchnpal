@@ -18,6 +18,7 @@ public class User {
     private String preference;
     private List<Recipe> favourites = new ArrayList<>();
     private List<Intolerance> allergies = new ArrayList<>();
+    private List<Ingredient> ingredients = new ArrayList<>();
     private Recipe currentRecipe;
 
     private User() {
@@ -64,6 +65,10 @@ public class User {
         return allergies;
     }
 
+    public List<Ingredient> getFridgeIngredients() {
+        return ingredients;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -75,11 +80,17 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
-
+    
     public Recipe getRecipe() { return this.currentRecipe; }
 
     public void addDietRestriction(Diet dietRestriction) {
-        this.dietRestrictions.add(dietRestriction);
+        if (!this.dietRestrictions.contains(dietRestriction)) {
+            this.dietRestrictions.add(dietRestriction);
+        }
+    }
+
+    public void clearDietRestrictions() {
+        this.dietRestrictions = new ArrayList<>();
     }
 
     public void setNumCalPerDay(Integer numCalPerDay) {
@@ -91,14 +102,26 @@ public class User {
     }
 
     public void addFavourite(Recipe favourite) {
-        this.favourites.add(favourite);
+        if (!this.favourites.contains(favourite)) {
+            this.favourites.add(favourite);
+        }
+    }
+
+    public void clearFavourites() {
+        this.favourites = new ArrayList<>();
     }
 
     public void addAllergy(Intolerance allergy) {
-        this.allergies.add(allergy);
+        if (!this.allergies.contains(allergy)) {
+            this.allergies.add(allergy);
+        }
     }
 
+    public void clearAllergies() {
+        this.allergies = new ArrayList<>();
+    }
+    
     public void setCurrentRecipe(Recipe r) {
-        this.currentRecipe = r;
+        this.currentRecipe = r;        
     }
 }

@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
 
 import kitchnpal.kitchnpal.Diet;
+import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.Intolerance;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
@@ -24,6 +25,7 @@ public class UserDatabaseHelper extends DatabaseHelper {
     private static final String COLUMN_ALLERGIES = "user_allergy";
     private static final String COLUMN_PREFERENCE = "user_recipe_preference";
     private static final String COLUMN_FAVOURITES = "user_favourite";
+    private static final String COLUMN_FRIDGE = "user_fridge";
     private String CREATE_USER_TABLE = "CREATE TABLE " + TABLE_USER + "("
             + COLUMN_USER_EMAIL + " TEXT PRIMARY KEY,"
             + COLUMN_USER_PASSWORD + " TEXT,"
@@ -66,31 +68,85 @@ public class UserDatabaseHelper extends DatabaseHelper {
         db.close();
     }
 
-    public void updateUser(User user) {
+    public void updateUserName(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = COLUMN_USER_EMAIL + " = ?";
         String[] selectionArgs = {String.valueOf(user.getEmail())};
 
         ContentValues values = new ContentValues();
-        if (user.getName() != null) {
-            values.put(COLUMN_USER_NAME, user.getName());
-        }
-        if (user.getDietRestrictions() != null) {
-            values.put(COLUMN_DIET_RESTRICTIONS, convertDietRestrictions(user.getDietRestrictions()));
-        }
-        if (user.getNumCalPerDay() != null) {
-            values.put(COLUMN_NUM_CAL_PER_DAY, user.getNumCalPerDay());
-        }
-        if (user.getAllergies() != null) {
-            values.put(COLUMN_ALLERGIES, convertAllergies(user.getAllergies()));
-        }
-        if (user.getPreference() != null) {
-            values.put(COLUMN_PREFERENCE, user.getPreference());
-        }
-        if (user.getFavourites() != null) {
-            values.put(COLUMN_FAVOURITES, convertFavourites(user.getFavourites()));
-        }
+        values.put(COLUMN_USER_NAME, user.getName());
 
+        db.update(TABLE_USER, values, selection, selectionArgs);
+        db.close();
+    }
+
+    public void updateUserDietRestrictions(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {String.valueOf(user.getEmail())};
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_DIET_RESTRICTIONS, convertDietRestrictions(user.getDietRestrictions()));
+
+        db.update(TABLE_USER, values, selection, selectionArgs);
+        db.close();
+    }
+
+    public void updateUserCalories(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {String.valueOf(user.getEmail())};
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_NUM_CAL_PER_DAY, user.getNumCalPerDay());
+
+        db.update(TABLE_USER, values, selection, selectionArgs);
+        db.close();
+    }
+
+    public void updateUserAllergies(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {String.valueOf(user.getEmail())};
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ALLERGIES, convertAllergies(user.getAllergies()));
+
+        db.update(TABLE_USER, values, selection, selectionArgs);
+        db.close();
+    }
+
+    public void updateUserPreference(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {String.valueOf(user.getEmail())};
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PREFERENCE, user.getPreference());
+
+        db.update(TABLE_USER, values, selection, selectionArgs);
+        db.close();
+    }
+
+    public void updateUserFavourites(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {String.valueOf(user.getEmail())};
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_FAVOURITES, convertFavourites(user.getFavourites()));
+
+        db.update(TABLE_USER, values, selection, selectionArgs);
+        db.close();
+    }
+
+    public void updateFridge(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {String.valueOf(user.getEmail())};
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_FRIDGE, convertFridgeIngredients(user.getFridgeIngredients()));
         db.update(TABLE_USER, values, selection, selectionArgs);
         db.close();
     }
@@ -100,6 +156,17 @@ public class UserDatabaseHelper extends DatabaseHelper {
         for (int i = 0; i < favourites.size(); i++) {
             stringBuilder.append(favourites.get(i).getName());
             if (i != favourites.size() - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    private String convertFridgeIngredients(List<Ingredient> ingredients) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < ingredients.size(); i++) {
+            stringBuilder.append(ingredients.get(i).getIngredientName());
+            if (i != ingredients.size() - 1) {
                 stringBuilder.append(", ");
             }
         }
@@ -164,8 +231,88 @@ public class UserDatabaseHelper extends DatabaseHelper {
         return cursorCount > 0;
     }
 
+    public String getDietRestrictions(String email) {
+        return retrieveDataInColumn(COLUMN_DIET_RESTRICTIONS, email);
+    }
+
+    public String getUserName(String email) {
+        return retrieveDataInColumn(COLUMN_USER_NAME, email);
+    }
+
+    public String getAllergies(String email) {
+        return retrieveDataInColumn(COLUMN_ALLERGIES, email);
+    }
+
+    public String getUserPreferences(String email) {
+        return retrieveDataInColumn(COLUMN_PREFERENCE, email);
+    }
+
+    public Integer getUserCalories(String email) {
+        String[] columns = { COLUMN_NUM_CAL_PER_DAY };
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {email};
+        Cursor cursor = db.query(TABLE_USER, // table to query
+                columns,                     // columns to return
+                selection,                   // columns for the WHERE clause
+                selectionArgs,               // values for the WHERE clause
+                null,                        // group the rows
+                null,                        // filter by row groups
+                null);                       // sort order
+        Integer value = null;
+        System.out.println(cursor.getCount());
+        if (cursor !=  null) {
+            cursor.moveToFirst();
+            value = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return value;
+    }
+
+    private String retrieveDataInColumn(String columnName, String email) {
+        String[] columns = {columnName};
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {email};
+        Cursor cursor = db.query(TABLE_USER, // table to query
+                columns,                     // columns to return
+                selection,                   // columns for the WHERE clause
+                selectionArgs,               // values for the WHERE clause
+                null,                        // group the rows
+                null,                        // filter by row groups
+                null);                       // sort order
+        String value = "";
+        System.out.println(cursor.getCount());
+        if (cursor != null) {
+            cursor.moveToFirst();
+            value = cursor.getString(0);
+        }
+        cursor.close();
+        db.close();
+        return value;
+    }
+
     public String[] getFavourites(String email) {
         String[] columns = { COLUMN_FAVOURITES };
+        String selection = COLUMN_USER_EMAIL;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] selectionArgs = {email};
+        Cursor cursor = db.query(TABLE_USER,  // table to query
+                columns,                      // columns to return
+                selection,                    // columns for the WHERE clause
+                selectionArgs,                // values for the WHERE clause
+                null,                         // group the rows
+                null,                         // filter by row groups
+                null);                        // sort order
+        String[] results = cursor.getString(0).split(",");
+        cursor.close();
+        db.close();
+        return results;
+    }
+
+    public String[] getFridgeIngredients(String email) {
+        String[] columns = { COLUMN_FRIDGE };
         String selection = COLUMN_USER_EMAIL;
         SQLiteDatabase db = this.getReadableDatabase();
         String[] selectionArgs = {email};
