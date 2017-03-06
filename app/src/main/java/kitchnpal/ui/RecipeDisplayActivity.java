@@ -11,6 +11,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
@@ -39,19 +40,18 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         if (toDisplay == null) {
             //TODO: Get Recipe from Server
             String name = "Cookies";
-            ArrayList<String> ingreds = new ArrayList<String>();
-            ingreds.add("Eggs");
-            ingreds.add("Milk");
+            ArrayList<Ingredient> ingreds = new ArrayList<Ingredient>();
+            int id = 11221;
             ArrayList<String> steps = new ArrayList<String>();
             steps.add("Mix eggs");
             steps.add("Put in oven");
-            toDisplay = new Recipe(name, ingreds, steps);
+            toDisplay = new Recipe(name, id, ingreds, steps);
         }
 
         TextView myTextView = (TextView)findViewById(R.id.recipe_contents);
         if (myTextView != null) {
             List<String> steps = toDisplay.getInstructions();
-            List<String> ingreds = toDisplay.getIngredients();
+            List<Ingredient> ingreds = toDisplay.getIngredients();
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append(toDisplay.getName());
@@ -69,7 +69,7 @@ public class RecipeDisplayActivity extends AppCompatActivity {
             stringBuilder.append("\n\n");
             stringBuilder.append("Ingredients:\n");
             for (int i = 0; i < ingreds.size(); i++) {
-                stringBuilder.append(ingreds.get(i));
+                stringBuilder.append(ingreds.get(i).getIngredientName());
                 if (i != ingreds.size() - 1) {
                     stringBuilder.append("\n");
                 }
