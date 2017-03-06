@@ -10,10 +10,15 @@ import java.util.List;
 public enum QuantityType {
 
         UNIT("Unit(s)"),
-        LBS("LB(S)"),
-        CUP("Cup(s)"),
-        OUNCE("Ounce(s)"),
-        GRAMS("Gram(s)");
+        LB("lb"),
+        CUP("cup"),
+        CUPS("cups"),
+        TEASPOON("teaspoon"),
+        TEASPOONS("teaspoons"),
+        TABLESPOON("tablespoon"),
+        TABLESPOONS("tablespoons"),
+        GRAM("gram"),
+        GRAMS("grams");
 
         private String  name;
 
@@ -33,17 +38,27 @@ public enum QuantityType {
         return types;
     }
 
-    public static QuantityType stringToDiet(String s) {
+    public static QuantityType stringToType(String s) {
         switch(s) {
             case "Unit(s)":
                 return UNIT;
-            case "LB(S)":
-                return LBS;
-            case "Cup(s)":
+            case "lb":
+                return LB;
+            case "cup":
                 return CUP;
-            case "Ounce(s)":
-                return OUNCE;
-            case "Gram(s)":
+            case "cups":
+                return CUPS;
+            case "teaspoon":
+                return TEASPOON;
+            case "teaspoons":
+                return TEASPOONS;
+            case "tablespoon":
+                return TABLESPOON;
+            case "tablespoons":
+                return TABLESPOONS;
+            case "gram":
+                return GRAM;
+            case "grams":
                 return GRAMS;
             default:
                 return null;

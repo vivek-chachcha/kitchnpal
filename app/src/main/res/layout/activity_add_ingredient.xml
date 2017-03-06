@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="kitchnpal.kitchnpal.kitchnpal.ui.FridgeActivity">
+    tools:context="kitchnpal.ui.FridgeActivity">
 
     <ScrollView
         android:id="@+id/user_form"

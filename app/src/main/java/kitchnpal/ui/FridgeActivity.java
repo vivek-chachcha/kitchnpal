@@ -60,7 +60,7 @@ public class FridgeActivity extends AppCompatActivity {
         public void onClick(View view) {
             Ingredient newIngredient = new Ingredient(ingredientNameView.getText().toString().trim(),
                     Float.valueOf(ingredientAmountView.getText().toString()),
-                    QuantityType.stringToDiet(quantityTypeBtn.getText().toString()));
+                    QuantityType.stringToType(quantityTypeBtn.getText().toString()));
 
             user.addIngredientToFridge(newIngredient);
             dbHelper.updateFridge(user);

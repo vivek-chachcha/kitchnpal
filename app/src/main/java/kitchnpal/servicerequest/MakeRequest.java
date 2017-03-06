@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kitchnpal.kitchnpal.Ingredient;
+import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
@@ -167,7 +168,7 @@ public class MakeRequest {
         try {
             for (int i = 0; i < ingredients.length(); i++) {
                 JSONObject obj = ingredients.getJSONObject(i);
-                results.add(new Ingredient(obj.getString("name"), (float)obj.get("amount")));
+                results.add(new Ingredient(obj.getString("name"), (float)obj.get("amount"), QuantityType.stringToType(obj.getString("unit"))));
             }
         } catch(Exception e) {
             e.printStackTrace();

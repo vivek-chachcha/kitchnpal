@@ -10,10 +10,10 @@ public class Ingredient {
 
     private QuantityType quantityType;
 
-    public Ingredient(String name, float amount) {
+    public Ingredient(String name, float amount,  QuantityType type) {
         ingredientName = name;
         ingredientAmount = amount;
-        quantityType = QuantityType.GRAMS;
+        quantityType = type;
     }
 
     public String getIngredientName() {
