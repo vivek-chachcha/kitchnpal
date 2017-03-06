@@ -129,10 +129,10 @@ public class MainActivity extends AppCompatActivity {
         String array[] = {"Carrot", "Butter", "3 Eggs"};
 
         public FridgeFragment() {
-            UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
-            User user = User.getInstance();
+           // UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
+           // User user = User.getInstance();
 
-            myIngredientsString = helper.getFridgeIngredients(user.getEmail());
+           // myIngredientsString = helper.getFridgeIngredients(user.getEmail());
 
         }
 
@@ -195,9 +195,27 @@ public class MainActivity extends AppCompatActivity {
             // Object p = myIngredientsString
             Object p = array[position];
             String name = p.toString();
-            Intent i = new Intent(getContext(), FridgeActivity.class);
-            i.putExtra("add_ingredient", name);
-            startActivity(i);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Would you like to remove this ingredient from your fridge?")
+
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            // TODO Remove ingredient
+                            //user.removeIngredientFromFridge(ingredient);
+                            //dbHelper.updateFridge(user);
+
+                            //Intent i = new Intent(getContext(), SearchResultActivity.class);
+                            //startActivity(i);
+                        }})
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }});
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 
