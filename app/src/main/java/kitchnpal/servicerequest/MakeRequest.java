@@ -19,9 +19,11 @@ import com.android.volley.Response.Listener;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
+import kitchnpal.kitchnpal.User;
 
 /**
  * Created by linhphan on 17-03-05.
@@ -49,8 +51,8 @@ public class MakeRequest {
                     null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-            // Display the first 500 characters of the response string.
-            mTxtDisplay.setText("Response is: "+ response.toString());
+                Recipe result = getParsedRecipe(response);
+                User.getInstance().setCurrentRecipe(result);
             }
             }, new Response.ErrorListener() {
             @Override
@@ -60,6 +62,14 @@ public class MakeRequest {
         });
         // Add the request to the RequestQueue.
         ApplicationController.getInstance().getRequestQueue().add(jsonRequest);
+    }
+
+    private Recipe getParsedRecipe(JSONObject response) {
+        //TODO: parse json response
+        String name = "fromreq";
+        ArrayList<String> ingreds = new ArrayList<String>();
+        ArrayList<String> steps = new ArrayList<String>();
+        return new Recipe(name, ingreds, steps);
     }
     
 

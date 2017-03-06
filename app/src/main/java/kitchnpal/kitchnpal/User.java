@@ -18,6 +18,7 @@ public class User {
     private String preference;
     private List<Recipe> favourites = new ArrayList<>();
     private List<Intolerance> allergies = new ArrayList<>();
+    private Recipe currentRecipe;
 
     private User() {
         // make constructor private for singleton
@@ -75,6 +76,8 @@ public class User {
         this.email = email;
     }
 
+    public Recipe getRecipe() { return this.currentRecipe; }
+
     public void addDietRestriction(Diet dietRestriction) {
         this.dietRestrictions.add(dietRestriction);
     }
@@ -93,5 +96,9 @@ public class User {
 
     public void addAllergy(Intolerance allergy) {
         this.allergies.add(allergy);
+    }
+
+    public void setCurrentRecipe(Recipe r) {
+        this.currentRecipe = r;
     }
 }
