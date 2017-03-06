@@ -42,16 +42,16 @@ import kitchnpal.kitchnpal.User;
 public class MakeRequest {
     public ConcurrentHashMap<String, Recipe> cache = new ConcurrentHashMap<>();
     ImageView mImageView;
+    private String userUrl = "http://35.163.134.8/users";
+    private String recipeUrl = "http://35.163.134.8/recipes";
     
     public MakeRequest() {
     }
     
     public void getRecipesWithSearchTerm(String searchTerm) {
         User.getInstance().clearSearchResults();
-        String url ="http://www.google.com";
-
         // Request a string response from the provided URL.
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url,
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, recipeUrl,
                     null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -73,10 +73,9 @@ public class MakeRequest {
     }
 
     public void getRecipesWithIngredients(ArrayList<String> ingredients) {
-        String url ="http://www.google.com";
-
+        User.getInstance().clearSearchResults();
         // Request a string response from the provided URL.
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url,
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, recipeUrl,
                 null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -94,10 +93,8 @@ public class MakeRequest {
     }
 
     public void getRecipeDetails(int id) {
-        String url ="http://www.google.com";
-
         // Request a string response from the provided URL.
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url,
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, recipeUrl,
                 null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
