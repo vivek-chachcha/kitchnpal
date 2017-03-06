@@ -20,6 +20,7 @@ public class User {
     private List<Intolerance> allergies = new ArrayList<>();
     private List<Ingredient> ingredients = new ArrayList<>();
     private Recipe currentRecipe;
+    private ArrayList<Recipe> searchResults = new ArrayList<>();
 
     private User() {
         // make constructor private for singleton
@@ -83,6 +84,10 @@ public class User {
     
     public Recipe getRecipe() { return this.currentRecipe; }
 
+    public ArrayList<Recipe> getSearchResults() {
+        return this.searchResults;
+    }
+
     public void addDietRestriction(Diet dietRestriction) {
         if (!this.dietRestrictions.contains(dietRestriction)) {
             this.dietRestrictions.add(dietRestriction);
@@ -125,7 +130,17 @@ public class User {
         this.currentRecipe = r;        
     }
 
+
     public void addIngredientToFridge(Ingredient i) {
-        this.ingredients.add(i);
+	    this.ingredients.add(i);
+    }
+
+    public void setSearchResults(ArrayList<Recipe> results) {
+        this.searchResults = results;
+    }
+
+    public void clearSearchResults() {
+        this.searchResults = new ArrayList<>();
+
     }
 }

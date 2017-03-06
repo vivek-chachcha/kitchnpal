@@ -1,5 +1,6 @@
 package kitchnpal.kitchnpal;
 
+import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
 import java.util.ArrayList;
@@ -10,22 +11,38 @@ import java.util.List;
  */
 public class Recipe {
     private String recipeName;
-    private ArrayList<String> ingredients;
+    private ArrayList<Ingredient> ingredients;
     private ArrayList<String> instructions;
-    private ImageView recipeImage;
+    private Drawable recipeImage;
+    private int id;
 
-    public Recipe(String name, ArrayList<String> ingreds, ArrayList<String> instructs) {
+    public Recipe(String name, int id, ArrayList<Ingredient> ingreds, ArrayList<String> instructs) {
         recipeName = name;
         ingredients = ingreds;
         instructions = instructs;
+        this.id = id;
+    }
+
+    public Recipe(String title, int id) {
+        recipeName = title;
+        this.id = id;
     }
 
     public String getName() { return recipeName; }
-    public List<String> getIngredients() { return ingredients; }
+    public List<Ingredient> getIngredients() { return ingredients; }
     public List<String> getInstructions() { return instructions; }
+    public int getId() { return id; }
 
-    public void setImage(ImageView iw) {
-        recipeImage = iw;
+    public void setImage(Drawable d) {
+        recipeImage = d;
+    }
+
+    public void setIngredients(ArrayList<Ingredient> ingreds) {
+        this.ingredients = ingreds;
+    }
+
+    public void setInstructions(ArrayList<String> steps) {
+        this.instructions = steps;
     }
 
     public void displayRecipe() {
