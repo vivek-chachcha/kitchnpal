@@ -18,6 +18,7 @@ public class User {
     private String preference;
     private List<Recipe> favourites = new ArrayList<>();
     private List<Intolerance> allergies = new ArrayList<>();
+    private List<Ingredient> ingredients = new ArrayList<>();
 
     private User() {
         // make constructor private for singleton
@@ -61,6 +62,10 @@ public class User {
 
     public List<Intolerance> getAllergies() {
         return allergies;
+    }
+
+    public List<Ingredient> getFridgeIngredients() {
+        return ingredients;
     }
 
     public void setName(String name) {
