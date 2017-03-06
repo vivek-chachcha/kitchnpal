@@ -28,9 +28,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import kitchnpal.kitchnpal.Ingredient;
-import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
@@ -39,17 +39,10 @@ import kitchnpal.kitchnpal.User;
  * Created by linhphan on 17-03-05.
  */
 public class MakeRequest {
-
-    TextView mTxtDisplay;
+    public ConcurrentHashMap<String, Recipe> cache = new ConcurrentHashMap<>();
     ImageView mImageView;
     
-    private String type;
-    private String recipe;
-    
-    public MakeRequest(String type, String recipe, TextView textView) {
-        this.type = type;
-        this.recipe = recipe;
-        mTxtDisplay = textView;
+    public MakeRequest() {
     }
     
     public void getRecipesWithSearchTerm(String searchTerm) {
@@ -71,7 +64,7 @@ public class MakeRequest {
             }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-            mTxtDisplay.setText("That didn't work!");
+
             }
         });
         // Add the request to the RequestQueue.
@@ -92,7 +85,7 @@ public class MakeRequest {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                mTxtDisplay.setText("That didn't work!");
+
             }
         });
         // Add the request to the RequestQueue.
@@ -113,7 +106,7 @@ public class MakeRequest {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                mTxtDisplay.setText("That didn't work!");
+
             }
         });
         // Add the request to the RequestQueue.
@@ -125,10 +118,13 @@ public class MakeRequest {
         try {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject temp = array.getJSONObject(i);
-                String title = temp.getString("title");
+                String title = temp.getString("title").trim();
                 int id = temp.getInt("id");
                 String imageUrl = temp.getString("image");
                 Recipe recipe = new Recipe(title, id);
+                if (!cache.containsKey(title)) {
+                    cache.put(title.trim(), recipe);
+                }
 
                 InputStream is = (InputStream) new URL(imageUrl).getContent();
                 Drawable d = Drawable.createFromStream(is, "src name");
@@ -168,7 +164,7 @@ public class MakeRequest {
         try {
             for (int i = 0; i < ingredients.length(); i++) {
                 JSONObject obj = ingredients.getJSONObject(i);
-                results.add(new Ingredient(obj.getString("name"), (float)obj.get("amount"), QuantityType.stringToType(obj.getString("unit"))));
+                results.add(new Ingredient(obj.getString("name"), (float)obj.get("amount")));
             }
         } catch(Exception e) {
             e.printStackTrace();
