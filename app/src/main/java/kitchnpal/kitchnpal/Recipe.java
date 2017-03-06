@@ -5,6 +5,9 @@ import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
+import kitchnpal.servicerequest.MakeRequest;
 
 /**
  * Created by matt on 2017-02-23.
@@ -15,12 +18,21 @@ public class Recipe {
     private ArrayList<String> instructions;
     private Drawable recipeImage;
     private int id;
+    private MakeRequest mr;
 
     public Recipe(String name, int id, ArrayList<Ingredient> ingreds, ArrayList<String> instructs) {
         recipeName = name;
         ingredients = ingreds;
         instructions = instructs;
         this.id = id;
+        mr  = new MakeRequest();
+        if (mr.cache.containsKey(recipeName)) {
+            mr.cache.remove(recipeName);
+            mr.cache.put(recipeName, this);
+        }
+        else {
+            mr.cache.put(recipeName.trim(), this);
+        }
     }
 
     public Recipe(String title, int id) {
