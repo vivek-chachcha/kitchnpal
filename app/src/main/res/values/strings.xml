@@ -89,6 +89,11 @@
     <string name="user_preferences">Recipe Preference</string>
     <string name="action_save_pref">Save Preferences</string>
     <string name="title_activity_recipe_display">RecipeDisplayActivity</string>
+    <string name="title_activity_add_ingredient">Add Ingredient</string>
+    <string name="ingredient_name">Ingredient Name</string>
+    <string name="ingredient_quantity">Quantity</string>
+    <string name="ingredient_quantity_type">Quantity Type</string>
+
     <string name="large_text">
         "Material is the metaphor.\n\n"
 

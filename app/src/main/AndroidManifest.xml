@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -32,6 +33,9 @@
         <activity
             android:name="kitchnpal.ui.UserPreferenceActivity"
             android:label="@string/title_activity_user_preference" />
+        <activity
+            android:name="kitchnpal.ui.FridgeActivity"
+            android:label="@string/title_activity_add_ingredient" />
         <activity
             android:name="kitchnpal.ui.RecipeDisplayActivity"
             android:label="@string/title_activity_recipe_display"

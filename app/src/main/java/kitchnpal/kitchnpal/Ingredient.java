@@ -7,12 +7,10 @@ package kitchnpal.kitchnpal;
 public class Ingredient {
     private String ingredientName;
     private float ingredientAmount;
-    private enum QuantityType {
-        UNIT, LBS, CUP, OUNCES, GRAMS
-    }
+
     private QuantityType quantityType;
 
-    public Ingredient(String name, float amount, QuantityType type) {
+    public Ingredient(String name, float amount,  QuantityType type) {
         ingredientName = name;
         ingredientAmount = amount;
         quantityType = type;
@@ -26,11 +24,19 @@ public class Ingredient {
         this.ingredientName = name;
     }
 
-    public float getIngredientAmunt() {
+    public float getIngredientAmount() {
         return this.ingredientAmount;
     }
 
     public void setIngredientAmount(float amount) {
         this.ingredientAmount = amount;
+    }
+    
+    public void setQuantityType(QuantityType qt) {
+        this.quantityType = qt;
+    }
+    
+    public String getQuantityType() {
+        return this.quantityType.toString();
     }
 }

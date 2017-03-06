@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.List;
 
 import kitchnpal.kitchnpal.Diet;
+import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.Intolerance;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
@@ -24,6 +25,7 @@ public class UserDatabaseHelper extends DatabaseHelper {
     private static final String COLUMN_ALLERGIES = "user_allergy";
     private static final String COLUMN_PREFERENCE = "user_recipe_preference";
     private static final String COLUMN_FAVOURITES = "user_favourite";
+    private static final String COLUMN_FRIDGE = "user_fridge";
     private String CREATE_USER_TABLE = "CREATE TABLE " + TABLE_USER + "("
             + COLUMN_USER_EMAIL + " TEXT PRIMARY KEY,"
             + COLUMN_USER_PASSWORD + " TEXT,"
@@ -138,11 +140,33 @@ public class UserDatabaseHelper extends DatabaseHelper {
         db.close();
     }
 
+    public void updateFridge(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {String.valueOf(user.getEmail())};
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_FRIDGE, convertFridgeIngredients(user.getFridgeIngredients()));
+        db.update(TABLE_USER, values, selection, selectionArgs);
+        db.close();
+    }
+
     private String convertFavourites(List<Recipe> favourites) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < favourites.size(); i++) {
             stringBuilder.append(favourites.get(i).getName());
             if (i != favourites.size() - 1) {
+                stringBuilder.append(", ");
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    private String convertFridgeIngredients(List<Ingredient> ingredients) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < ingredients.size(); i++) {
+            stringBuilder.append(ingredients.get(i).getIngredientName());
+            if (i != ingredients.size() - 1) {
                 stringBuilder.append(", ");
             }
         }
@@ -271,6 +295,24 @@ public class UserDatabaseHelper extends DatabaseHelper {
 
     public String[] getFavourites(String email) {
         String[] columns = { COLUMN_FAVOURITES };
+        String selection = COLUMN_USER_EMAIL;
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] selectionArgs = {email};
+        Cursor cursor = db.query(TABLE_USER,  // table to query
+                columns,                      // columns to return
+                selection,                    // columns for the WHERE clause
+                selectionArgs,                // values for the WHERE clause
+                null,                         // group the rows
+                null,                         // filter by row groups
+                null);                        // sort order
+        String[] results = cursor.getString(0).split(",");
+        cursor.close();
+        db.close();
+        return results;
+    }
+
+    public String[] getFridgeIngredients(String email) {
+        String[] columns = { COLUMN_FRIDGE };
         String selection = COLUMN_USER_EMAIL;
         SQLiteDatabase db = this.getReadableDatabase();
         String[] selectionArgs = {email};

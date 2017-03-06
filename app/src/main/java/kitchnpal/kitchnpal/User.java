@@ -18,6 +18,9 @@ public class User {
     private String preference;
     private List<Recipe> favourites = new ArrayList<>();
     private List<Intolerance> allergies = new ArrayList<>();
+    private List<Ingredient> ingredients = new ArrayList<>();
+    private Recipe currentRecipe;
+    private ArrayList<Recipe> searchResults = new ArrayList<>();
 
     private User() {
         // make constructor private for singleton
@@ -63,6 +66,10 @@ public class User {
         return allergies;
     }
 
+    public List<Ingredient> getFridgeIngredients() {
+        return ingredients;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -73,6 +80,12 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+    
+    public Recipe getRecipe() { return this.currentRecipe; }
+
+    public ArrayList<Recipe> getSearchResults() {
+        return this.searchResults;
     }
 
     public void addDietRestriction(Diet dietRestriction) {
@@ -111,5 +124,23 @@ public class User {
 
     public void clearAllergies() {
         this.allergies = new ArrayList<>();
+    }
+    
+    public void setCurrentRecipe(Recipe r) {
+        this.currentRecipe = r;        
+    }
+
+
+    public void addIngredientToFridge(Ingredient i) {
+	    this.ingredients.add(i);
+    }
+
+    public void setSearchResults(ArrayList<Recipe> results) {
+        this.searchResults = results;
+    }
+
+    public void clearSearchResults() {
+        this.searchResults = new ArrayList<>();
+
     }
 }

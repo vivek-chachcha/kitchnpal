@@ -33,6 +33,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.RecipeSearch;
@@ -118,10 +119,21 @@ public class MainActivity extends AppCompatActivity {
          * The fragment argument representing the section number for this
          * fragment.
          */
+
+
         private static final String ARG_SECTION_NUMBER = "section_number";
-        String array[] = { "Carrot", "Butter", "3 Eggs" };
+
+        String[] myIngredientsString;
+
+
+        String array[] = {"Carrot", "Butter", "3 Eggs"};
 
         public FridgeFragment() {
+            UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
+            User user = User.getInstance();
+
+            myIngredientsString = helper.getFridgeIngredients(user.getEmail());
+
         }
 
         /**
@@ -142,27 +154,50 @@ public class MainActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_fridge, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.fridge_tab_body));
+
+
             return rootView;
         }
 
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             ListView list = getListView();
+            // String[] nStringArray = new String[myIngredients.size()];
+            // nStringArray = myIngredients.toArray(nStringArray);
+
+            FloatingActionButton addIngr = (FloatingActionButton) view.findViewById(R.id.addIngredient);
+            addIngr.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent addIngr= new Intent(getContext(), FridgeActivity.class);
+                    startActivity(addIngr);
+                }
+            });
 
             //Fridge List Contents
 
-            list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
+            list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array)); //use nStringArray
         }
 
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
             super.onListItemClick(l, v, position, id);
 
-            //FRIDGE LIST ITEM FUNCTIONALITY HERE
-            Object o = array[position];
-            String pen = o.toString();
-            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
+            //String[] nStringArray = new String[myIngredients.size()];
+           // nStringArray = myIngredients.toArray(nStringArray);
 
+            //FRIDGE LIST ITEM FUNCTIONALITY HERE
+            //Object o = array[position]; // use nStringArray
+            //String pen = o.toString();
+            // Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
+
+            //REAL FRIDGE ITEM FUNCTIONALITY HERE
+            // Object p = myIngredientsString
+            Object p = array[position];
+            String name = p.toString();
+            Intent i = new Intent(getContext(), FridgeActivity.class);
+            i.putExtra("add_ingredient", name);
+            startActivity(i);
         }
     }
 
