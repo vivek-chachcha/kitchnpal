@@ -31,18 +31,22 @@ public class RecipeDisplayActivity extends AppCompatActivity {
 
         UserDatabaseHelper helper = new UserDatabaseHelper(this);
         User user = User.getInstance();
-        ArrayList<Recipe> myFavs = helper.getFavourites(user.getEmail());
+//        ArrayList<Recipe> myFavs = helper.getFavourites(user.getEmail());
         Recipe toDisplay = null;
-        for (Recipe r: myFavs) {
-            if (r.getName().equalsIgnoreCase(recipeName)) {
-                toDisplay = r;
-            }
-        }
+//        for (Recipe r: myFavs) {
+//            if (r.getName().equalsIgnoreCase(recipeName)) {
+//                toDisplay = r;
+//            }
+//        }
         if (toDisplay == null) {
 //            MakeRequest mr = new MakeRequest();
 //            mr.getRecipeDetails(mr.cache.get(recipeName).getId());
 //            toDisplay = user.getRecipe();
-            toDisplay = new Recipe("Cookies", 11012);
+            ArrayList<String> inst = new ArrayList<>();
+            inst.add("First Step");
+            ArrayList<Ingredient> ing = new ArrayList<>();
+            ing.add(new Ingredient("Banana", 2));
+            toDisplay = new Recipe("Cookies", 11012, ing, inst);
         }
 
         TextView myTextView = (TextView)findViewById(R.id.recipe_contents);
