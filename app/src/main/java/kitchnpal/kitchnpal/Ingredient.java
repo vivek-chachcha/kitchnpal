@@ -12,10 +12,10 @@ public class Ingredient {
     }
     private QuantityType quantityType;
 
-    public Ingredient(String name, float amount, QuantityType type) {
+    public Ingredient(String name, float amount) {
         ingredientName = name;
         ingredientAmount = amount;
-        quantityType = type;
+        quantityType = QuantityType.GRAMS;
     }
 
     public String getIngredientName() {
@@ -26,11 +26,19 @@ public class Ingredient {
         this.ingredientName = name;
     }
 
-    public float getIngredientAmunt() {
+    public float getIngredientAmount() {
         return this.ingredientAmount;
     }
 
     public void setIngredientAmount(float amount) {
         this.ingredientAmount = amount;
+    }
+    
+    public void setQuantityType(QuantityType qt) {
+        this.quantityType = qt;
+    }
+    
+    public String getQuantityType() {
+        return this.quantityType.toString();
     }
 }
