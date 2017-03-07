@@ -1,5 +1,16 @@
 require_relative 'Client.rb'
 
+def validate_token(accessToken)
+	valid = false
+	client = create_client()
+	stmt = client.prepare("SELECT COUNT(id) FROM User WHERE accessToken = ?")
+	results = stmt.execute(accessToken)
+	if (results.count == 1)
+		valid = true
+	end
+	valid
+end
+
 def get_user(email, pwd)
 	user = nil
         # connect to the MySQL server
@@ -23,18 +34,12 @@ def create_user(params)
 		return "User already exists!"
 	end
 
-	stmt = client.prepare("INSERT INTO User (name, password, email, calPerDay, isActive, preferences,
-				lacto_vegetarian, ovo_vegetarian, vegan, vegetarian, pescetarian, accessToken) VALUES
-				(?, ?, ?, ?, 1, ?, ?, ?, ?, ?, ?, ?)")
+	stmt = client.prepare("INSERT INTO User (name, password, email, calPerDay, isActive, preferences, diet, accessToken) VALUES
+				(?, ?, ?, ?, 1, ?, ?, ?)")
 	calPerDay = (params['calPerDay'] == nil) ? 0 : params['calPerDay']
 	preferences = (params['preferences'] == 'cheapest') ? 'cheapest' : 'lowcal'
-	lactoVeg = (params['diet'].include? "lacto") ? 1 : 0
-	ovoVeg = (params['diet'].include? "ovo") ? 1 : 0
-	vegan = (params['diet'].include? "vegan") ? 1 : 0
-	vegetarian = (params['diet'].include? "vegetarian") ? 1 : 0
-	pescetarian = (params['diet'].include? "pescetarian") ? 1 : 0
 	accessToken = (0...8).map { (65 + rand(26)).chr }.join
-	results = stmt.execute(params['name'], params['password'], params['email'], calPerDay, preferences, lactoVeg, ovoVeg, vegan, vegetarian, pescetarian, accessToken)
+	results = stmt.execute(params['name'], params['password'], params['email'], calPerDay, preferences, params['diet'], accessToken)
 	
 	#retrieve inserted user
 	id = client.query("SELECT last_insert_id()")
@@ -55,21 +60,22 @@ def update_user(params)
         end
 
 	stmt = client.prepare("UPDATE User
-				SET name = ?, password = ?, calPerDay = ?, preferences = ?,
-                                lacto_vegetarian = ?, ovo_vegetarian = ?, vegan = ?, vegetarian = ?, pescetarian = ?
+				SET name = ?, password = ?, calPerDay = ?, preferences = ?, diet = ?
                         	WHERE email = ?")
         calPerDay = (params['calPerDay'] == nil) ? 0 : params['calPerDay']
         preferences = (params['preferences'] == 'cheapest') ? 'cheapest' : 'lowcal'
-        lactoVeg = (params['diet'].include? "lacto") ? 1 : 0
-        ovoVeg = (params['diet'].include? "ovo") ? 1 : 0
-        vegan = (params['diet'].include? "vegan") ? 1 : 0
-        vegetarian = (params['diet'].include? "vegetarian") ? 1 : 0
-        pescetarian = (params['diet'].include? "pescetarian") ? 1 : 0
-        results = stmt.execute(params['name'], params['password'], calPerDay, preferences, lactoVeg, ovoVeg, vegan, vegetarian, pescetariani, params['email'])
+        results = stmt.execute(params['name'], params['password'], calPerDay, preferences, params['diet'], params['email'])
         
 	#retrieve updated user
 	id = client.query("SELECT last_insert_id()")
         id = id.first['last_insert_id()']
         results = client.query("SELECT * FROM User WHERE id = '#{id}'")
         results.first
+end
+
+def get_user_by_token(accessToken)
+	client = create_client()
+	stmt = client.prepare("SELECT * FROM User WHERE accessToken = ?")
+	user = stmt.execute(accessToken)
+	user.first
 end
