@@ -6,6 +6,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
@@ -30,29 +31,26 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        ImageButton star = (ImageButton) findViewById(R.id.toggleFavourite);
+
         RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
 
-        String recipeName = getIntent().getStringExtra("recipe_name");
+        int recipeId = getIntent().getIntExtra("recipe_id", 114160);
 
         UserDatabaseHelper helper = new UserDatabaseHelper(this);
         User user = User.getInstance();
         TextView myTextView = (TextView)findViewById(R.id.recipe_contents);
-//        ArrayList<Recipe> myFavs = helper.getFavourites(user.getEmail());
+        ArrayList<Recipe> myFavs = user.getFavourites();
+        MakeRequest mr = new MakeRequest();
         Recipe toDisplay = null;
-//        for (Recipe r: myFavs) {
-//            if (r.getName().equalsIgnoreCase(recipeName)) {
-//                toDisplay = r;
-//            }
-//        }
+        for (Recipe r: myFavs) {
+            if (r.getId() == recipeId) {
+                mr.getRecipeDetails(recipeId, myTextView, queue);
+                toDisplay = r;
+            }
+        }
         if (toDisplay == null) {
-            MakeRequest mr = new MakeRequest();
-            mr.getRecipeDetails(479101, myTextView, queue);
-//            mr.getRecipeDetails(mr.cache.get(recipeName).getId());
-//            ArrayList<String> inst = new ArrayList<>();
-//            inst.add("First Step");
-//            ArrayList<Ingredient> ing = new ArrayList<>();
-//            ing.add(new Ingredient("Banana", 2));
-//            toDisplay = new Recipe("Cookies", 11012, ing, inst);
+            mr.getRecipeDetails(recipeId, myTextView, queue);
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
