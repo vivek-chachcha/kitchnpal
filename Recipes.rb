@@ -5,12 +5,13 @@ def get_recipes(params)
 	name = params.has_key?("name")) ? params['name'] : ""
 	ingredients = params.has_key?("ingredients") ? params['ingredients'] : ""
 	user = get_user_by_token(params['accessToken'])
+	diet = user.diet.nil? ? "" : user.diet 
 	response = Unirest.get "https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/searchComplex?addRecipeInformation=false&fillIngredients=false&instructionsRequired=true&limitLicense=false&number=20&offset=0&query=&ranking=1",
 		headers:{
 		"X-Mashape-Key" => "gY0JeRT5jTmsh9Ld5t3ez3DUrxWGp1wXcF9jsnhtvOpIsoXsyi",
 		"Accept" => "application/json"
 		},
-		parameters:{ :query => name, :diet => user.diet, :includeIngredients => ingredients}
+		parameters:{ :query => name, :diet => diet, :includeIngredients => ingredients}
 
 	if user.preferences == 'lowCal'
 		response.body.results.sort_by!(|recipe| recipe.calories)
