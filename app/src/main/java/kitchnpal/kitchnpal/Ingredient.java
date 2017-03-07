@@ -15,6 +15,12 @@ public class Ingredient {
         ingredientAmount = amount;
         quantityType = type;
     }
+    
+    public Ingredient(String name, double amount) {
+        ingredientName = name;
+        ingredientAmount = amount;
+        quantityType = QuantityType.CUP;
+    }
 
     public String getIngredientName() {
         return this.ingredientName;
