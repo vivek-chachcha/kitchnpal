@@ -306,7 +306,7 @@ public static class RecipesFragment extends ListFragment {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView topView = (TextView) rootView.findViewById(R.id.section_label);
 
-            String body = "Search Results for: duck";
+            String body = "Search Results for: ";
             topView.setText(body);
             return rootView;
         }
@@ -318,7 +318,7 @@ public static class RecipesFragment extends ListFragment {
             final EditText mEdit = (EditText) view.findViewById(R.id.txt);
             Button mButton = (Button) view.findViewById(R.id.button);
             
-            displayNewResults("duck", list);
+            //displayNewResults("duck", list);
             
             mButton.setOnClickListener(
                     new View.OnClickListener() {

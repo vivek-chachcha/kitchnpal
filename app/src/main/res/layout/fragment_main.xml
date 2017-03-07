@@ -9,33 +9,47 @@
     android:orientation="vertical"
     tools:context="kitchnpal.ui.MainActivity$SearchFragment">
 
-    <TextView
-        android:id="@+id/section_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    
-    <EditText
-        android:layout_width="fill_parent"
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/section_label"
-        android:id="@+id/txt"
-        android:hint="Search for..." />
-        
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_below="@id/txt"
-        android:layout_height="wrap_content"
-        android:background="#921111"
-        android:text="Submit"
-        android:textColor="#ffffff"
-        android:typeface="normal" />
-        
+        android:id="@+id/search_bar"
+        android:layout_marginBottom="10dp">
+
+        <EditText
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txt"
+            android:hint="Search for..."
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:background="#921111"
+            android:text="Go!"
+            android:textColor="#ffffff"
+            android:typeface="normal"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/section_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt" />
+
+    </RelativeLayout>
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|bottom"
-        android:layout_below="@+id/button" />
+        android:layout_below="@+id/search_bar" />
 
 </LinearLayout>
