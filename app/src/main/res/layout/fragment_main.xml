@@ -6,10 +6,30 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="kitchnpal.ui.MainActivity$PlaceholderFragment">
+    tools:context="kitchnpal.ui.MainActivity$SearchFragment">
 
     <TextView
         android:id="@+id/section_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+        
+    <EditText
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/section_label"
+        android:id="@+id/txt"
+        android:hint="Search for..." />
+        
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/txt" />
+    
+    <TextView
+        android:id="@+id/section_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
