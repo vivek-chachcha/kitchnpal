@@ -110,9 +110,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class FridgeFragment extends ListFragment {
         /**
          * The fragment argument representing the section number for this
@@ -123,17 +120,15 @@ public class MainActivity extends AppCompatActivity {
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         String[] myIngredientsString;
-        List<Ingredient> myIngredients;
 
 
         String array[] = {"Carrot", "Butter", "3 Eggs"};
 
         public FridgeFragment() {
-            UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
-            User user = User.getInstance();
+           // UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
+           // User user = User.getInstance();
 
-//            myIngredientsString = helper.getFridgeIngredients(user.getEmail());
-//            myIngredients = user.getFridgeIngredients();
+           // myIngredientsString = helper.getFridgeIngredients(user.getEmail());
 
         }
 
@@ -163,15 +158,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             ListView list = getListView();
-//            String[] nStringArray = new String[myIngredients.size()];
-//            nStringArray = myIngredients.toArray(nStringArray);
+            // String[] nStringArray = new String[myIngredients.size()];
+            // nStringArray = myIngredients.toArray(nStringArray);
 
-            FloatingActionButton add = (FloatingActionButton) view.findViewById(R.id.addIngredient);
-            add.setOnClickListener(new View.OnClickListener() {
+            FloatingActionButton addIngr = (FloatingActionButton) view.findViewById(R.id.addIngredient);
+            addIngr.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    Intent addIngr= new Intent(getContext(), FridgeActivity.class);
+                    startActivity(addIngr);
                 }
             });
 
@@ -184,23 +179,39 @@ public class MainActivity extends AppCompatActivity {
         public void onListItemClick(ListView l, View v, int position, long id) {
             super.onListItemClick(l, v, position, id);
 
-            String[] nStringArray = new String[myIngredients.size()];
-            nStringArray = myIngredients.toArray(nStringArray);
+            //String[] nStringArray = new String[myIngredients.size()];
+           // nStringArray = myIngredients.toArray(nStringArray);
 
             //FRIDGE LIST ITEM FUNCTIONALITY HERE
-            Object o = array[position]; // use nStringArray
-            String pen = o.toString();
-            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
+            //Object o = array[position]; // use nStringArray
+            //String pen = o.toString();
+            // Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
 
             //REAL FRIDGE ITEM FUNCTIONALITY HERE
-            Object p = myIngredientsString[position];
+            // Object p = myIngredientsString
+            Object p = array[position];
             String name = p.toString();
-            for (Ingredient i : myIngredients) {
-                if (i.getIngredientName().equalsIgnoreCase(name.trim())) {
 
-                }
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setMessage("Would you like to remove this ingredient from your fridge?")
 
-            }
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+
+                            // TODO Remove ingredient
+                            //user.removeIngredientFromFridge(ingredient);
+                            //dbHelper.updateFridge(user);
+
+                            //Intent i = new Intent(getContext(), SearchResultActivity.class);
+                            //startActivity(i);
+                        }})
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }});
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
     }
 
