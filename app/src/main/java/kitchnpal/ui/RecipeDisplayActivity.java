@@ -40,7 +40,8 @@ public class RecipeDisplayActivity extends AppCompatActivity {
 //        }
         if (toDisplay == null) {
 //            MakeRequest mr = new MakeRequest();
-//            mr.getRecipeDetails(mr.cache.get(recipeName).getId());
+//            RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();  
+//            mr.getRecipeDetails(mr.cache.get(recipeName).getId(), queue);
 //            toDisplay = user.getRecipe();
             ArrayList<String> inst = new ArrayList<>();
             inst.add("First Step");
