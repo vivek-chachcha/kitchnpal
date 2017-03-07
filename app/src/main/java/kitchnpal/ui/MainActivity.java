@@ -1,7 +1,6 @@
 package kitchnpal.ui;
 
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -9,7 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -24,11 +22,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.RequestQueue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +34,9 @@ import java.util.List;
 import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
-import kitchnpal.kitchnpal.RecipeSearch;
 import kitchnpal.kitchnpal.User;
+import kitchnpal.servicerequest.MakeRequest;
+import kitchnpal.servicerequest.VolleySingleton;
 import kitchnpal.sql.UserDatabaseHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -111,9 +110,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class FridgeFragment extends ListFragment {
         /**
          * The fragment argument representing the section number for this
@@ -219,29 +215,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class RecipesFragment extends ListFragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+public static class RecipesFragment extends ListFragment {
+        
         private static final String ARG_SECTION_NUMBER = "section_number";
-
-        String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
-        String[] myFavs;
+        private ArrayList<Recipe> myFavs;
+        private UserDatabaseHelper helper;
+        private User user;
 
         public RecipesFragment() {
-//            UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
-//            User user = User.getInstance();
-//            myFavs = helper.getFavourites(user.getEmail());
+            helper = new UserDatabaseHelper(getContext());
+            user = User.getInstance();
+            Recipe r = new Recipe("Cashew Fried Rice", 114160);
+            user.addFavourite(r);
+            r = new Recipe("Hearty Slow Cooker Lasagna", 714837);
+            user.addFavourite(r);
+            r = new Recipe("Honey-Soy Broiled Salmon", 695333);
+            user.addFavourite(r);
+            myFavs = user.getFavourites();
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static RecipesFragment newInstance(int sectionNumber) {
             RecipesFragment fragment = new RecipesFragment();
             Bundle args = new Bundle();
@@ -262,7 +254,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             ListView list = getListView();
-
+            String[] array = new String[myFavs.size()];
+            for (int i = 0; i < myFavs.size(); i++) {
+                array[i] = myFavs.get(i).getName();
+            }
             //Recipe List Contents
             list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
         }
@@ -270,34 +265,23 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
             super.onListItemClick(l, v, position, id);
-
-            //RECIPE LIST ITEM FUNCTIONALITY HERE
-//            Object o = array[position];
-//            String pen = o.toString();
-//            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
-
-            //REAL LIST ITEM FUNCTIONALITY
-            //Object p = myFavs[position];
-            Object p = array[position];
-            String name = p.toString();
             Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
-            i.putExtra("recipe_name", name);
+            i.putExtra("recipe_id", myFavs.get(position).getId());
             startActivity(i);
         }
     }
 
-    public static class SearchFragment extends Fragment {
+    /**
+     * A placeholder fragment containing a simple view.
+     */
+    public static class SearchFragment extends ListFragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
-        String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
-        String[] myFavs;
-
         public SearchFragment() {
-
         }
 
         /**
@@ -315,133 +299,50 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_search, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            TextView topView = (TextView) rootView.findViewById(R.id.section_label);
+            TextView bottomView = (TextView) rootView.findViewById(R.id.section_bottom);
 
-            Button nameSearchBtn = (Button) rootView.findViewById(R.id.name_search);
-            Button ingredientSearchBtn = (Button) rootView.findViewById(R.id.ingredient_search);
-            Button allSearchBtn = (Button) rootView.findViewById(R.id.all_search);
-
-            nameSearchBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    final EditText input = new EditText(getActivity());
-                    builder.setMessage("Enter the name of the recipe: ")
-                            .setTitle("Search by Name")
-                            .setView(input)
-                            .setPositiveButton("Search", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
-                                    ArrayList<String> recipeNames = new ArrayList<>();
-                                    List<Recipe> recipes = new RecipeSearch().searchByName(input.getText().toString());
-                                    if (recipes != null) {
-                                        for (Recipe r : recipes) {
-                                            recipeNames.add(r.getName());
-                                        }
-                                    }
-                                    Intent i = new Intent(getContext(), SearchResultActivity.class);
-                                    i.putStringArrayListExtra("recipe_names", recipeNames);
-                                    startActivity(i);
-                                }})
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                     dialog.cancel();
-                                }});
-
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
-            });
-
-            ingredientSearchBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ArrayList<String> recipeNames = new ArrayList<>();
-                    //TODO: get ingredients from the fridge
-                    List<Recipe> recipes = new RecipeSearch().searchByIngredient("REPLACE_ME");
-                    if (recipes != null) {
-                        for (Recipe r : recipes) {
-                            recipeNames.add(r.getName());
-                        }
-                    }
-                    Intent i = new Intent(getContext(), SearchResultActivity.class);
-                    i.putStringArrayListExtra("recipe_names", recipeNames);
-                    startActivity(i);
-                }
-            });
-
-            allSearchBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    User user = User.getInstance();
-                    UserDatabaseHelper dbHelper = new UserDatabaseHelper(getContext());
-                    String preference = dbHelper.getUserPreferences(user.getEmail());
-                    ArrayList<String> recipeNames = new ArrayList<>();
-                    List<Recipe> recipes = new RecipeSearch().searchByPreference(preference);
-                    if (recipes != null) {
-                        for (Recipe r : recipes) {
-                            recipeNames.add(r.getName());
-                        }
-                    }
-                    Intent i = new Intent(getContext(), SearchResultActivity.class);
-                    i.putStringArrayListExtra("recipe_names", recipeNames);
-                    startActivity(i);
-                }
-            });
-
+            String body = "Search Results for: duck";
+            topView.setText(body);
             return rootView;
-        }
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
-        private static final String ARG_SECTION_NUMBER = "section_number";
-
-        public PlaceholderFragment() {
-        }
-
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
-            Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-            fragment.setArguments(args);
-            return fragment;
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            switch(getArguments().getInt(ARG_SECTION_NUMBER)) {
-                case 1:
-                    // Search Tab
-                    textView.setText(getString(R.string.search_tab_body));
-                    break;
-                case 2:
-                    // Recipe Tab
-                    textView.setText(getString(R.string.recipe_tab_body));
-                    break;
-                case 3:
-                    // Fridge Tab
-                    textView.setText(getString(R.string.fridge_tab_body));
-                    break;
-                default:
-                    textView.setText(getString(R.string.search_tab_body));
-                    break;
-            }
-            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            return rootView;
+        public void onViewCreated(View view, Bundle savedInstanceState) {
+            final TextView topView = (TextView) view.findViewById(R.id.section_label);
+            final ListView list = getListView();
+            
+            displayNewResults("duck", list);
+            
+            mButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        public void onClick(View view) {
+                            displayNewResults(mEdit.getText().toString(), list);
+                            String body = "Search Results for: " + mEdit.getText().toString();
+                            topView.setText(body);
+                        }
+                });
+        }
+        
+        private void displayNewResults(String searchTerm, ListView list) {
+            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
+
+            RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
+            MakeRequest mr = new MakeRequest();
+            mr.getRecipesWithSearchTerm(searchTerm, queue, arrayAdapter, list);
+        }
+
+        @Override
+        public void onListItemClick(ListView l, View v, int position, long id) {
+            super.onListItemClick(l, v, position, id);
+
+            //Look at individual recipe
+            Object p = l.getItemAtPosition(position);
+            String name = p.toString();
+            Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
+            i.putExtra("recipe_name", name);
+            startActivity(i);
         }
     }
 
@@ -461,12 +362,11 @@ public class MainActivity extends AppCompatActivity {
             // Return a PlaceholderFragment (defined as a static inner class below).
             if (position + 1 == 3) {
                 return FridgeFragment.newInstance(position + 1);
-            } else if (position + 1 == 2) {
-                return RecipesFragment.newInstance(position + 1);
-            } else if (position + 1 == 1) {
-                return SearchFragment.newInstance(position + 1);
             }
-            return PlaceholderFragment.newInstance(position + 1);
+            else if (position + 1 == 2) {
+                return RecipesFragment.newInstance(position + 1);
+            }
+            return SearchFragment.newInstance(position + 1);
         }
 
         @Override
@@ -484,41 +384,6 @@ public class MainActivity extends AppCompatActivity {
                     return "Favourites";
                 case 2:
                     return "Fridge";
-            }
-            return null;
-        }
-    }
-
-    public class SearchSectionPagerAdapter extends FragmentPagerAdapter {
-
-        public SearchSectionPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            if (position + 1 == 2) {
-                return FridgeFragment.newInstance(position + 1);
-            } else if (position + 1 == 1) {
-                return RecipesFragment.newInstance(position + 1);
-            }
-            return PlaceholderFragment.newInstance(position + 1);
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Search";
-                case 1:
-                    return "Results";
             }
             return null;
         }
