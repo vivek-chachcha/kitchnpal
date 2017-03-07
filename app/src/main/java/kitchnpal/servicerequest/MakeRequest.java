@@ -35,6 +35,7 @@ import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
+import kitchnpal.servicerequest.VolleySingleton;
 
 /**
  * Created by linhphan on 17-03-05.
@@ -48,7 +49,7 @@ public class MakeRequest {
     public MakeRequest() {
     }
     
-    public void getRecipesWithSearchTerm(String searchTerm) {
+    public void getRecipesWithSearchTerm(String searchTerm, RequestQueue queue) {
         User.getInstance().clearSearchResults();
         String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?query=" + searchTerm;
         // Request a string response from the provided URL.
@@ -66,14 +67,14 @@ public class MakeRequest {
             }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                error.printStackTrace();
             }
         });
         // Add the request to the RequestQueue.
-        ApplicationController.getInstance().getRequestQueue().add(jsonRequest);
+        queue.add(jsonRequest);
     }
 
-    public void getRecipesWithIngredients(ArrayList<String> ingredientsNames) {
+    public void getRecipesWithIngredients(ArrayList<String> ingredientsNames, RequestQueue queue) {
         String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients";
         StringBuilder sb = new StringBuilder();
         sb.append(url);
@@ -98,14 +99,14 @@ public class MakeRequest {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                error.printStackTrace();
             }
         });
         // Add the request to the RequestQueue.
-        ApplicationController.getInstance().getRequestQueue().add(jsonRequest);
+        queue.add(jsonRequest);
     }
 
-    public void getRecipeDetails(int id) {
+    public void getRecipeDetails(int id, RequestQueue queue) {
         String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/" + id + "/information";
         // Request a string response from the provided URL.
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url,
@@ -122,7 +123,7 @@ public class MakeRequest {
             }
         });
         // Add the request to the RequestQueue.
-        ApplicationController.getInstance().getRequestQueue().add(jsonRequest);
+        queue.add(jsonRequest);
     }
 
     private ArrayList<Recipe> getParsedRecipes(JSONArray array) {
@@ -196,6 +197,5 @@ public class MakeRequest {
         }
         return results;
     }
-
 }
 
