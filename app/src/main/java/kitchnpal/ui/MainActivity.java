@@ -11,6 +11,8 @@ import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -301,7 +303,6 @@ public static class RecipesFragment extends ListFragment {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView topView = (TextView) rootView.findViewById(R.id.section_label);
-            TextView bottomView = (TextView) rootView.findViewById(R.id.section_bottom);
 
             String body = "Search Results for: duck";
             topView.setText(body);
@@ -312,6 +313,8 @@ public static class RecipesFragment extends ListFragment {
         public void onViewCreated(View view, Bundle savedInstanceState) {
             final TextView topView = (TextView) view.findViewById(R.id.section_label);
             final ListView list = getListView();
+            final EditText mEdit = (EditText) view.findViewById(R.id.txt);
+            Button mButton = (Button) view.findViewById(R.id.button);
             
             displayNewResults("duck", list);
             
