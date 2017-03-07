@@ -50,8 +50,9 @@ public class MakeRequest {
     
     public void getRecipesWithSearchTerm(String searchTerm) {
         User.getInstance().clearSearchResults();
+        String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?query=" + searchTerm;
         // Request a string response from the provided URL.
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, recipeUrl,
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url,
                     null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -72,10 +73,22 @@ public class MakeRequest {
         ApplicationController.getInstance().getRequestQueue().add(jsonRequest);
     }
 
-    public void getRecipesWithIngredients(ArrayList<String> ingredients) {
+    public void getRecipesWithIngredients(ArrayList<String> ingredientsNames) {
+        String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients";
+        StringBuilder sb = new StringBuilder();
+        sb.append(url);
+        sb.append("?ingredients=");
+        for (int i = 0; i < ingredientsNames.size(); i++) {
+            sb.append(ingredientsNames.get(i));
+            if (i != ingredientsNames.size() - 1) {
+                sb.append(",");
+            }
+        }
+        url = sb.toString();
+        
         User.getInstance().clearSearchResults();
         // Request a string response from the provided URL.
-        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, recipeUrl,
+        JsonArrayRequest jsonRequest = new JsonArrayRequest(Request.Method.GET, url,
                 null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
@@ -93,8 +106,9 @@ public class MakeRequest {
     }
 
     public void getRecipeDetails(int id) {
+        String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/" + id + "/information";
         // Request a string response from the provided URL.
-        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, recipeUrl,
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url,
                 null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
