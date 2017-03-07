@@ -305,32 +305,32 @@ public class MainActivity extends AppCompatActivity {
 
             String body = "Search Results for: duck";
             topView.setText(body);
-//            ArrayList<Recipe> recipes = User.getInstance().getSearchResults();
-//            String[] array = new String[recipes.size()];
-//            for (int i = 0; i < recipes.size(); i++) {
-//                array[i] = recipes.get(i).getName();
-//            }
-//
-//            list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
-
-            //textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
 
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
-//            TextView topView = (TextView) view.findViewById(R.id.section_label);
-//            TextView bottomView = (TextView) view.findViewById(R.id.section_bottom);
-            ListView list = getListView();
-
-//            list.addHeaderView(topView);
-//            list.addFooterView(bottomView);
-
+            final TextView topView = (TextView) view.findViewById(R.id.section_label);
+            final ListView list = getListView();
+            
+            displayNewResults("duck", list);
+            
+            mButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        public void onClick(View view) {
+                            displayNewResults(mEdit.getText().toString(), list);
+                            String body = "Search Results for: " + mEdit.getText().toString();
+                            topView.setText(body);
+                        }
+                });
+        }
+        
+        private void displayNewResults(String searchTerm, ListView list) {
             ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
 
             RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
             MakeRequest mr = new MakeRequest();
-            mr.getRecipesWithSearchTerm("duck", queue, arrayAdapter, list);
+            mr.getRecipesWithSearchTerm(searchTerm, queue, arrayAdapter, list);
         }
 
         @Override
