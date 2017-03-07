@@ -215,29 +215,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public static class RecipesFragment extends ListFragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+public static class RecipesFragment extends ListFragment {
+        
         private static final String ARG_SECTION_NUMBER = "section_number";
-
-        String array[] = { "Fried Rice", "Pesto Chicken Pasta", "Chocolate Cookies" };
-        String[] myFavs;
+        private ArrayList<Recipe> myFavs;
+        private UserDatabaseHelper helper;
+        private User user;
 
         public RecipesFragment() {
-//            UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
-//            User user = User.getInstance();
-//            myFavs = helper.getFavourites(user.getEmail());
+            helper = new UserDatabaseHelper(getContext());
+            user = User.getInstance();
+            Recipe r = new Recipe("Cashew Fried Rice", 114160);
+            user.addFavourite(r);
+            r = new Recipe("Hearty Slow Cooker Lasagna", 714837);
+            user.addFavourite(r);
+            r = new Recipe("Honey-Soy Broiled Salmon", 695333);
+            user.addFavourite(r);
+            myFavs = user.getFavourites();
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static RecipesFragment newInstance(int sectionNumber) {
             RecipesFragment fragment = new RecipesFragment();
             Bundle args = new Bundle();
@@ -258,7 +254,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             ListView list = getListView();
-
+            String[] array = new String[myFavs.size()];
+            for (int i = 0; i < myFavs.size(); i++) {
+                array[i] = myFavs.get(i).getName();
+            }
             //Recipe List Contents
             list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array));
         }
@@ -266,18 +265,8 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onListItemClick(ListView l, View v, int position, long id) {
             super.onListItemClick(l, v, position, id);
-
-            //RECIPE LIST ITEM FUNCTIONALITY HERE
-//            Object o = array[position];
-//            String pen = o.toString();
-//            Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
-
-            //REAL LIST ITEM FUNCTIONALITY
-            //Object p = myFavs[position];
-            Object p = array[position];
-            String name = p.toString();
             Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
-            i.putExtra("recipe_name", name);
+            i.putExtra("recipe_id", myFavs.get(position).getId());
             startActivity(i);
         }
     }
