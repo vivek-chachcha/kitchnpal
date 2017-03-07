@@ -16,7 +16,7 @@ public class User {
     private List<Diet> dietRestrictions = new ArrayList<>();
     private Integer numCalPerDay;
     private String preference;
-    private List<Recipe> favourites = new ArrayList<>();
+    private ArrayList<Recipe> favourites = new ArrayList<>();
     private List<Intolerance> allergies = new ArrayList<>();
     private List<Ingredient> ingredients = new ArrayList<>();
     private Recipe currentRecipe;
@@ -58,7 +58,7 @@ public class User {
         return preference;
     }
 
-    public List<Recipe> getFavourites() {
+    public ArrayList<Recipe> getFavourites() {
         return favourites;
     }
 
