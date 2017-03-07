@@ -106,6 +106,7 @@ public class MakeRequest {
                 null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
+                //TODO: MUST HAVE AN ARRAY ADAPTER TO GIVE RESULTS TO
 //                ArrayList<Recipe> results = getParsedRecipes(response);
 //                User.getInstance().setSearchResults(results);
             }
@@ -247,7 +248,7 @@ public class MakeRequest {
         try {
             for (int i = 0; i < ingredients.length(); i++) {
                 JSONObject obj = ingredients.getJSONObject(i);
-                results.add(new Ingredient(obj.getString("name"), 1));
+                results.add(new Ingredient(obj.getString("name"), obj.getDouble("amount")));
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -258,7 +259,7 @@ public class MakeRequest {
     public ArrayList<String> parseInstructions(String raw) {
         ArrayList<String> results = new ArrayList<>();
         try {
-            String[] pieces = raw.split(".");
+            String[] pieces = raw.split("   ");
             for (String s : pieces) {
                 results.add(s);
             }
