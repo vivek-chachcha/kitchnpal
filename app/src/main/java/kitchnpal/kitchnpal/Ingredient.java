@@ -6,11 +6,11 @@ package kitchnpal.kitchnpal;
 
 public class Ingredient {
     private String ingredientName;
-    private float ingredientAmount;
+    private double ingredientAmount;
 
     private QuantityType quantityType;
 
-    public Ingredient(String name, float amount,  QuantityType type) {
+    public Ingredient(String name, double amount,  QuantityType type) {
         ingredientName = name;
         ingredientAmount = amount;
         quantityType = type;
@@ -30,7 +30,7 @@ public class Ingredient {
         this.ingredientName = name;
     }
 
-    public float getIngredientAmount() {
+    public double getIngredientAmount() {
         return this.ingredientAmount;
     }
 
