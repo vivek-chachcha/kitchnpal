@@ -46,7 +46,8 @@ import kitchnpal.kitchnpal.User;
  * Created by linhphan on 17-03-05.
  */
 public class MakeRequest {
-    public ConcurrentHashMap<String, Recipe> cache = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, Recipe> fullRecipeCache = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, String> searchCache = new ConcurrentHashMap<>();
     ImageView mImageView;
     
     public MakeRequest() {
@@ -176,9 +177,9 @@ public class MakeRequest {
                 String title = temp.getString("title").trim();
                 int id = temp.getInt("id");
                 String imageUrl = temp.getString("image");
-                Recipe recipe = new Recipe(title, id);
-                if (!cache.containsKey(title)) {
-                    cache.put(title.trim(), recipe);
+                Recipe recipe = new Recipe(title.trim(), id);
+                if (!searchCache.containsKey(title.trim())) {
+                    searchCache.put(title.trim(), Integer.toString(id));
                 }
 
 //                InputStream is = (InputStream) new URL(imageUrl).getContent();
@@ -209,33 +210,38 @@ public class MakeRequest {
             ArrayList<String> instructions = parseInstructions(temp.getString("instructions"));
 
             Recipe recipe = new Recipe(title, id, ingredients, instructions);
+            if (fullRecipeCache.containsKey(Integer.toString(id))) {
+                fullRecipeCache.remove(Integer.toString(id));
+            }
+            fullRecipeCache.put(Integer.toString(id), recipe);
 
 //            InputStream is = (InputStream) new URL(imageUrl).getContent();
 //            Drawable d = Drawable.createFromStream(is, "src name");
 //            recipe.setImage(d);
 
             if (myTextView != null) {
-                List<String> steps = recipe.getInstructions();
-                List<Ingredient> ingreds = recipe.getIngredients();
-
                 StringBuilder stringBuilder = new StringBuilder();
                 stringBuilder.append(recipe.getName());
                 stringBuilder.append("\n\n");
                 stringBuilder.append("Instructions:\n");
-                for (int i = 0; i < steps.size(); i++) {
+                for (int i = 0; i < instructions.size(); i++) {
                     int stepNum = i + 1;
                     stringBuilder.append(stepNum);
                     stringBuilder.append(": ");
-                    stringBuilder.append(steps.get(i));
-                    if (i != steps.size() - 1) {
-                        stringBuilder.append("\n");
+                    stringBuilder.append(instructions.get(i));
+                    if (i != instructions.size() - 1) {
+                        stringBuilder.append("\n\n");
                     }
                 }
                 stringBuilder.append("\n\n");
                 stringBuilder.append("Ingredients:\n");
-                for (int i = 0; i < ingreds.size(); i++) {
-                    stringBuilder.append(ingreds.get(i).getIngredientName());
-                    if (i != ingreds.size() - 1) {
+                for (int i = 0; i < ingredients.size(); i++) {
+                    stringBuilder.append(ingredients.get(i).getIngredientName());
+                    stringBuilder.append(", ");
+                    stringBuilder.append(ingredients.get(i).getIngredientAmount());
+                    stringBuilder.append(" ");
+                    stringBuilder.append(ingredients.get(i).getIngredientUnit());
+                    if (i != ingredients.size() - 1) {
                         stringBuilder.append("\n");
                     }
                 }
@@ -253,7 +259,7 @@ public class MakeRequest {
         try {
             for (int i = 0; i < ingredients.length(); i++) {
                 JSONObject obj = ingredients.getJSONObject(i);
-                results.add(new Ingredient(obj.getString("name"), obj.getDouble("amount")));
+                results.add(new Ingredient(obj.getString("name"), obj.getDouble("amount"), "CUPS"));
             }
         } catch(Exception e) {
             e.printStackTrace();
@@ -264,9 +270,11 @@ public class MakeRequest {
     public ArrayList<String> parseInstructions(String raw) {
         ArrayList<String> results = new ArrayList<>();
         try {
-            String[] pieces = raw.split("   ");
-            for (String s : pieces) {
+            int marker = 0;
+            while (marker < raw.length() - 4 || raw.indexOf(".", marker) >= raw.length()) {
+                String s = raw.substring(marker, raw.indexOf(".", marker));
                 results.add(s);
+                marker = raw.indexOf(".", marker) + 1;
             }
         } catch(Exception e) {
             e.printStackTrace();
