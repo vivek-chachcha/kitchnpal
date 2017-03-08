@@ -7,6 +7,7 @@ package kitchnpal.kitchnpal;
 public class Ingredient {
     private String ingredientName;
     private double ingredientAmount;
+    private String unit;
 
     private QuantityType quantityType;
 
@@ -16,14 +17,19 @@ public class Ingredient {
         quantityType = type;
     }
     
-    public Ingredient(String name, double amount) {
+    public Ingredient(String name, double amount, String unit) {
         ingredientName = name;
         ingredientAmount = amount;
+        this.unit = unit;
         quantityType = QuantityType.CUP;
     }
 
     public String getIngredientName() {
         return this.ingredientName;
+    }
+    
+    public String getIngredientUnit() {
+        return this.unit;
     }
 
     public void setIngredientName(String name) {
