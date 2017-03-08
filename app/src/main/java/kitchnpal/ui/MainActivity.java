@@ -303,8 +303,10 @@ public static class RecipesFragment extends ListFragment {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private static MakeRequest mr = new MakeRequest();
 
         public SearchFragment() {
+            mr = new MakeRequest();
         }
 
         /**
@@ -394,7 +396,6 @@ public static class RecipesFragment extends ListFragment {
             ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
 
             RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
-            MakeRequest mr = new MakeRequest();
             mr.getRecipesWithIngredients(ingredients, queue, arrayAdapter, list);
         }
 
@@ -402,7 +403,6 @@ public static class RecipesFragment extends ListFragment {
             ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
 
             RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
-            MakeRequest mr = new MakeRequest();
             mr.getRecipesWithSearchTerm(searchTerm, queue, arrayAdapter, list);
         }
 
@@ -413,7 +413,6 @@ public static class RecipesFragment extends ListFragment {
             //Look at individual recipe
             Object p = l.getItemAtPosition(position);
             String name = p.toString().trim();
-            MakeRequest mr = new MakeRequest();
             int recipeId = Integer.parseInt(mr.searchCache.get(name));
             Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
             i.putExtra("recipe_name", name);

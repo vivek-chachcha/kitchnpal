@@ -27,6 +27,7 @@ public class RecipeDisplayActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(getIntent().getStringExtra("recipe_name"));
         setContentView(R.layout.activity_recipe_display);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -40,18 +41,19 @@ public class RecipeDisplayActivity extends AppCompatActivity {
 
         UserDatabaseHelper helper = new UserDatabaseHelper(this);
         User user = User.getInstance();
-        TextView myTextView = (TextView)findViewById(R.id.recipe_contents);
+        TextView ingredientView = (TextView)findViewById(R.id.ingredients);
+        TextView instructionView = (TextView)findViewById(R.id.instructions);
         ArrayList<Recipe> myFavs = user.getFavourites();
         final MakeRequest mr = new MakeRequest();
         Recipe toDisplay = null;
         for (Recipe r: myFavs) {
             if (r.getId() == recipeId) {
-                mr.getRecipeDetails(recipeId, myTextView, queue);
+                mr.getRecipeDetails(recipeId, ingredientView, instructionView, queue);
                 toDisplay = r;
             }
         }
         if (toDisplay == null) {
-            mr.getRecipeDetails(recipeId, myTextView, queue);
+            mr.getRecipeDetails(recipeId, ingredientView, instructionView, queue);
         }
 
         FloatingActionButton toggleFav = (FloatingActionButton) findViewById(R.id.toggleFavourite);
