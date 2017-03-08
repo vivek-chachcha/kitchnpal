@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kitchnpal.kitchnpal.Ingredient;
+import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.RecipeSearch;
@@ -128,7 +129,14 @@ public class MainActivity extends AppCompatActivity {
         String[] myIngredientsString;
 
 
-        String array[] = {"Carrot", "Butter", "3 Eggs"};
+        // Test ingredients
+        Ingredient i1 = new Ingredient("Chicken", 3, QuantityType.CUPS);
+        Ingredient i2 = new Ingredient("Salt", 2, QuantityType.GRAMS);
+
+
+        String ingredientArray[] = {i1.ingredientToString(), i2.ingredientToString()};
+
+        // TODO Retrieve ingredients
 
         public FridgeFragment() {
            // UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
@@ -178,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
 
             //Fridge List Contents
 
-            list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, array)); //use nStringArray
+            list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, ingredientArray)); //use nStringArray
         }
 
         @Override
@@ -195,7 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
             //REAL FRIDGE ITEM FUNCTIONALITY HERE
             // Object p = myIngredientsString
-            Object p = array[position];
+            Object p = ingredientArray[position];
             String name = p.toString();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
