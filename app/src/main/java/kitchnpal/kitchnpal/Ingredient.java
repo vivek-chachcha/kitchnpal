@@ -1,5 +1,8 @@
 package kitchnpal.kitchnpal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Jerry on 2017-02-25.
  */
@@ -7,7 +10,6 @@ package kitchnpal.kitchnpal;
 public class Ingredient {
     private String ingredientName;
     private double ingredientAmount;
-    private String unit;
 
     private QuantityType quantityType;
 
@@ -16,20 +18,17 @@ public class Ingredient {
         ingredientAmount = amount;
         quantityType = type;
     }
-    
-    public Ingredient(String name, double amount, String unit) {
-        ingredientName = name;
-        ingredientAmount = amount;
-        this.unit = unit;
-        quantityType = QuantityType.CUP;
+
+    public String ingredientToString() {
+        return this.getIngredientName() + " x " + this.getIngredientAmount() + " " + this.getQuantityTypeString();
     }
 
     public String getIngredientName() {
         return this.ingredientName;
     }
     
-    public String getIngredientUnit() {
-        return this.unit;
+    public QuantityType getIngredientQuantityType() {
+        return this.quantityType;
     }
 
     public void setIngredientName(String name) {
@@ -48,7 +47,18 @@ public class Ingredient {
         this.quantityType = qt;
     }
     
-    public String getQuantityType() {
+    public String getQuantityTypeString() {
         return this.quantityType.toString();
+    }
+
+    public static List<String> ingredientsToString(List<Ingredient> ingredients) {
+        if (ingredients != null) {
+            List<String> ingredientsString = new ArrayList<String>(ingredients.size());
+            for (Ingredient i : ingredients) {
+                ingredientsString.add(i.ingredientToString());
+            }
+            return ingredientsString;
+        }
+        else return null;
     }
 }

@@ -23,6 +23,7 @@ import kitchnpal.kitchnpal.Intolerance;
 import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.User;
+import kitchnpal.sql.FridgeDatabaseHelper;
 import kitchnpal.sql.UserDatabaseHelper;
 
 
@@ -33,6 +34,7 @@ import kitchnpal.sql.UserDatabaseHelper;
 public class FridgeActivity extends AppCompatActivity {
 
     private UserDatabaseHelper dbHelper;
+    private FridgeDatabaseHelper fridgeDbHelper;
     private Button quantityTypeBtn;
     private EditText ingredientNameView;
     private EditText ingredientAmountView;
@@ -63,7 +65,7 @@ public class FridgeActivity extends AppCompatActivity {
                     QuantityType.stringToType(quantityTypeBtn.getText().toString()));
 
             user.addIngredientToFridge(newIngredient);
-            dbHelper.updateFridge(user);
+            fridgeDbHelper.addIngredient(newIngredient);
 
             nextPage();
         }

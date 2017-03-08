@@ -135,7 +135,13 @@ public class User {
 	    this.ingredients.add(i);
     }
 
-    public void removeIngredientFromFridge(Ingredient i) { this.ingredients.remove(i);}
+    public void removeIngredientByName(String name) {
+        for (Ingredient i: this.ingredients) {
+            if (i.getIngredientName() == name){
+                this.ingredients.remove(i);
+            }
+        }
+    }
 
     public void setSearchResults(ArrayList<Recipe> results) {
         this.searchResults = results;

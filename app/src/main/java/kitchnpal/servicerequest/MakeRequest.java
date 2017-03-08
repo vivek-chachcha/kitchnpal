@@ -38,6 +38,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import kitchnpal.kitchnpal.Ingredient;
+import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
@@ -241,7 +242,7 @@ public class MakeRequest {
                     stringBuilder.append(": ");
                     stringBuilder.append(ingredients.get(i).getIngredientAmount());
                     stringBuilder.append(" ");
-                    stringBuilder.append(ingredients.get(i).getIngredientUnit().toLowerCase());
+                    stringBuilder.append(ingredients.get(i).getIngredientQuantityType().getName().toLowerCase());
                     if (i != ingredients.size() - 1) {
                         stringBuilder.append("\n");
                     }
@@ -260,7 +261,7 @@ public class MakeRequest {
         try {
             for (int i = 0; i < ingredients.length(); i++) {
                 JSONObject obj = ingredients.getJSONObject(i);
-                results.add(new Ingredient(obj.getString("name"), obj.getDouble("amount"), "CUPS"));
+                results.add(new Ingredient(obj.getString("name"), obj.getDouble("amount"), QuantityType.CUPS));
             }
         } catch(Exception e) {
             e.printStackTrace();
