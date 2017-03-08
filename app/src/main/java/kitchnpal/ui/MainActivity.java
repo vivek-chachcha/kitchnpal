@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Button;
@@ -38,6 +39,7 @@ import java.util.List;
 import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
+import kitchnpal.kitchnpal.RecipeSearch;
 import kitchnpal.kitchnpal.User;
 import kitchnpal.servicerequest.MakeRequest;
 import kitchnpal.servicerequest.VolleySingleton;
@@ -315,22 +317,71 @@ public static class RecipesFragment extends ListFragment {
         public void onViewCreated(View view, Bundle savedInstanceState) {
             final TextView topView = (TextView) view.findViewById(R.id.section_label);
             final ListView list = getListView();
-            final EditText mEdit = (EditText) view.findViewById(R.id.txt);
-            Button mButton = (Button) view.findViewById(R.id.button);
-            
-            //displayNewResults("duck", list);
-            
-            mButton.setOnClickListener(
-                    new View.OnClickListener() {
-                        public void onClick(View view) {
-                            displayNewResults(mEdit.getText().toString(), list);
-                            String body = "Search Results for: " + mEdit.getText().toString();
-                            topView.setText(body);
-                        }
-                });
+
+            Button nameSearchBtn = (Button) view.findViewById(R.id.name_search);
+            Button ingredientSearchBtn = (Button) view.findViewById(R.id.ingredient_search);
+            Button allSearchBtn = (Button) view.findViewById(R.id.all_search);
+
+            nameSearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    final EditText input = new EditText(getActivity());
+                    builder.setMessage("Enter the name of the recipe: ")
+                            .setTitle("Search by Name")
+                            .setView(input)
+                            .setPositiveButton("Search", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+
+                                    String text = input.getText().toString().trim();
+                                    displayNewNameResults(text, list);
+                                    String body = "Search Results for: " + text;
+                                    topView.setText(body);
+                                }})
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }});
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
+            });
+
+            ingredientSearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    // TODO: Get ingredients from local db
+                    ArrayList<String> ingredients = new ArrayList<String>();
+                    ingredients.add("apples");
+                    ingredients.add("flour");
+                    ingredients.add("sugar");
+                    displayNewIngredientResults(ingredients, list);
+                    String body = "Searching by Fridge Ingredients: ";
+                    topView.setText(body);
+                }
+            });
+
+            allSearchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    displayNewNameResults("", list);
+                    String body = "Searching All Recipes: " ;
+                    topView.setText(body);
+                }
+            });
         }
-        
-        private void displayNewResults(String searchTerm, ListView list) {
+
+
+        private void displayNewIngredientResults(ArrayList<String> ingredients, ListView list) {
+            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
+
+            RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
+            MakeRequest mr = new MakeRequest();
+            mr.getRecipesWithIngredients(ingredients, queue, arrayAdapter, list);
+        }
+
+        private void displayNewNameResults(String searchTerm, ListView list) {
             ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
 
             RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();

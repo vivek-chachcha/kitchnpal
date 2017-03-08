@@ -55,7 +55,12 @@ public class MakeRequest {
     
     public void getRecipesWithSearchTerm(String searchTerm, RequestQueue queue, final ArrayAdapter adapter, final ListView list) {
         User.getInstance().clearSearchResults();
-        String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search?query=" + searchTerm;
+        String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search";
+        if (!searchTerm.equals("")) {
+            url += "?query=";
+            searchTerm = searchTerm.replaceAll("\\s","+");
+            url += searchTerm;
+        }
 
         // Request a string response from the provided URL.
         JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url,
@@ -88,7 +93,8 @@ public class MakeRequest {
         queue.add(jsonRequest);
     }
 
-    public void getRecipesWithIngredients(ArrayList<String> ingredientsNames, RequestQueue queue) {
+    public void getRecipesWithIngredients(ArrayList<String> ingredientsNames, RequestQueue queue, final ArrayAdapter adapter, final ListView list) {
+        User.getInstance().clearSearchResults();
         String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/findByIngredients";
         StringBuilder sb = new StringBuilder();
         sb.append(url);
@@ -106,9 +112,8 @@ public class MakeRequest {
                 null, new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
-                //TODO: MUST HAVE AN ARRAY ADAPTER TO GIVE RESULTS TO
-//                ArrayList<Recipe> results = getParsedRecipes(response);
-//                User.getInstance().setSearchResults(results);
+                ArrayList<Recipe> results = getParsedRecipes(response, adapter, list);
+                User.getInstance().setSearchResults(results);
             }
         }, new Response.ErrorListener() {
             @Override
