@@ -65,9 +65,10 @@ public class FridgeActivity extends AppCompatActivity {
                     QuantityType.stringToType(quantityTypeBtn.getText().toString()));
 
             user.addIngredientToFridge(newIngredient);
-            fridgeDbHelper.addIngredient(newIngredient);
+            //fridgeDbHelper.addIngredient(newIngredient);
 
             nextPage();
+
         }
     });
 }
