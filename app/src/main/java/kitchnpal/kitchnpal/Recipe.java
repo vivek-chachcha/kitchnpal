@@ -26,13 +26,6 @@ public class Recipe {
         instructions = instructs;
         this.id = id;
         mr  = new MakeRequest();
-        if (mr.cache.containsKey(recipeName)) {
-            mr.cache.remove(recipeName);
-            mr.cache.put(recipeName, this);
-        }
-        else {
-            mr.cache.put(recipeName.trim(), this);
-        }
     }
 
     public Recipe(String title, int id) {
