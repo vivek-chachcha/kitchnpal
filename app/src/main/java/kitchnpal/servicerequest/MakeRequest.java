@@ -134,7 +134,7 @@ public class MakeRequest {
         queue.add(jsonRequest);
     }
 
-    public void getRecipeDetails(int id, final TextView toDisplay, RequestQueue queue) {
+    public void getRecipeDetails(int id, final TextView ingredientView, final TextView instructionView, RequestQueue queue) {
         String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/" + id + "/information";
 
         // Request a string response from the provided URL.
@@ -142,7 +142,7 @@ public class MakeRequest {
                 null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Recipe result = parseRecipeSteps(response, toDisplay);
+                Recipe result = parseRecipeSteps(response, instructionView, ingredientView);
                 User.getInstance().setCurrentRecipe(result);
             }
 
@@ -200,7 +200,7 @@ public class MakeRequest {
         return results;
     }
 
-    public Recipe parseRecipeSteps(JSONObject temp, TextView myTextView) {
+    public Recipe parseRecipeSteps(JSONObject temp, TextView instructionView, TextView ingredientView) {
         try {
             String title = temp.getString("title");
             int id = temp.getInt("id");
@@ -219,11 +219,8 @@ public class MakeRequest {
 //            Drawable d = Drawable.createFromStream(is, "src name");
 //            recipe.setImage(d);
 
-            if (myTextView != null) {
+            if (instructionView != null) {
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(recipe.getName());
-                stringBuilder.append("\n\n");
-                stringBuilder.append("Instructions:\n");
                 for (int i = 0; i < instructions.size(); i++) {
                     int stepNum = i + 1;
                     stringBuilder.append(stepNum);
@@ -233,19 +230,23 @@ public class MakeRequest {
                         stringBuilder.append("\n\n");
                     }
                 }
-                stringBuilder.append("\n\n");
-                stringBuilder.append("Ingredients:\n");
+                instructionView.setText(stringBuilder.toString());
+            }
+
+            if (ingredientView != null) {
+                StringBuilder stringBuilder = new StringBuilder();
                 for (int i = 0; i < ingredients.size(); i++) {
-                    stringBuilder.append(ingredients.get(i).getIngredientName());
-                    stringBuilder.append(", ");
+                    String name = ingredients.get(i).getIngredientName();
+                    stringBuilder.append(name.substring(0, 1).toUpperCase() + name.substring(1));
+                    stringBuilder.append(": ");
                     stringBuilder.append(ingredients.get(i).getIngredientAmount());
                     stringBuilder.append(" ");
-                    stringBuilder.append(ingredients.get(i).getIngredientUnit());
+                    stringBuilder.append(ingredients.get(i).getIngredientUnit().toLowerCase());
                     if (i != ingredients.size() - 1) {
                         stringBuilder.append("\n");
                     }
                 }
-                myTextView.setText(stringBuilder.toString());
+                ingredientView.setText(stringBuilder.toString());
             }
             return recipe;
         } catch (Exception e) {

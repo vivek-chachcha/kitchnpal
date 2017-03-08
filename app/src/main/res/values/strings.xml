@@ -88,7 +88,7 @@
     <string name="user_allergies">Allergies</string>
     <string name="user_preferences">Recipe Preference</string>
     <string name="action_save_pref">Save Preferences</string>
-    <string name="title_activity_recipe_display">RecipeDisplayActivity</string>
+    <string name="title_activity_recipe_display">Recipe</string>
     <string name="title_activity_add_ingredient">Add Ingredient</string>
     <string name="ingredient_name">Ingredient Name</string>
     <string name="ingredient_quantity">Quantity</string>

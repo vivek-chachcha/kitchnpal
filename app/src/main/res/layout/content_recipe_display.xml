@@ -8,11 +8,50 @@
     tools:context="kitchnpal.ui.RecipeDisplayActivity"
     tools:showIn="@layout/activity_recipe_display">
 
-    <TextView
-        android:id="@+id/recipe_contents"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:text="" />
+        android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/ingredientTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="Ingredients: "
+                android:textStyle="bold"
+                android:textSize="20dp"/>
+
+            <TextView
+                android:id="@+id/ingredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text=""
+                android:layout_below="@id/ingredientTitle" />
+
+            <TextView
+                android:id="@+id/instructionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:text="Instructions: "
+                android:textStyle="bold"
+                android:layout_below="@id/ingredients"
+                android:textSize="20dp"/>
+
+            <TextView
+                android:id="@+id/instructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:text=""
+                android:layout_below="@id/instructionTitle" />
+    </RelativeLayout>
 
 </android.support.v4.widget.NestedScrollView>
