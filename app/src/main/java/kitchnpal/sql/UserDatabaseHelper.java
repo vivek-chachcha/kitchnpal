@@ -311,7 +311,7 @@ public class UserDatabaseHelper extends DatabaseHelper {
         ArrayList<Recipe> array = new ArrayList<>();
         MakeRequest mr = new MakeRequest();
         for (String r : results) {
-            array.add(mr.cache.get(r));
+            array.add(mr.fullRecipeCache.get(r));
         }
         cursor.close();
         db.close();
