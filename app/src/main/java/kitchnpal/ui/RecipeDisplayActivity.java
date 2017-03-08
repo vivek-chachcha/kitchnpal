@@ -31,17 +31,18 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ImageButton star = (ImageButton) findViewById(R.id.toggleFavourite);
+//        ImageButton star = (ImageButton) findViewById(R.id.toggleFavourite);
 
         RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
 
-        int recipeId = getIntent().getIntExtra("recipe_id", 114160);
+        final int recipeId = getIntent().getIntExtra("recipe_id", 114160);
+        String recipeName = getIntent().getStringExtra("recipe_name");
 
         UserDatabaseHelper helper = new UserDatabaseHelper(this);
         User user = User.getInstance();
         TextView myTextView = (TextView)findViewById(R.id.recipe_contents);
         ArrayList<Recipe> myFavs = user.getFavourites();
-        MakeRequest mr = new MakeRequest();
+        final MakeRequest mr = new MakeRequest();
         Recipe toDisplay = null;
         for (Recipe r: myFavs) {
             if (r.getId() == recipeId) {
@@ -52,6 +53,29 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         if (toDisplay == null) {
             mr.getRecipeDetails(recipeId, myTextView, queue);
         }
+
+        FloatingActionButton toggleFav = (FloatingActionButton) findViewById(R.id.toggleFavourite);
+        toggleFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Recipe recipe = mr.fullRecipeCache.get(Integer.toString(recipeId));
+                boolean inThere = false;
+                for (Recipe rec : User.getInstance().getFavourites()) {
+                    if (recipe.getId() == rec.getId()) {
+                        inThere = true;
+                    }
+                }
+                if (!inThere) {
+                    User.getInstance().addFavourite(recipe);
+                    Snackbar.make(view, "Added to Your Favourites", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+                else {
+                    Snackbar.make(view, "Already in Your Favourites", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
