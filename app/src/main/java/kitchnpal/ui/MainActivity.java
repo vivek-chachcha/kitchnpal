@@ -126,10 +126,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         private static final String ARG_SECTION_NUMBER = "section_number";
-        private FridgeDatabaseHelper helper;
+        // private FridgeDatabaseHelper helper;
         private User user;
 
-        private ArrayList<Ingredient> myIngredients;
+        private List<Ingredient> myIngredients;
         private List<String> ingredientsString;
 
 
@@ -145,7 +145,10 @@ public class MainActivity extends AppCompatActivity {
              //helper = new FridgeDatabaseHelper(getContext());
 
              //myIngredients= helper.getIngredients();
-             //ingredientsString = Ingredient.ingredientsToString(myIngredients);
+            user = User.getInstance();
+
+            myIngredients = user.getFridgeIngredients();
+            ingredientsString = Ingredient.ingredientsToString(myIngredients);
 
         }
 
@@ -219,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
 
                             // Remove ingredient
                             user.removeIngredientByName(myIngredients.get(position).getIngredientName());
-                            helper.removeIngredient(myIngredients.get(position));
+                            //helper.removeIngredient(myIngredients.get(position));
 
                             Intent i = new Intent(getContext(), MainActivity.class);
                             startActivity(i);
