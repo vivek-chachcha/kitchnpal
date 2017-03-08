@@ -44,6 +44,7 @@ import kitchnpal.kitchnpal.RecipeSearch;
 import kitchnpal.kitchnpal.User;
 import kitchnpal.servicerequest.MakeRequest;
 import kitchnpal.servicerequest.VolleySingleton;
+import kitchnpal.sql.FridgeDatabaseHelper;
 import kitchnpal.sql.UserDatabaseHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -125,24 +126,26 @@ public class MainActivity extends AppCompatActivity {
 
 
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private FridgeDatabaseHelper helper;
+        private User user;
 
-        String[] myIngredientsString;
+        private ArrayList<Ingredient> myIngredients;
+        private List<String> ingredientsString;
 
 
         // Test ingredients
-        Ingredient i1 = new Ingredient("Chicken", 3, QuantityType.CUPS);
-        Ingredient i2 = new Ingredient("Salt", 2, QuantityType.GRAMS);
+        //Ingredient i1 = new Ingredient("Chicken", 3, QuantityType.CUPS);
+        //Ingredient i2 = new Ingredient("Salt", 2, QuantityType.GRAMS);
 
 
-        String ingredientArray[] = {i1.ingredientToString(), i2.ingredientToString()};
+        //String ingredientArray[] = {i1.ingredientToString(), i2.ingredientToString()};
 
-        // TODO Retrieve ingredients
 
         public FridgeFragment() {
-           // UserDatabaseHelper helper = new UserDatabaseHelper(getContext());
-           // User user = User.getInstance();
+             //helper = new FridgeDatabaseHelper(getContext());
 
-           // myIngredientsString = helper.getFridgeIngredients(user.getEmail());
+             //myIngredients= helper.getIngredients();
+             //ingredientsString = Ingredient.ingredientsToString(myIngredients);
 
         }
 
@@ -179,18 +182,19 @@ public class MainActivity extends AppCompatActivity {
             addIngr.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent addIngr= new Intent(getContext(), FridgeActivity.class);
+                    Intent addIngr = new Intent(getContext(), FridgeActivity.class);
                     startActivity(addIngr);
                 }
             });
 
             //Fridge List Contents
-
-            list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, ingredientArray)); //use nStringArray
+            if (ingredientsString != null) {
+                list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, ingredientsString)); //use nStringArray
+            }
         }
 
         @Override
-        public void onListItemClick(ListView l, View v, int position, long id) {
+        public void onListItemClick(ListView l, View v, final int position, long id) {
             super.onListItemClick(l, v, position, id);
 
             //String[] nStringArray = new String[myIngredients.size()];
@@ -203,8 +207,9 @@ public class MainActivity extends AppCompatActivity {
 
             //REAL FRIDGE ITEM FUNCTIONALITY HERE
             // Object p = myIngredientsString
-            Object p = ingredientArray[position];
-            String name = p.toString();
+            // TODO ON CLICK
+            //Object p = myIngredients[position];
+            //String name = p.toString();
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Would you like to remove this ingredient from your fridge?")
@@ -212,12 +217,12 @@ public class MainActivity extends AppCompatActivity {
                     .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
 
-                            // TODO Remove ingredient
-                            //user.removeIngredientFromFridge(ingredient);
-                            //dbHelper.updateFridge(user);
+                            // Remove ingredient
+                            user.removeIngredientByName(myIngredients.get(position).getIngredientName());
+                            helper.removeIngredient(myIngredients.get(position));
 
-                            //Intent i = new Intent(getContext(), SearchResultActivity.class);
-                            //startActivity(i);
+                            Intent i = new Intent(getContext(), MainActivity.class);
+                            startActivity(i);
                         }})
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
