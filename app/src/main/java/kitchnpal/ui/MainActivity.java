@@ -231,7 +231,7 @@ public static class RecipesFragment extends ListFragment {
         public RecipesFragment() {
             helper = new UserDatabaseHelper(getContext());
             user = User.getInstance();
-            Recipe r = new Recipe("Cashew Fried Rice", 114160);
+            Recipe r = new Recipe("Maple Bacon Oatmeal", 605773);
             user.addFavourite(r);
             r = new Recipe("Hearty Slow Cooker Lasagna", 714837);
             user.addFavourite(r);
@@ -273,6 +273,7 @@ public static class RecipesFragment extends ListFragment {
             super.onListItemClick(l, v, position, id);
             Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
             i.putExtra("recipe_id", myFavs.get(position).getId());
+            i.putExtra("recipe_name", myFavs.get(position).getName());
             startActivity(i);
         }
     }
@@ -395,9 +396,12 @@ public static class RecipesFragment extends ListFragment {
 
             //Look at individual recipe
             Object p = l.getItemAtPosition(position);
-            String name = p.toString();
+            String name = p.toString().trim();
+            MakeRequest mr = new MakeRequest();
+            int recipeId = Integer.parseInt(mr.searchCache.get(name));
             Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
             i.putExtra("recipe_name", name);
+            i.putExtra("recipe_id", recipeId);
             startActivity(i);
         }
     }
