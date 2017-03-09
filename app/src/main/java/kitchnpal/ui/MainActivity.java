@@ -6,7 +6,6 @@ import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,12 +23,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 
@@ -38,10 +35,8 @@ import java.util.List;
 
 import kitchnpal.kitchnpal.Fridge;
 import kitchnpal.kitchnpal.Ingredient;
-import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
-import kitchnpal.kitchnpal.RecipeSearch;
 import kitchnpal.kitchnpal.User;
 import kitchnpal.servicerequest.MakeRequest;
 import kitchnpal.servicerequest.VolleySingleton;
@@ -82,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        int defaultValue = 0;
+        int page = getIntent().getIntExtra("page", defaultValue);
+        mViewPager.setCurrentItem(page);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -193,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
                             helper.removeIngredient(myIngredients.get(position));
 
                             Intent i = new Intent(getContext(), MainActivity.class);
+                            i.putExtra("page", 3);
                             startActivity(i);
                         }})
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {

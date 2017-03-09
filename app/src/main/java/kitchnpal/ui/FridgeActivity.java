@@ -48,7 +48,7 @@ public class FridgeActivity extends AppCompatActivity {
 
         List<String> quantityTypes = QuantityType.stringValues();
         quantityTypeBtn = (Button) findViewById(R.id.ingredient_qtype);
-        final SelectBtnListener quantityTypeBtnListener = new SelectBtnListener(this, quantityTypes, quantityTypeBtn, false);
+        final SelectBtnListener quantityTypeBtnListener = new SelectBtnListener(this, quantityTypes, quantityTypeBtn);
         quantityTypeBtn.setOnClickListener(quantityTypeBtnListener);
 
         ingredientNameView = (EditText) findViewById(R.id.ingredient_name);
@@ -68,73 +68,31 @@ public class FridgeActivity extends AppCompatActivity {
                 fridgeDbHelper.addIngredient(newIngredient);
 
                 nextPage();
-
             }
         });
     }
     private void nextPage() {
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        i.putExtra("page", 3);
         startActivity(i);
     }
 
     private static class SelectBtnListener implements View.OnClickListener {
 
         private CharSequence[] options;
-        private List<CharSequence> selectedOptions;
         private Context context;
         private Button btn;
-        private Boolean isMultiSelect;
         private CharSequence selectedOption;
 
-        public SelectBtnListener(Activity activity, List<String> options, Button btn, Boolean isMultiSelect) {
+        public SelectBtnListener(Activity activity, List<String> options, Button btn) {
             this.options = options.toArray(new CharSequence[options.size()]);
-            this.selectedOptions = new ArrayList<>();
             this.context = activity;
             this.btn = btn;
-            this.isMultiSelect = isMultiSelect;
             this.selectedOption = "";
         }
         @Override
         public void onClick(View view) {
-            if (isMultiSelect) {
-                showMultiDialog();
-            } else {
-                showSingleDialog();
-            }
-        }
-
-        public List<CharSequence> getSelectedOptions() {
-            return selectedOptions;
-        }
-
-        private void showMultiDialog() {
-            boolean[] checkedItems = new boolean[options.length];
-            for(int i = 0; i < options.length; i++) {
-                checkedItems[i] = selectedOptions.contains(options[i]);
-            }
-
-            DialogInterface.OnMultiChoiceClickListener multiListener = new DialogInterface.OnMultiChoiceClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int i, boolean isChecked) {
-                    if(isChecked)
-                        selectedOptions.add(options[i]);
-                    else
-                        selectedOptions.remove(options[i]);
-                    onChangeSelected();
-                }
-            };
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-            builder.setTitle("Select");
-            builder.setMultiChoiceItems(options, checkedItems, multiListener);
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
-                @Override
-                public void onClick(DialogInterface dialog, int i) {
-                    dialog.dismiss();
-                }
-            });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            showSingleDialog();
         }
 
         private void showSingleDialog() {
@@ -164,17 +122,6 @@ public class FridgeActivity extends AppCompatActivity {
             });
             AlertDialog dialog = builder.create();
             dialog.show();
-        }
-
-        private void onChangeSelected() {
-            StringBuilder stringBuilder = new StringBuilder();
-            for(int i = 0; i < selectedOptions.size(); i++) {
-                stringBuilder.append(selectedOptions.get(i));
-                if (i != selectedOptions.size() - 1) {
-                    stringBuilder.append(", ");
-                }
-            }
-            btn.setText(stringBuilder.toString());
         }
     }
 }
