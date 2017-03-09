@@ -9,8 +9,10 @@ import android.widget.TextView;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.Response;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
@@ -27,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.QuantityType;
+import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
 import kitchnpal.sql.UserDatabaseHelper;
@@ -191,8 +194,8 @@ public class MakeRequest {
         queue.add(jsonRequest);
     }
 
-    public void getRecipeDetails(User user, int id, final TextView ingredientView, final TextView instructionView, 
-				 RequestQueue queue, final ImageLoader loader, final NetworkImageView imageView) {
+    public void getRecipeDetails(User user, int id, final TextView ingredientView, final TextView instructionView,
+                                 RequestQueue queue, final ImageLoader loader, final NetworkImageView imageView) {
         String url ="http://35.166.124.250:4567/recipes/" + id + "?accessToken=" + user.getAccessToken();
 
         // Request a string response from the provided URL.
