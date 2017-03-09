@@ -60,14 +60,31 @@ public class FridgeActivity extends AppCompatActivity {
         addIngrBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Ingredient newIngredient = new Ingredient(ingredientNameView.getText().toString().trim(),
-                        Float.valueOf(ingredientAmountView.getText().toString()),
-                        QuantityType.stringToType(quantityTypeBtn.getText().toString()));
+                String ingredientNameString = ingredientNameView.getText().toString();
+                String ingredientAmountString = ingredientAmountView.getText().toString();
+                String ingredientQuantityTypeString = quantityTypeBtn.getText().toString();
 
-                fridge.addIngredient(newIngredient);
-                fridgeDbHelper.addIngredient(newIngredient);
+                if (ingredientNameString != "" && ingredientAmountString  != "" && ingredientQuantityTypeString  != "") {
+                    Ingredient newIngredient = new Ingredient(ingredientNameString.trim(),
+                            Float.valueOf(ingredientAmountString),
+                            QuantityType.stringToType(ingredientQuantityTypeString));
 
-                nextPage();
+                    fridge.addIngredient(newIngredient);
+                    fridgeDbHelper.addIngredient(newIngredient);
+
+                    nextPage();
+                }
+                else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(FridgeActivity.this);
+                    builder.setMessage("Please complete all fields of the ingredient.")
+
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }});
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }
             }
         });
     }
