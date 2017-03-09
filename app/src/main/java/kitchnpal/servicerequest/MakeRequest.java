@@ -10,36 +10,29 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Cache;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.DiskBasedCache;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.JsonRequest;
-import com.android.volley.toolbox.Volley;
-import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import kitchnpal.kitchnpal.Diet;
 import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.QuantityType;
-import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
 
@@ -54,7 +47,85 @@ public class MakeRequest {
     public MakeRequest() {
 
     }
-    
+
+    public void createUser(final User user, RequestQueue queue) {
+        String url = "http://35.166.124.250:4567/users";
+        StringRequest jsonRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            System.out.println(response);
+                            JSONObject user = new JSONObject(response).getJSONObject("user");
+                            User.getInstance().setAccessToken(user.getString("accessToken"));
+                        } catch(JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                })
+                {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        StringBuilder dietString = new StringBuilder();
+                        for (int i = 0; i < user.getDietRestrictions().size(); i++) {
+                            dietString.append(user.getDietRestrictions().get(i).getName());
+                            if (i != user.getDietRestrictions().size() - 1) {
+                                dietString.append(", ");
+                            }
+                        }
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("email", user.getEmail());
+                        params.put("name", user.getName());
+                        params.put("password", SHA1(user.getPassword()));
+                        params.put("calPerDay", user.getNumCalPerDay().toString());
+                        params.put("preferences", user.getPreference().toString().toLowerCase());
+                        params.put("diet", dietString.toString());
+
+                        return params;
+                    }
+                };
+        queue.add(jsonRequest);
+    }
+
+    private static String convertToHex(byte[] data) {
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < data.length; i++) {
+            int halfbyte = (data[i] >>> 4) & 0x0F;
+            int two_halfs = 0;
+            do {
+                if ((0 <= halfbyte) && (halfbyte <= 9))
+                    buf.append((char) ('0' + halfbyte));
+                else
+                    buf.append((char) ('a' + (halfbyte - 10)));
+                halfbyte = data[i] & 0x0F;
+            } while(two_halfs++ < 1);
+        }
+        return buf.toString();
+    }
+
+    public static String SHA1(String text) {
+        try {
+            MessageDigest md;
+            md = MessageDigest.getInstance("SHA-1");
+            byte[] sha1hash = new byte[40];
+            md.update(text.getBytes("iso-8859-1"), 0, text.length());
+            sha1hash = md.digest();
+            return convertToHex(sha1hash);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public void getRecipesWithSearchTerm(String searchTerm, RequestQueue queue, final ArrayAdapter adapter, final ListView list) {
         User.getInstance().clearSearchResults();
         String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/recipes/search";

@@ -15,11 +15,12 @@ public class User {
     private String email;
     private List<Diet> dietRestrictions = new ArrayList<>();
     private Integer numCalPerDay;
-    private String preference;
+    private RecipePreference preference;
     private ArrayList<Recipe> favourites = new ArrayList<>();
     private List<Intolerance> allergies = new ArrayList<>();
     private Recipe currentRecipe;
     private ArrayList<Recipe> searchResults = new ArrayList<>();
+    private String accessToken;
 
     private User() {
         // make constructor private for singleton
@@ -31,6 +32,14 @@ public class User {
             return user;
         }
         return user;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     public String getName() {
@@ -53,7 +62,7 @@ public class User {
         return numCalPerDay;
     }
 
-    public String getPreference() {
+    public RecipePreference getPreference() {
         return preference;
     }
 
@@ -97,7 +106,7 @@ public class User {
         this.numCalPerDay = numCalPerDay;
     }
 
-    public void setPreference(String preference) {
+    public void setPreference(RecipePreference preference) {
         this.preference = preference;
     }
 

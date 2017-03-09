@@ -343,6 +343,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 if (!dbHelper.checkUser(mEmail)) {;
                     dbHelper.addUser(user);
                     i = new Intent(getApplicationContext(), UserPreferenceActivity.class);
+                    i.putExtra("isNewUser", true);
                 }
                 startActivity(i);
             } else {

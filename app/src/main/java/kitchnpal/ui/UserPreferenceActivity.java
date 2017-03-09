@@ -12,6 +12,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.android.volley.RequestQueue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,7 +21,10 @@ import java.util.List;
 import kitchnpal.kitchnpal.Diet;
 import kitchnpal.kitchnpal.Intolerance;
 import kitchnpal.kitchnpal.R;
+import kitchnpal.kitchnpal.RecipePreference;
 import kitchnpal.kitchnpal.User;
+import kitchnpal.servicerequest.MakeRequest;
+import kitchnpal.servicerequest.VolleySingleton;
 import kitchnpal.sql.UserDatabaseHelper;
 
 public class UserPreferenceActivity extends AppCompatActivity {
@@ -36,6 +41,7 @@ public class UserPreferenceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_preferences);
         final User user = User.getInstance();
+        final boolean isNewUser = getIntent().getBooleanExtra("isNewUser", false);
 
         List<String> dietRestrictions = Diet.stringValues();
         dietRestrictionsBtn = (Button) findViewById(R.id.user_diet_restrictions);
@@ -47,7 +53,7 @@ public class UserPreferenceActivity extends AppCompatActivity {
         final SelectBtnListener allergyBtnListener = new SelectBtnListener(this, allergies, allergiesBtn, true);
         allergiesBtn.setOnClickListener(allergyBtnListener);
 
-        List<String> preferences = Arrays.asList("Lowest Price", "Lowest Calories");
+        List<String> preferences = RecipePreference.stringValues();
         userPreferencesBtn = (Button) findViewById(R.id.user_preferences);
         final SelectBtnListener preferenceBtnListener = new SelectBtnListener(this, preferences, userPreferencesBtn, false);
         userPreferencesBtn.setOnClickListener(preferenceBtnListener);
@@ -76,7 +82,7 @@ public class UserPreferenceActivity extends AppCompatActivity {
                     user.addAllergy(Intolerance.stringToIntolerance(s.trim()));
                 }
                 dbHelper.updateUserAllergies(user);
-                user.setPreference(userPreferencesBtn.getText().toString().trim());
+                user.setPreference(RecipePreference.stringToPreference(userPreferencesBtn.getText().toString()));
                 dbHelper.updateUserPreference(user);
                 Integer i = null;
                 try {
@@ -87,6 +93,11 @@ public class UserPreferenceActivity extends AppCompatActivity {
                 user.setNumCalPerDay(i);
                 dbHelper.updateUserCalories(user);
 
+                if (isNewUser) {
+                    MakeRequest mr = new MakeRequest();
+                    RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
+                    mr.createUser(user, queue);
+                }
                 nextPage();
             }
         });

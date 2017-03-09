@@ -92,7 +92,7 @@ public class UserDatabaseHelper extends DatabaseHelper {
         String[] selectionArgs = {String.valueOf(user.getEmail())};
 
         ContentValues values = new ContentValues();
-        values.put(COLUMN_PREFERENCE, user.getPreference());
+        values.put(COLUMN_PREFERENCE, user.getPreference().getName());
 
         db.update(TABLE_USER, values, selection, selectionArgs);
         db.close();
