@@ -191,7 +191,8 @@ public class MakeRequest {
         queue.add(jsonRequest);
     }
 
-    public void getRecipeDetails(User user, int id, final TextView ingredientView, final TextView instructionView, RequestQueue queue) {
+    public void getRecipeDetails(User user, int id, final TextView ingredientView, final TextView instructionView, 
+				 RequestQueue queue, final ImageLoader loader, final NetworkImageView imageView) {
         String url ="http://35.166.124.250:4567/recipes/" + id + "?accessToken=" + user.getAccessToken();
 
         // Request a string response from the provided URL.
@@ -199,7 +200,7 @@ public class MakeRequest {
                 null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Recipe result = parseRecipeSteps(response, instructionView, ingredientView);
+                Recipe result = parseRecipeSteps(response, instructionView, ingredientView, loader, imageView);
                 User.getInstance().setCurrentRecipe(result);
             }
 
@@ -248,7 +249,8 @@ public class MakeRequest {
         return results;
     }
 
-    public Recipe parseRecipeSteps(JSONObject temp, TextView instructionView, TextView ingredientView) {
+    public Recipe parseRecipeSteps(JSONObject temp, TextView instructionView, TextView ingredientView,
+				  ImageLoader loader, NetworkImageView imageView) {
         try {
             JSONObject recipeObj = temp.getJSONObject("recipe");
             String title = recipeObj.getString("title");
@@ -263,10 +265,11 @@ public class MakeRequest {
                 fullRecipeCache.remove(Integer.toString(id));
             }
             fullRecipeCache.put(Integer.toString(id), recipe);
-
-//            InputStream is = (InputStream) new URL(imageUrl).getContent();
-//            Drawable d = Drawable.createFromStream(is, "src name");
-//            recipe.setImage(d);
+	
+	    loader.get(imageUrl, ImageLoader.getImageListener(imageView,
+                    R.mipmap.ic_launcher, android.R.drawable
+                            .ic_dialog_alert));
+            imageView.setImageUrl(imageUrl, loader);
 
             if (instructionView != null) {
                 StringBuilder stringBuilder = new StringBuilder();
