@@ -1,5 +1,6 @@
 package kitchnpal.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -31,8 +32,14 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recipe_display);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-//        ImageButton star = (ImageButton) findViewById(R.id.toggleFavourite);
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.back_arrow));
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(i);
+            }
+        });
 
         RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
 
@@ -56,7 +63,18 @@ public class RecipeDisplayActivity extends AppCompatActivity {
             mr.getRecipeDetails(recipeId, ingredientView, instructionView, queue);
         }
 
-        FloatingActionButton toggleFav = (FloatingActionButton) findViewById(R.id.toggleFavourite);
+        final FloatingActionButton toggleFav = (FloatingActionButton) findViewById(R.id.toggleFavourite);
+        boolean inThere = false;
+        for (Recipe rec : myFavs) {
+            if (recipeId == rec.getId()) {
+                inThere = true;
+            }
+        }
+        if (!inThere) {
+            toggleFav.setImageResource(R.drawable.fav);
+        } else {
+            toggleFav.setImageResource(R.drawable.fav_set);
+        }
         toggleFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -71,14 +89,16 @@ public class RecipeDisplayActivity extends AppCompatActivity {
                 if (!inThere) {
                     user.addFavourite(recipe);
                     helper.updateUserFavourites(user);
-                    Snackbar.make(view, "Added to Your Favourites", Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, "Added To Your Favourites", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
+                    toggleFav.setImageResource(R.drawable.fav_set);
                 }
                 else {
                     user.removeFavourite(recipe);
                     helper.updateUserFavourites(user);
-                    Snackbar.make(view, "Removed from Your Favourites", Snackbar.LENGTH_LONG)
+                    Snackbar.make(view, "Removed From Your Favourites", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
+                    toggleFav.setImageResource(R.drawable.fav);
                 }
             }
         });
