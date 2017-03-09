@@ -5,8 +5,12 @@ require_relative 'Recipes.rb'
 
 get '/users/:email' do
 	return_msg = {}
-	if (params.key?("email") && params.key?("password"))
-		result = get_user(params['email'], params['password'])
+	if (params.key?("email") && params.key?("accessToken"))
+		if (!validate_token(params['accessToken']))
+	                return_msg[:status] = 'invalid access token'
+	                return return_msg.to_json
+	        end
+		result = get_user(params['email'])
 		if (result == nil)
 			return_msg[:status] = 'invalid user id'
 		else
@@ -14,7 +18,7 @@ get '/users/:email' do
 			return_msg[:user] = result.to_s
 		end
 	else
-		return_msg[:status] = 'required parameters - email, password - not provided'
+		return_msg[:status] = 'required parameters - email, accessToken - not provided'
 	end
 	return_msg.to_json
 end
@@ -36,7 +40,7 @@ end
 
 put '/users/:email' do
 	return_msg = {}
-	if (!params.has_key?("accessToken") || params['accessToken'] == '')
+	if (!params.key?("accessToken") || params['accessToken'] == '')
 		return_msg[:status] = 'Access token is not provided'
 		return return_msg.to_json
 	end
@@ -44,8 +48,8 @@ put '/users/:email' do
 		return_msg[:status] = 'invalid access token'
 		return return_msg.to_json
 	end
-	if (params.key?("email") && params.key?("password"))
-		result = update_user(params['email'], params['password'])
+	if (params.key?("email"))
+		result = update_user(params)
 		if (result.class == Hash)
 			return_msg[:user] = result
 		else
@@ -59,7 +63,7 @@ end
 
 get '/recipes' do
 	return_msg = {}
-	if (!params.has_key?("accessToken") || params['accessToken'] == '')
+	if (!params.key?("accessToken") || params['accessToken'] == '')
                 return_msg[:status] = 'Access token is not provided'
                 return return_msg.to_json
         end
@@ -73,7 +77,7 @@ end
 
 get '/recipes/:id' do
 	return_msg = {}
-	if (!params.has_key?("accessToken") || params['accessToken'] == '')
+	if (!params.key?("accessToken") || params['accessToken'] == '')
                 return_msg[:status] = 'Access token is not provided'
                 return return_msg.to_json
         end
@@ -89,4 +93,3 @@ get '/recipes/:id' do
 	end
 	return_msg.to_json
 end
-	

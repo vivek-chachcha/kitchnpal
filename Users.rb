@@ -3,20 +3,20 @@ require_relative 'Client.rb'
 def validate_token(accessToken)
 	valid = false
 	client = create_client()
-	stmt = client.prepare("SELECT COUNT(id) FROM User WHERE accessToken = ?")
+	stmt = client.prepare("SELECT COUNT(id) as count FROM User WHERE accessToken = ?")
 	results = stmt.execute(accessToken)
-	if (results.count == 1)
+	if (results.first['count'] == 1)
 		valid = true
 	end
 	valid
 end
 
-def get_user(email, pwd)
+def get_user(email)
 	user = nil
         # connect to the MySQL server
         client = create_client()
-	stmt = client.prepare("SELECT * FROM User WHERE email = ? AND password = ?")
-	results = stmt.execute(email, pwd)
+	stmt = client.prepare("SELECT * FROM User WHERE email = ?")
+	results = stmt.execute(email)
 	if (results.count == 1)
 		user = results.first
 	end
@@ -28,9 +28,9 @@ def create_user(params)
 	client = create_client()
 
 	#check if email already exists
-	count = client.prepare("SELECT COUNT(id) FROM User WHERE email = ?")
+	count = client.prepare("SELECT COUNT(id) as count FROM User WHERE email = ?")
 	count = count.execute(params['email'])
-	if (count.count != 0)
+	if (count.first['count'] != 0)
 		return "User already exists!"
 	end
 
@@ -53,9 +53,9 @@ def update_user(params)
 	client = create_client()
 
 	#check if email already exists
-        count = client.prepare("SELECT COUNT(id) FROM User WHERE email = ?")
+        count = client.prepare("SELECT COUNT(id) as count FROM User WHERE email = ?")
         count = count.execute(params['email'])
-        if (count.count == 0)
+        if (count.first['count'] == 0)
                 return "User does not exist!"
         end
 
@@ -67,9 +67,7 @@ def update_user(params)
         results = stmt.execute(params['name'], params['password'], calPerDay, preferences, params['diet'], params['email'])
         
 	#retrieve updated user
-	id = client.query("SELECT last_insert_id()")
-        id = id.first['last_insert_id()']
-        results = client.query("SELECT * FROM User WHERE id = '#{id}'")
+        results = client.query("SELECT * FROM User WHERE email = '#{params['email']}'")
         results.first
 end
 
