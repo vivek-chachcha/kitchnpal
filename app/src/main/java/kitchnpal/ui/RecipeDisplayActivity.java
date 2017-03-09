@@ -42,6 +42,8 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         });
 
         RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
+        ImageLoader loader = VolleySingleton.getInstance(getApplicationContext()).getImageLoader();
+        NetworkImageView mImageView = (NetworkImageView)findViewById(R.id.networkImageView);
 
         final int recipeId = getIntent().getIntExtra("recipe_id", 114160);
         String recipeName = getIntent().getStringExtra("recipe_name");
@@ -57,12 +59,12 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         Recipe toDisplay = null;
         for (Recipe r: myFavs) {
             if (r.getId() == recipeId) {
-                mr.getRecipeDetails(user, recipeId, ingredientView, instructionView, queue);
+                mr.getRecipeDetails(user, recipeId, ingredientView, instructionView, queue, loader, mImageView);
                 toDisplay = r;
             }
         }
         if (toDisplay == null) {
-            mr.getRecipeDetails(user, recipeId, ingredientView, instructionView, queue);
+            mr.getRecipeDetails(user, recipeId, ingredientView, instructionView, queue, loader, mImageView);
         }
 
         final FloatingActionButton toggleFav = (FloatingActionButton) findViewById(R.id.toggleFavourite);
