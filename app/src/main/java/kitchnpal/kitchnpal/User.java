@@ -84,7 +84,7 @@ public class User {
     }
 
     public void addDietRestriction(Diet dietRestriction) {
-        if (!this.dietRestrictions.contains(dietRestriction)) {
+        if (dietRestriction != null && !this.dietRestrictions.contains(dietRestriction)) {
             this.dietRestrictions.add(dietRestriction);
         }
     }
@@ -102,7 +102,7 @@ public class User {
     }
 
     public void addFavourite(Recipe favourite) {
-        if (!this.favourites.contains(favourite)) {
+        if (favourite != null && !this.favourites.contains(favourite)) {
             this.favourites.add(favourite);
         }
     }
@@ -112,7 +112,7 @@ public class User {
     }
 
     public void addAllergy(Intolerance allergy) {
-        if (!this.allergies.contains(allergy)) {
+        if (allergy != null && !this.allergies.contains(allergy)) {
             this.allergies.add(allergy);
         }
     }

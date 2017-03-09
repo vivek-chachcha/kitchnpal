@@ -30,7 +30,7 @@ public class Fridge {
     }
 
     public void addIngredient(Ingredient ingredient) {
-        if (!ingredients.contains(ingredient)) {
+        if (ingredient != null && !ingredients.contains(ingredient)) {
             this.ingredients.add(ingredient);
         }
     }
