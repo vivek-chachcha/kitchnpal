@@ -128,32 +128,8 @@ public class MakeRequest {
                     }
                 };
         queue.add(jsonRequest);
-    }	
-
-/*
-    public void getUser(final User user, RequestQueue queue) {
-        String url = "http://35.166.124.250:4567/users/" + user.getEmail().toString() + "?accessToken=" + user.getAccessToken().toString();
-        StringRequest jsonRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            System.out.println(response);
-                        } catch(JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                });
-        queue.add(jsonRequest);
     }
-*/
+
     public void getRecipesWithSearchTerm(User user, String searchTerm, RequestQueue queue, final ArrayAdapter adapter, final ListView list) {
         User.getInstance().clearSearchResults();
         if (!searchTerm.equals("")) {

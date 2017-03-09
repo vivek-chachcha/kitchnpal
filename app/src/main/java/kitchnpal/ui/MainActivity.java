@@ -232,10 +232,7 @@ public static class RecipesFragment extends ListFragment {
 
             helper = new UserDatabaseHelper(getActivity());
             user = User.getInstance();
-            Recipe r = new Recipe("Maple Bacon Oatmeal", 605773);
-            r = new Recipe("Hearty Slow Cooker Lasagna", 714837);
-            r = new Recipe("Honey-Soy Broiled Salmon", 695333);
-            myFavs = helper.getFavourites(user.getEmail());//user.getFavourites();
+            myFavs = helper.getFavourites(user.getEmail());
             return rootView;
         }
 
