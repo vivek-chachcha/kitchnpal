@@ -2,6 +2,7 @@ package kitchnpal.sql;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
@@ -112,6 +113,8 @@ public class UserDatabaseHelper extends DatabaseHelper {
     private String convertFavourites(List<Recipe> favourites) {
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < favourites.size(); i++) {
+            stringBuilder.append(favourites.get(i).getId());
+            stringBuilder.append(" : ");
             stringBuilder.append(favourites.get(i).getName());
             if (i != favourites.size() - 1) {
                 stringBuilder.append(", ");
@@ -230,7 +233,6 @@ public class UserDatabaseHelper extends DatabaseHelper {
                 null,                        // filter by row groups
                 null);                       // sort order
         String value = "";
-        System.out.println(cursor.getCount());
         if (cursor != null) {
             cursor.moveToFirst();
             value = cursor.getString(0);
@@ -242,7 +244,7 @@ public class UserDatabaseHelper extends DatabaseHelper {
 
     public ArrayList<Recipe> getFavourites(String email) {
         String[] columns = { COLUMN_FAVOURITES };
-        String selection = COLUMN_USER_EMAIL;
+        String selection = COLUMN_USER_EMAIL + " = ?";
         SQLiteDatabase db = this.getReadableDatabase();
         String[] selectionArgs = {email};
         Cursor cursor = db.query(TABLE_USER,  // table to query
@@ -252,11 +254,20 @@ public class UserDatabaseHelper extends DatabaseHelper {
                 null,                         // group the rows
                 null,                         // filter by row groups
                 null);                        // sort order
-        String[] results = cursor.getString(0).split(",");
+        String value = "";
+        if (cursor != null && cursor.getCount() > 0) {
+            cursor.moveToFirst();
+            value = cursor.getString(0);
+        }
         ArrayList<Recipe> array = new ArrayList<>();
-        MakeRequest mr = new MakeRequest();
-        for (String r : results) {
-            array.add(mr.fullRecipeCache.get(r));
+        if (value != null && !value.equals("")) {
+            String[] results = value.split(",");
+            for (String r : results) {
+                String[] tuple = r.split(":");
+                int id = Integer.parseInt(tuple[0].trim());
+                String name = tuple[1].trim();
+                array.add(new Recipe(name, id));
+            }
         }
         cursor.close();
         db.close();

@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kitchnpal.kitchnpal.R;
+import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
 import kitchnpal.sql.FridgeDatabaseHelper;
 import kitchnpal.sql.UserDatabaseHelper;
@@ -336,6 +337,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 User user = User.getInstance();
                 user.setEmail(mEmail);
                 user.setPassword(mPassword);
+                for (Recipe r : dbHelper.getFavourites(mEmail)) {
+                    user.addFavourite(r);
+                }
                 if (!dbHelper.checkUser(mEmail)) {;
                     dbHelper.addUser(user);
                     i = new Intent(getApplicationContext(), UserPreferenceActivity.class);

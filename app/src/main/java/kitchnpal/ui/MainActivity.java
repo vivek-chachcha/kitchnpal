@@ -212,15 +212,6 @@ public static class RecipesFragment extends ListFragment {
         private User user;
 
         public RecipesFragment() {
-            helper = new UserDatabaseHelper(getContext());
-            user = User.getInstance();
-            Recipe r = new Recipe("Maple Bacon Oatmeal", 605773);
-            user.addFavourite(r);
-            r = new Recipe("Hearty Slow Cooker Lasagna", 714837);
-            user.addFavourite(r);
-            r = new Recipe("Honey-Soy Broiled Salmon", 695333);
-            user.addFavourite(r);
-            myFavs = user.getFavourites();
         }
 
         public static RecipesFragment newInstance(int sectionNumber) {
@@ -237,6 +228,13 @@ public static class RecipesFragment extends ListFragment {
             View rootView = inflater.inflate(R.layout.fragment_recipes, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.recipe_tab_body));
+
+            helper = new UserDatabaseHelper(getActivity());
+            user = User.getInstance();
+            Recipe r = new Recipe("Maple Bacon Oatmeal", 605773);
+            r = new Recipe("Hearty Slow Cooker Lasagna", 714837);
+            r = new Recipe("Honey-Soy Broiled Salmon", 695333);
+            myFavs = helper.getFavourites(user.getEmail());//user.getFavourites();
             return rootView;
         }
 

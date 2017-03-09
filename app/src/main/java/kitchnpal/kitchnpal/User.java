@@ -102,13 +102,19 @@ public class User {
     }
 
     public void addFavourite(Recipe favourite) {
-        if (favourite != null && !this.favourites.contains(favourite)) {
+        if (favourite != null && !favourite.equals("") && !this.favourites.contains(favourite)) {
             this.favourites.add(favourite);
         }
     }
 
-    public void clearFavourites() {
-        this.favourites = new ArrayList<>();
+    public void removeFavourite(Recipe favourite) {
+        if (favourite != null) {
+            for (int i = 0; i< this.favourites.size(); i++) {
+                if (this.favourites.get(i).getId() == favourite.getId()) {
+                    this.favourites.remove(i);
+                }
+            }
+        }
     }
 
     public void addAllergy(Intolerance allergy) {

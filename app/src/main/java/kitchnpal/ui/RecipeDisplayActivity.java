@@ -39,11 +39,11 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         final int recipeId = getIntent().getIntExtra("recipe_id", 114160);
         String recipeName = getIntent().getStringExtra("recipe_name");
 
-        UserDatabaseHelper helper = new UserDatabaseHelper(this);
-        User user = User.getInstance();
+        final UserDatabaseHelper helper = new UserDatabaseHelper(this);
+        final User user = User.getInstance();
         TextView ingredientView = (TextView)findViewById(R.id.ingredients);
         TextView instructionView = (TextView)findViewById(R.id.instructions);
-        ArrayList<Recipe> myFavs = user.getFavourites();
+        ArrayList<Recipe> myFavs = helper.getFavourites(user.getEmail());
         final MakeRequest mr = new MakeRequest();
         Recipe toDisplay = null;
         for (Recipe r: myFavs) {
@@ -62,18 +62,22 @@ public class RecipeDisplayActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Recipe recipe = mr.fullRecipeCache.get(Integer.toString(recipeId));
                 boolean inThere = false;
-                for (Recipe rec : User.getInstance().getFavourites()) {
+
+                for (Recipe rec : helper.getFavourites(user.getEmail())) {
                     if (recipe.getId() == rec.getId()) {
                         inThere = true;
                     }
                 }
                 if (!inThere) {
-                    User.getInstance().addFavourite(recipe);
+                    user.addFavourite(recipe);
+                    helper.updateUserFavourites(user);
                     Snackbar.make(view, "Added to Your Favourites", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
                 else {
-                    Snackbar.make(view, "Already in Your Favourites", Snackbar.LENGTH_LONG)
+                    user.removeFavourite(recipe);
+                    helper.updateUserFavourites(user);
+                    Snackbar.make(view, "Removed from Your Favourites", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }
             }
