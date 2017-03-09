@@ -47,7 +47,9 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         String recipeName = getIntent().getStringExtra("recipe_name");
 
         final UserDatabaseHelper helper = new UserDatabaseHelper(this);
+        String accessToken = helper.getUserAccessToken(User.getInstance().getEmail());
         final User user = User.getInstance();
+        user.setAccessToken(accessToken);
         TextView ingredientView = (TextView)findViewById(R.id.ingredients);
         TextView instructionView = (TextView)findViewById(R.id.instructions);
         ArrayList<Recipe> myFavs = helper.getFavourites(user.getEmail());
@@ -55,12 +57,12 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         Recipe toDisplay = null;
         for (Recipe r: myFavs) {
             if (r.getId() == recipeId) {
-                mr.getRecipeDetails(recipeId, ingredientView, instructionView, queue);
+                mr.getRecipeDetails(user, recipeId, ingredientView, instructionView, queue);
                 toDisplay = r;
             }
         }
         if (toDisplay == null) {
-            mr.getRecipeDetails(recipeId, ingredientView, instructionView, queue);
+            mr.getRecipeDetails(user, recipeId, ingredientView, instructionView, queue);
         }
 
         final FloatingActionButton toggleFav = (FloatingActionButton) findViewById(R.id.toggleFavourite);

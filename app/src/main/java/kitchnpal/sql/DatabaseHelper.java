@@ -38,7 +38,7 @@ public abstract class DatabaseHelper extends SQLiteOpenHelper {
     protected static final String COLUMN_ALLERGIES = "user_allergy";
     protected static final String COLUMN_PREFERENCE = "user_recipe_preference";
     protected static final String COLUMN_FAVOURITES = "user_favourite";
-    protected static final String COLUMN_FRIDGE = "user_fridge";
+    protected static final String COLUMN_ACCESS_TOKEN = "user_access_token";
     protected String CREATE_USER_TABLE = "CREATE TABLE " + TABLE_USER + "("
             + COLUMN_USER_EMAIL + " TEXT PRIMARY KEY,"
             + COLUMN_USER_PASSWORD + " TEXT,"
@@ -47,7 +47,8 @@ public abstract class DatabaseHelper extends SQLiteOpenHelper {
             + COLUMN_NUM_CAL_PER_DAY + " INT,"
             + COLUMN_ALLERGIES + " TEXT,"
             + COLUMN_PREFERENCE + " TEXT,"
-            + COLUMN_FAVOURITES + " TEXT"
+            + COLUMN_FAVOURITES + " TEXT,"
+            + COLUMN_ACCESS_TOKEN + " TEXT"
             + ")";
     protected String DROP_USER_TABLE = "DROP TABLE IF EXISTS " + TABLE_USER;
 

@@ -98,6 +98,18 @@ public class UserDatabaseHelper extends DatabaseHelper {
         db.close();
     }
 
+    public void updateUserAccessToken(User user) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COLUMN_USER_EMAIL + " = ?";
+        String[] selectionArgs = {String.valueOf(user.getEmail())};
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_ACCESS_TOKEN, user.getAccessToken());
+
+        db.update(TABLE_USER, values, selection, selectionArgs);
+        db.close();
+    }
+
     public void updateUserFavourites(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = COLUMN_USER_EMAIL + " = ?";
@@ -195,6 +207,10 @@ public class UserDatabaseHelper extends DatabaseHelper {
 
     public String getUserPreferences(String email) {
         return retrieveDataInColumn(COLUMN_PREFERENCE, email);
+    }
+
+    public String getUserAccessToken(String email) {
+        return retrieveDataInColumn(COLUMN_ACCESS_TOKEN, email);
     }
 
     public Integer getUserCalories(String email) {

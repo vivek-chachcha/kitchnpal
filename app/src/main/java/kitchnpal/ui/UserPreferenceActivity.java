@@ -93,10 +93,14 @@ public class UserPreferenceActivity extends AppCompatActivity {
                 user.setNumCalPerDay(i);
                 dbHelper.updateUserCalories(user);
 
+                MakeRequest mr = new MakeRequest();
+                RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
                 if (isNewUser) {
-                    MakeRequest mr = new MakeRequest();
-                    RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
-                    mr.createUser(user, queue);
+                    mr.createUser(user, queue, dbHelper);
+                } else {
+                    String accessToken = dbHelper.getUserAccessToken(user.getEmail());
+                    user.setAccessToken(accessToken);
+                    mr.updateUser(user, queue);
                 }
                 nextPage();
             }

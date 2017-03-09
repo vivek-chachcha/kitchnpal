@@ -270,6 +270,7 @@ public static class RecipesFragment extends ListFragment {
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static MakeRequest mr = new MakeRequest();
+        private static UserDatabaseHelper userDbHelper;
 
         public SearchFragment() {
             mr = new MakeRequest();
@@ -292,6 +293,7 @@ public static class RecipesFragment extends ListFragment {
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView topView = (TextView) rootView.findViewById(R.id.section_label);
+            userDbHelper = new UserDatabaseHelper(getActivity());
 
             String body = "Search Results for: ";
             topView.setText(body);
@@ -319,8 +321,11 @@ public static class RecipesFragment extends ListFragment {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
 
+                                    String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
+                                    User user = User.getInstance();
+                                    user.setAccessToken(accessToken);
                                     String text = input.getText().toString().trim();
-                                    displayNewNameResults(text, list);
+                                    displayNewNameResults(user, text, list);
                                     String body = "Search Results for: " + text;
                                     topView.setText(body);
                                 }})
@@ -341,7 +346,10 @@ public static class RecipesFragment extends ListFragment {
                     for (Ingredient i : dbHelper.getIngredients()) {
                         ingredients.add(i.getIngredientName());
                     }
-                    displayNewIngredientResults(ingredients, list);
+                    String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
+                    User user = User.getInstance();
+                    user.setAccessToken(accessToken);
+                    displayNewIngredientResults(user, ingredients, list);
                     String body = "Searching by Fridge Ingredients: ";
                     topView.setText(body);
                 }
@@ -350,7 +358,10 @@ public static class RecipesFragment extends ListFragment {
             allSearchBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    displayNewNameResults("", list);
+                    String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
+                    User user = User.getInstance();
+                    user.setAccessToken(accessToken);
+                    displayNewNameResults(user, "", list);
                     String body = "Searching All Recipes: " ;
                     topView.setText(body);
                 }
@@ -358,18 +369,18 @@ public static class RecipesFragment extends ListFragment {
         }
 
 
-        private void displayNewIngredientResults(ArrayList<String> ingredients, ListView list) {
+        private void displayNewIngredientResults(User user, ArrayList<String> ingredients, ListView list) {
             ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
 
             RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
-            mr.getRecipesWithIngredients(ingredients, queue, arrayAdapter, list);
+            mr.getRecipesWithIngredients(user, ingredients, queue, arrayAdapter, list);
         }
 
-        private void displayNewNameResults(String searchTerm, ListView list) {
+        private void displayNewNameResults(User user, String searchTerm, ListView list) {
             ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
 
             RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
-            mr.getRecipesWithSearchTerm(searchTerm, queue, arrayAdapter, list);
+            mr.getRecipesWithSearchTerm(user, searchTerm, queue, arrayAdapter, list);
         }
 
         @Override
