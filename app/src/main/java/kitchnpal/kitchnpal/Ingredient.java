@@ -48,7 +48,7 @@ public class Ingredient {
     }
     
     public String getQuantityTypeString() {
-        return this.quantityType.toString();
+        return this.quantityType.getName();
     }
 
     public static List<String> ingredientsToString(List<Ingredient> ingredients) {

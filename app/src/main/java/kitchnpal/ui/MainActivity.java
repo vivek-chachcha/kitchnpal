@@ -36,6 +36,7 @@ import com.android.volley.RequestQueue;
 import java.util.ArrayList;
 import java.util.List;
 
+import kitchnpal.kitchnpal.Fridge;
 import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
@@ -123,33 +124,14 @@ public class MainActivity extends AppCompatActivity {
          * The fragment argument representing the section number for this
          * fragment.
          */
-
-
         private static final String ARG_SECTION_NUMBER = "section_number";
-        // private FridgeDatabaseHelper helper;
-        private User user;
+        private FridgeDatabaseHelper helper;
+        private Fridge fridge;
 
         private List<Ingredient> myIngredients;
         private List<String> ingredientsString;
 
-
-        // Test ingredients
-        //Ingredient i1 = new Ingredient("Chicken", 3, QuantityType.CUPS);
-        //Ingredient i2 = new Ingredient("Salt", 2, QuantityType.GRAMS);
-
-
-        //String ingredientArray[] = {i1.ingredientToString(), i2.ingredientToString()};
-
-
         public FridgeFragment() {
-             //helper = new FridgeDatabaseHelper(getContext());
-
-             //myIngredients= helper.getIngredients();
-            user = User.getInstance();
-
-            myIngredients = user.getFridgeIngredients();
-            ingredientsString = Ingredient.ingredientsToString(myIngredients);
-
         }
 
         /**
@@ -170,7 +152,10 @@ public class MainActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_fridge, container, false);
             TextView textView = (TextView) rootView.findViewById(R.id.section_label);
             textView.setText(getString(R.string.fridge_tab_body));
-
+            helper = new FridgeDatabaseHelper(getActivity());
+            fridge = Fridge.getInstance();
+            myIngredients = helper.getIngredients();
+            ingredientsString = Ingredient.ingredientsToString(myIngredients);
 
             return rootView;
         }
@@ -178,8 +163,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onViewCreated(View view, Bundle savedInstanceState) {
             ListView list = getListView();
-            // String[] nStringArray = new String[myIngredients.size()];
-            // nStringArray = myIngredients.toArray(nStringArray);
 
             FloatingActionButton addIngr = (FloatingActionButton) view.findViewById(R.id.addIngredient);
             addIngr.setOnClickListener(new View.OnClickListener() {
@@ -199,21 +182,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onListItemClick(ListView l, View v, final int position, long id) {
             super.onListItemClick(l, v, position, id);
-
-            //String[] nStringArray = new String[myIngredients.size()];
-           // nStringArray = myIngredients.toArray(nStringArray);
-
-            //FRIDGE LIST ITEM FUNCTIONALITY HERE
-            //Object o = array[position]; // use nStringArray
-            //String pen = o.toString();
-            // Toast.makeText(getContext(), "You selected: " + " " + pen, Toast.LENGTH_LONG).show();
-
-            //REAL FRIDGE ITEM FUNCTIONALITY HERE
-            // Object p = myIngredientsString
-            // TODO ON CLICK
-            //Object p = myIngredients[position];
-            //String name = p.toString();
-
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setMessage("Would you like to remove this ingredient from your fridge?")
 
@@ -221,8 +189,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
 
                             // Remove ingredient
-                            user.removeIngredientByName(myIngredients.get(position).getIngredientName());
-                            //helper.removeIngredient(myIngredients.get(position));
+                            fridge.removeIngredientByName(myIngredients.get(position).getIngredientName());
+                            helper.removeIngredient(myIngredients.get(position));
 
                             Intent i = new Intent(getContext(), MainActivity.class);
                             startActivity(i);
@@ -370,11 +338,11 @@ public static class RecipesFragment extends ListFragment {
             ingredientSearchBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // TODO: Get ingredients from local db
+                    FridgeDatabaseHelper dbHelper = new FridgeDatabaseHelper(getActivity());
                     ArrayList<String> ingredients = new ArrayList<String>();
-                    ingredients.add("apples");
-                    ingredients.add("flour");
-                    ingredients.add("sugar");
+                    for (Ingredient i : dbHelper.getIngredients()) {
+                        ingredients.add(i.getIngredientName());
+                    }
                     displayNewIngredientResults(ingredients, list);
                     String body = "Searching by Fridge Ingredients: ";
                     topView.setText(body);

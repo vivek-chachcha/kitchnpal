@@ -18,7 +18,6 @@ public class User {
     private String preference;
     private ArrayList<Recipe> favourites = new ArrayList<>();
     private List<Intolerance> allergies = new ArrayList<>();
-    private List<Ingredient> ingredients = new ArrayList<>();
     private Recipe currentRecipe;
     private ArrayList<Recipe> searchResults = new ArrayList<>();
 
@@ -64,10 +63,6 @@ public class User {
 
     public List<Intolerance> getAllergies() {
         return allergies;
-    }
-
-    public List<Ingredient> getFridgeIngredients() {
-        return ingredients;
     }
 
     public void setName(String name) {
@@ -128,19 +123,6 @@ public class User {
     
     public void setCurrentRecipe(Recipe r) {
         this.currentRecipe = r;        
-    }
-
-
-    public void addIngredientToFridge(Ingredient i) {
-	    this.ingredients.add(i);
-    }
-
-    public void removeIngredientByName(String name) {
-        for (Ingredient i: this.ingredients) {
-            if (i.getIngredientName() == name){
-                this.ingredients.remove(i);
-            }
-        }
     }
 
     public void setSearchResults(ArrayList<Recipe> results) {

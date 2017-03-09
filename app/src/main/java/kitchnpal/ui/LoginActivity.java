@@ -35,6 +35,7 @@ import java.util.List;
 
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.User;
+import kitchnpal.sql.FridgeDatabaseHelper;
 import kitchnpal.sql.UserDatabaseHelper;
 
 import static android.Manifest.permission.READ_CONTACTS;

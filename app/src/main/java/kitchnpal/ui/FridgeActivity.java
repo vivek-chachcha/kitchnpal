@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import kitchnpal.kitchnpal.Diet;
+import kitchnpal.kitchnpal.Fridge;
 import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.Intolerance;
 import kitchnpal.kitchnpal.QuantityType;
@@ -39,12 +40,11 @@ public class FridgeActivity extends AppCompatActivity {
     private EditText ingredientNameView;
     private EditText ingredientAmountView;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_ingredient);
-        final User user = User.getInstance();
+        final Fridge fridge = Fridge.getInstance();
 
         List<String> quantityTypes = QuantityType.stringValues();
         quantityTypeBtn = (Button) findViewById(R.id.ingredient_qtype);
@@ -54,24 +54,24 @@ public class FridgeActivity extends AppCompatActivity {
         ingredientNameView = (EditText) findViewById(R.id.ingredient_name);
         ingredientAmountView = (EditText) findViewById(R.id.ingredient_amount);
 
+        fridgeDbHelper = new FridgeDatabaseHelper(this);
 
+        Button addIngrBtn = (Button) findViewById(R.id.add_ingredient_btn);
+        addIngrBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Ingredient newIngredient = new Ingredient(ingredientNameView.getText().toString().trim(),
+                        Float.valueOf(ingredientAmountView.getText().toString()),
+                        QuantityType.stringToType(quantityTypeBtn.getText().toString()));
 
-    Button addIngrBtn = (Button) findViewById(R.id.add_ingredient_btn);
-    addIngrBtn.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            Ingredient newIngredient = new Ingredient(ingredientNameView.getText().toString().trim(),
-                    Float.valueOf(ingredientAmountView.getText().toString()),
-                    QuantityType.stringToType(quantityTypeBtn.getText().toString()));
+                fridge.addIngredient(newIngredient);
+                fridgeDbHelper.addIngredient(newIngredient);
 
-            user.addIngredientToFridge(newIngredient);
-            //fridgeDbHelper.addIngredient(newIngredient);
+                nextPage();
 
-            nextPage();
-
-        }
-    });
-}
+            }
+        });
+    }
     private void nextPage() {
         Intent i = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(i);
