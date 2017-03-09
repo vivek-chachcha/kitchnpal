@@ -36,6 +36,8 @@ import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
 
+import static org.apache.commons.lang3.StringEscapeUtils.escapeHtml4;
+
 /**
  * Created by linhphan on 17-03-05.
  */
@@ -91,6 +93,106 @@ public class MakeRequest {
                         return params;
                     }
                 };
+        queue.add(jsonRequest);
+    }
+
+    public void updateUser(final User user, RequestQueue queue) {
+        String url = "http://35.166.124.250:4567/users/" + user.getEmail().toString();
+        StringRequest jsonRequest = new StringRequest(Request.Method.PUT, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            System.out.println(response);
+                        } catch(JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                })
+                {
+                    @Override
+                    protected Map<String, String> getParams() {
+                        StringBuilder dietString = new StringBuilder();
+                        for (int i = 0; i < user.getDietRestrictions().size(); i++) {
+                            dietString.append(user.getDietRestrictions().get(i).getName());
+                            if (i != user.getDietRestrictions().size() - 1) {
+                                dietString.append(", ");
+                            }
+                        }
+                        Map<String, String> params = new HashMap<String, String>();
+                        params.put("email", user.getEmail());
+                        params.put("name", user.getName());
+                        params.put("password", SHA1(user.getPassword()));
+                        params.put("calPerDay", user.getNumCalPerDay().toString());
+                        params.put("preferences", user.getPreference().toString().toLowerCase());
+			params.put("accessToken", user.getAccessToken().toString();
+                        params.put("diet", dietString.toString());
+
+                        return params;
+                    }
+                };
+        queue.add(jsonRequest);
+    }	
+
+
+    public void getUser(final User user, RequestQueue queue) {
+        String url = "http://35.166.124.250:4567/users/" + user.getEmail().toString() + "?accessToken=" + user.getAccessToken().toString();
+        StringRequest jsonRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            System.out.println(response);
+                        } catch(JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
+        queue.add(jsonRequest);
+    }
+
+    public void getRecipes(final User user, RequestQueue queue, String name, ArrayList<String> ingredients) {
+        String url = "http://35.166.124.250:4567/recipes?accessToken=" + user.getAccessToken().toString() + "&name=" + name;
+	StringBuilder sb = new StringBuilder();
+	for (String s : ingredients)
+	{
+	    sb.append(s);
+	    sb.append("\t");
+	}
+	String escapedIngredients = escapeHtml4(sb.toString());
+	url += "&ingredients=" + escapedIngredients;
+        StringRequest jsonRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            System.out.println(response);
+                        } catch(JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
         queue.add(jsonRequest);
     }
 
