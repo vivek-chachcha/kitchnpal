@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.EditText;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import kitchnpal.kitchnpal.Diet;
 import kitchnpal.kitchnpal.Fridge;
@@ -26,6 +29,8 @@ import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.User;
 import kitchnpal.sql.FridgeDatabaseHelper;
 import kitchnpal.sql.UserDatabaseHelper;
+
+import static android.R.attr.typeface;
 
 
 /**
@@ -44,6 +49,7 @@ public class FridgeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_ingredient);
+
         final Fridge fridge = Fridge.getInstance();
 
         List<String> quantityTypes = QuantityType.stringValues();

@@ -21,14 +21,21 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay"
-            android:textAlignment="center">
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/kitchnpalhatlogo"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="10dp"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="KITCHNPAL"
-                android:gravity="center"
+                android:text="KitchnPal"
+                android:typeface="serif"
+                android:gravity="center_vertical"
                 android:id="@+id/toolbar_title"
                 android:textSize="20dp"
                 android:textStyle="bold"
