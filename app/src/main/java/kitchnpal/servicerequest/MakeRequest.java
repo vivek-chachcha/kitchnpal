@@ -270,7 +270,7 @@ public class MakeRequest {
             fullRecipeCache.put(Integer.toString(id), recipe);
 	
 	    loader.get(imageUrl, ImageLoader.getImageListener(imageView,
-                    R.mipmap.ic_launcher, android.R.drawable
+                    R.mipmap.meal, android.R.drawable
                             .ic_dialog_alert));
             imageView.setImageUrl(imageUrl, loader);
 
