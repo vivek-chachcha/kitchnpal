@@ -256,7 +256,7 @@ public class MakeRequest {
     public Recipe parseRecipeSteps(JSONObject temp, TextView instructionView, TextView ingredientView,
 				  ImageLoader loader, NetworkImageView imageView) {
         try {
-            JSONObject recipeObj = temp;//temp.getJSONObject("recipe");
+            JSONObject recipeObj = temp.getJSONObject("recipe");
             String title = recipeObj.getString("title");
             int id = recipeObj.getInt("id");
             String imageUrl = recipeObj.getString("image");
