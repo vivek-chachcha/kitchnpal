@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
@@ -255,7 +256,7 @@ public class MakeRequest {
     public Recipe parseRecipeSteps(JSONObject temp, TextView instructionView, TextView ingredientView,
 				  ImageLoader loader, NetworkImageView imageView) {
         try {
-            JSONObject recipeObj = temp.getJSONObject("recipe");
+            JSONObject recipeObj = temp;//temp.getJSONObject("recipe");
             String title = recipeObj.getString("title");
             int id = recipeObj.getInt("id");
             String imageUrl = recipeObj.getString("image");
@@ -269,9 +270,7 @@ public class MakeRequest {
             }
             fullRecipeCache.put(Integer.toString(id), recipe);
 	
-	    loader.get(imageUrl, ImageLoader.getImageListener(imageView,
-                    R.mipmap.meal, android.R.drawable
-                            .ic_dialog_alert));
+	        loader.get(imageUrl, ImageLoader.getImageListener(imageView, R.drawable.kitchnpalhatlogo, android.R.drawable.ic_dialog_alert));
             imageView.setImageUrl(imageUrl, loader);
 
             if (instructionView != null) {
@@ -282,7 +281,7 @@ public class MakeRequest {
                     stringBuilder.append(": ");
                     stringBuilder.append(instructions.get(i));
                     if (i != instructions.size() - 1) {
-                        stringBuilder.append("\n\n");
+                        stringBuilder.append("\n");
                     }
                 }
                 instructionView.setText(stringBuilder.toString());

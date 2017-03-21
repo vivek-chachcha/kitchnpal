@@ -18,20 +18,20 @@
         <Button
             android:id="@+id/all_search"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:background="#B8B8B8"
+            android:layout_height="35dp"
+            android:background="@drawable/buttonbg"
             android:text="All"
-            android:textColor="#ffffff"
+            android:textColor="#FF7F50"
             android:typeface="normal"
             android:layout_alignParentTop="true"/>
 
         <Button
             android:id="@+id/name_search"
             android:layout_width="wrap_content"
-            android:layout_height="30dp"
-            android:background="#B8B8B8"
+            android:layout_height="35dp"
+            android:background="@drawable/buttonbg"
             android:text="Name"
-            android:textColor="#ffffff"
+            android:textColor="#FF7F50"
             android:typeface="normal"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="20dp"
@@ -41,21 +41,33 @@
         <Button
             android:id="@+id/ingredient_search"
             android:layout_width="fill_parent"
-            android:layout_height="30dp"
-            android:background="#B8B8B8"
+            android:layout_height="35dp"
+            android:background="@drawable/buttonbg"
             android:text="Ingredients"
-            android:textColor="#ffffff"
+            android:textColor="#FF7F50"
             android:typeface="normal"
             android:layout_alignParentTop="true"
             android:layout_toRightOf="@id/name_search"/>
 
     </RelativeLayout>
 
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@id/search_bar"/>
+
     <TextView
         android:id="@+id/section_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/search_bar"
+        android:layout_below="@id/divider"
+        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp" />
 
     <ListView

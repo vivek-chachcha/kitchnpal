@@ -2,6 +2,7 @@ package kitchnpal.ui;
 
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.setTabTextColors(Color.parseColor("#D3D3D3"), Color.parseColor("#FF7F50"));
         int defaultValue = 0;
         int page = getIntent().getIntExtra("page", defaultValue);
         mViewPager.setCurrentItem(page);
@@ -163,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
         public void onViewCreated(View view, Bundle savedInstanceState) {
             ListView list = getListView();
 
-            FloatingActionButton addIngr = (FloatingActionButton) view.findViewById(R.id.addIngredient);
+            Button addIngr = (Button) view.findViewById(R.id.addIngredient);
             addIngr.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

@@ -2,6 +2,7 @@ package kitchnpal.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -42,6 +43,7 @@ public class RecipeDisplayActivity extends AppCompatActivity {
                 startActivity(i);
             }
         });
+        CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.toolbar_layout);
 
         RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
         ImageLoader loader = VolleySingleton.getInstance(getApplicationContext()).getImageLoader();
@@ -54,6 +56,8 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         String accessToken = helper.getUserAccessToken(User.getInstance().getEmail());
         final User user = User.getInstance();
         user.setAccessToken(accessToken);
+        TextView recipeTitleView = (TextView)findViewById(R.id.recipeTitle);
+        recipeTitleView.setText(getIntent().getStringExtra("recipe_name"));
         TextView ingredientView = (TextView)findViewById(R.id.ingredients);
         TextView instructionView = (TextView)findViewById(R.id.instructions);
         ArrayList<Recipe> myFavs = helper.getFavourites(user.getEmail());
