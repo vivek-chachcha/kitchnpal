@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="25dp"
+    android:padding="25dp">
+
+
+        <TextView
+            android:text="Ingredient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ingredientNameTitle"
+            android:textSize="10pt"
+            android:padding="10dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/ingredientName"
+            android:padding="10dp"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/ingredient_amount_popup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/ingredient_quantity"
+            android:inputType="number"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/ingredient_qtype_text_popup"
+            android:hint="@string/ingredient_quantity_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="8pt"
+            android:text="Unit Type"
+            android:padding="10dp" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/ingredient_qtype_popup"
+            android:backgroundTint="#FFFFFF"
+            android:layout_weight="1"
+            android:padding="10dp" />
+
+</LinearLayout>

@@ -42,6 +42,14 @@
             android:label="@string/title_activity_add_ingredient"
             android:theme="@style/AppTheme" />
         <activity
+            android:name="kitchnpal.ui.BarcodeScanActivity"
+            android:label="Scan Ingredient Barcode"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name="kitchnpal.ui.CustomScannerActivity"
+            android:label="Scan Ingredient Barcode"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
             android:name="kitchnpal.ui.RecipeDisplayActivity"
             android:label="@string/title_activity_recipe_display"
             android:theme="@style/AppTheme.NoActionBar" ></activity>

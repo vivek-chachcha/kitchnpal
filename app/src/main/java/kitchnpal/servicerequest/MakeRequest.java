@@ -47,6 +47,48 @@ public class MakeRequest {
 
     }
 
+    public void getIngredientByUpcCode(String upc, RequestQueue queue, final TextView ingredientText) {
+        String url ="https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/food/products/upc/" + upc;
+
+        // Request a string response from the provided URL.
+        JsonObjectRequest jsonRequest = new JsonObjectRequest(Request.Method.GET, url,
+                null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                setParsedIngredient(response, ingredientText);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                error.printStackTrace();
+            }
+        })
+        {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                super.getHeaders();
+                Map<String, String> headers = new HashMap<>();
+                headers.put("X-Mashape-Key", "gY0JeRT5jTmsh9Ld5t3ez3DUrxWGp1wXcF9jsnhtvOpIsoXsyi");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+        queue.add(jsonRequest);
+    }
+
+    private void setParsedIngredient(JSONObject response, TextView ingredientText) {
+        try {
+            String ingredient = response.getString("title");
+            if (ingredient == null) {
+                ingredientText.setText(response.getString("message"));
+            } else {
+                ingredientText.setText(ingredient);
+            }
+        } catch (JSONException e) {
+            ingredientText.setText("Could not find the product.");
+        }
+    }
+
     public void createUser(final User user, RequestQueue queue, final UserDatabaseHelper dbHelper) {
         String url = "http://35.166.124.250:4567/users";
         StringRequest jsonRequest = new StringRequest(Request.Method.POST, url,

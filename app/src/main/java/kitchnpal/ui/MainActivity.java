@@ -1,8 +1,12 @@
 package kitchnpal.ui;
 
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.speech.SpeechRecognizer;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +22,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,12 +36,15 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.android.volley.RequestQueue;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import kitchnpal.kitchnpal.Fridge;
 import kitchnpal.kitchnpal.Ingredient;
+import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
@@ -61,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+    static private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        activity = this;
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -83,7 +93,6 @@ public class MainActivity extends AppCompatActivity {
         int defaultValue = 0;
         int page = getIntent().getIntExtra("page", defaultValue);
         mViewPager.setCurrentItem(page);
-
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +183,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            Button barcodeScan = (Button) view.findViewById(R.id.barcodeScan);
+            barcodeScan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    IntentIntegrator scanIntegrator = new IntentIntegrator(activity);
+                    scanIntegrator.setCaptureActivity(CustomScannerActivity.class);
+                    scanIntegrator.initiateScan();
+                }
+            });
+
             //Fridge List Contents
             if (ingredientsString != null) {
                 list.setAdapter(new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, ingredientsString)); //use nStringArray
@@ -202,6 +221,112 @@ public class MainActivity extends AppCompatActivity {
                             dialog.cancel();
                         }});
 
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+
+        if (scanningResult.getContents() != null) {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+            String scanContent = scanningResult.getContents();
+
+            LayoutInflater li = LayoutInflater.from(this);
+            View view = li.inflate(R.layout.barcode_popup, null);
+            builder.setView(view);
+            final TextView tv = (TextView) view.findViewById(R.id.ingredientName);
+            final Button quantityTypeBtn = (Button) view.findViewById(R.id.ingredient_qtype_popup);
+            List<String> quantityTypes = QuantityType.stringValues();
+            SelectBtnListener quantityTypeBtnListener = new SelectBtnListener(this, quantityTypes, quantityTypeBtn);
+            quantityTypeBtn.setOnClickListener(quantityTypeBtnListener);
+            final EditText ingredientAmountView = (EditText) view.findViewById(R.id.ingredient_amount_popup);
+
+            final FridgeDatabaseHelper fridgeDbHelper = new FridgeDatabaseHelper(this);
+            final Fridge fridge = Fridge.getInstance();
+
+            MakeRequest mr = new MakeRequest();
+            RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
+            mr.getIngredientByUpcCode(scanContent.trim(), queue, tv);
+            builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            String ingredientNameString = tv.getText().toString();
+                            String ingredientAmountString = ingredientAmountView.getText().toString();
+                            String ingredientQuantityTypeString = quantityTypeBtn.getText().toString();
+
+                            if (ingredientNameString != "" && ingredientAmountString  != "" && ingredientQuantityTypeString  != "") {
+                                Ingredient newIngredient = new Ingredient(ingredientNameString.trim(),
+                                        Float.valueOf(ingredientAmountString),
+                                        QuantityType.stringToType(ingredientQuantityTypeString));
+
+                                fridge.addIngredient(newIngredient);
+                                fridgeDbHelper.addIngredient(newIngredient);
+
+                                dialog.dismiss();
+                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                i.putExtra("page", 3);
+                                startActivity(i);
+                            } else {
+                                builder.setMessage("Please complete all fields.");
+                            }
+                        }})
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }});
+
+            AlertDialog dialog = builder.create();
+            dialog.show();
+        }
+    }
+
+    private static class SelectBtnListener implements View.OnClickListener {
+
+        private CharSequence[] options;
+        private Context context;
+        private Button btn;
+        private CharSequence selectedOption;
+
+        public SelectBtnListener(Activity activity, List<String> options, Button btn) {
+            this.options = options.toArray(new CharSequence[options.size()]);
+            this.context = activity;
+            this.btn = btn;
+            this.selectedOption = "";
+        }
+        @Override
+        public void onClick(View view) {
+            showSingleDialog();
+        }
+
+        private void showSingleDialog() {
+            int checkedItem = -1;
+            for(int i = 0; i < options.length; i++) {
+                if (selectedOption.equals(options[i])) {
+                    checkedItem = i;
+                }
+            }
+
+            DialogInterface.OnClickListener singleListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    selectedOption = options[i];
+                    btn.setText(selectedOption.toString());
+                }
+            };
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            builder.setTitle("Select");
+            builder.setSingleChoiceItems(options, checkedItem, singleListener);
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int i) {
+                    dialog.dismiss();
+                }
+            });
             AlertDialog dialog = builder.create();
             dialog.show();
         }
@@ -312,10 +437,10 @@ public static class RecipesFragment extends ListFragment {
                 @Override
                 public void onClick(View view) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                    final EditText input = new EditText(getActivity());
-                    builder.setMessage("Enter the name of the recipe: ")
-                            .setTitle("Search by Name")
-                            .setView(input)
+                    LayoutInflater li = LayoutInflater.from(getContext());
+                    final View view1 = li.inflate(R.layout.name_search_popup, null);
+                    builder.setTitle("Search by Name")
+                            .setView(view1)
                             .setPositiveButton("Search", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.dismiss();
@@ -323,6 +448,7 @@ public static class RecipesFragment extends ListFragment {
                                     String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
                                     User user = User.getInstance();
                                     user.setAccessToken(accessToken);
+                                    EditText input = (EditText) view1.findViewById(R.id.name_search_text);
                                     String text = input.getText().toString().trim();
                                     displayNewNameResults(user, text, list);
                                     String body = "Search Results for: " + text;
