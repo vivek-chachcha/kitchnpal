@@ -39,7 +39,7 @@ public class Ingredient {
         return this.ingredientAmount;
     }
 
-    public void setIngredientAmount(float amount) {
+    public void setIngredientAmount(double amount) {
         this.ingredientAmount = amount;
     }
     
