@@ -50,6 +50,32 @@ public class FridgeDatabaseHelper extends DatabaseHelper {
         db.close();
     }
 
+    public double getIngredientAmount(String name) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = COLUMN_INGREDIENT_NAME + " = ?";
+        String[] selectionArgs = {String.valueOf(name)};
+
+
+        ContentValues values = new ContentValues();
+        String[] columns = { COLUMN_INGREDIENT_AMOUNT };
+        Cursor cursor = db.query(TABLE_FRIDGE,  // table to query
+                columns,                      // columns to return
+                selection,                    // columns for the WHERE clause
+                selectionArgs,                // values for the WHERE clause
+                null,                         // group the rows
+                null,                         // filter by row groups
+                null);                        // sort order
+
+        double value = 0;
+        if (cursor !=  null) {
+            cursor.moveToFirst();
+            value = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return value;
+    }
+
     public void removeIngredient(Ingredient ingredient) {
         SQLiteDatabase db = this.getWritableDatabase();
         String selection = COLUMN_INGREDIENT_NAME + " = ?";
