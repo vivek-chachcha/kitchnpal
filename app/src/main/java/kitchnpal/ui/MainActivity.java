@@ -263,8 +263,18 @@ public class MainActivity extends AppCompatActivity {
                                         Float.valueOf(ingredientAmountString),
                                         QuantityType.stringToType(ingredientQuantityTypeString));
 
-                                fridge.addIngredient(newIngredient);
-                                fridgeDbHelper.addIngredient(newIngredient);
+                                if (fridge.isIngredientInFridge(ingredientNameString)) {
+                                    double addedAmount = newIngredient.getIngredientAmount();
+                                    double currentAmount = fridgeDbHelper.getIngredientAmount(ingredientNameString);
+                                    double totalAmount = addedAmount + currentAmount;
+                                    Ingredient updatedIngredient = new Ingredient(ingredientNameString.trim(), totalAmount,
+                                            QuantityType.stringToType(ingredientQuantityTypeString));
+                                    fridge.addIngredient(newIngredient);
+                                    fridgeDbHelper.updateIngredient(updatedIngredient);
+                                } else {
+                                    fridge.addIngredient(newIngredient);
+                                    fridgeDbHelper.addIngredient(newIngredient);
+                                }
 
                                 dialog.dismiss();
                                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
