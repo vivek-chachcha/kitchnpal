@@ -59,8 +59,8 @@ public class FridgeActivity extends AppCompatActivity {
 
         ingredientNameView = (EditText) findViewById(R.id.ingredient_name);
         ingredientAmountView = (EditText) findViewById(R.id.ingredient_amount);
-
-        fridgeDbHelper = new FridgeDatabaseHelper(this);
+        final Context activityContext = this;
+        fridgeDbHelper = new FridgeDatabaseHelper(activityContext);
 
         Button addIngrBtn = (Button) findViewById(R.id.add_ingredient_btn);
         addIngrBtn.setOnClickListener(new View.OnClickListener() {
@@ -75,18 +75,16 @@ public class FridgeActivity extends AppCompatActivity {
                             Float.valueOf(ingredientAmountString),
                             QuantityType.stringToType(ingredientQuantityTypeString));
 
-                    if (fridge.isIngredientInFridge(ingredientNameString)) {
+                    if (fridge.isIngredientInFridge(ingredientNameString, activityContext)) {
                         double addedAmount = newIngredient.getIngredientAmount();
                         double currentAmount = fridgeDbHelper.getIngredientAmount(ingredientNameString);
                         double totalAmount = addedAmount + currentAmount;
                         Ingredient updatedIngredient = new Ingredient(ingredientNameString.trim(),
                                 totalAmount,
                                 QuantityType.stringToType(ingredientQuantityTypeString));
-                        fridge.addIngredient(newIngredient);
                         fridgeDbHelper.updateIngredient(updatedIngredient);
                     }
                     else {
-                        fridge.addIngredient(newIngredient);
                         fridgeDbHelper.addIngredient(newIngredient);
                     }
 

@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
 
                             // Remove ingredient
-                            fridge.removeIngredientByName(myIngredients.get(position).getIngredientName());
+                            //fridge.removeIngredientByName(myIngredients.get(position).getIngredientName());
                             helper.removeIngredient(myIngredients.get(position));
 
                             Intent i = new Intent(getContext(), MainActivity.class);
@@ -245,8 +245,8 @@ public class MainActivity extends AppCompatActivity {
             SelectBtnListener quantityTypeBtnListener = new SelectBtnListener(this, quantityTypes, quantityTypeBtn);
             quantityTypeBtn.setOnClickListener(quantityTypeBtnListener);
             final EditText ingredientAmountView = (EditText) view.findViewById(R.id.ingredient_amount_popup);
-
-            final FridgeDatabaseHelper fridgeDbHelper = new FridgeDatabaseHelper(this);
+            final Context activityContext = this;
+            final FridgeDatabaseHelper fridgeDbHelper = new FridgeDatabaseHelper(activityContext);
             final Fridge fridge = Fridge.getInstance();
 
             MakeRequest mr = new MakeRequest();
@@ -263,16 +263,14 @@ public class MainActivity extends AppCompatActivity {
                                         Float.valueOf(ingredientAmountString),
                                         QuantityType.stringToType(ingredientQuantityTypeString));
 
-                                if (fridge.isIngredientInFridge(ingredientNameString)) {
+                                if (fridge.isIngredientInFridge(ingredientNameString, activityContext)) {
                                     double addedAmount = newIngredient.getIngredientAmount();
                                     double currentAmount = fridgeDbHelper.getIngredientAmount(ingredientNameString);
                                     double totalAmount = addedAmount + currentAmount;
                                     Ingredient updatedIngredient = new Ingredient(ingredientNameString.trim(), totalAmount,
                                             QuantityType.stringToType(ingredientQuantityTypeString));
-                                    fridge.addIngredient(newIngredient);
                                     fridgeDbHelper.updateIngredient(updatedIngredient);
                                 } else {
-                                    fridge.addIngredient(newIngredient);
                                     fridgeDbHelper.addIngredient(newIngredient);
                                 }
 

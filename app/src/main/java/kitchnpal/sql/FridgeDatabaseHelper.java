@@ -55,8 +55,6 @@ public class FridgeDatabaseHelper extends DatabaseHelper {
         String selection = COLUMN_INGREDIENT_NAME + " = ?";
         String[] selectionArgs = {String.valueOf(name)};
 
-
-        ContentValues values = new ContentValues();
         String[] columns = { COLUMN_INGREDIENT_AMOUNT };
         Cursor cursor = db.query(TABLE_FRIDGE,  // table to query
                 columns,                      // columns to return
@@ -74,6 +72,24 @@ public class FridgeDatabaseHelper extends DatabaseHelper {
         cursor.close();
         db.close();
         return value;
+    }
+
+    public boolean isIngredientInFridge(String ingredientName){
+        String[] columns = { COLUMN_INGREDIENT_NAME };
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selection = COLUMN_INGREDIENT_NAME + " = ?";
+        String[] selectionArgs = {ingredientName};
+        Cursor cursor = db.query(TABLE_FRIDGE,  // table to query
+                columns,                      // columns to return
+                selection,                    // columns for the WHERE clause
+                selectionArgs,                // values for the WHERE clause
+                null,                         // group the rows
+                null,                         // filter by row groups
+                null);                        // sort order
+        int cursorCount = cursor.getCount();
+        cursor.close();
+        db.close();
+        return cursorCount > 0;
     }
 
     public void removeIngredient(Ingredient ingredient) {

@@ -1,9 +1,12 @@
 package kitchnpal.kitchnpal;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import kitchnpal.sql.UserDatabaseHelper;
+import kitchnpal.sql.FridgeDatabaseHelper;
+
 
 /**
  * Created by Jerry on 2017-02-25.
@@ -12,6 +15,7 @@ import kitchnpal.sql.UserDatabaseHelper;
 public class Fridge {
     private List<Ingredient> ingredients = new ArrayList<>();
     private static Fridge fridge;
+    private FridgeDatabaseHelper helper;
 
     private Fridge() {
         // make constructor private for singleton
@@ -29,43 +33,13 @@ public class Fridge {
         return this.ingredients;
     }
 
-    public boolean isIngredientInFridge(String name) {
-        for (Ingredient i: this.ingredients) {
-            if (i.getIngredientName().equals(name)){
-                return true;
-            }
-        }
-            return false;
-    }
+    public boolean isIngredientInFridge(String name, Context context) {
 
-    public double getIngredientAmountByName(String name) {
-        for (Ingredient i: this.ingredients) {
-            if (i.getIngredientName().equals(name)){
-                return i.getIngredientAmount();
-            }
-        }
-        return 0;
-    }
-    public void addIngredient(Ingredient ingredient) {
-        if (ingredient != null && !ingredients.contains(ingredient)) {
-            this.ingredients.add(ingredient);
-        }
-        // If ingredient already exists, update the amount
-        else if (ingredients.contains(ingredient)){
-            int index = this.ingredients.indexOf(ingredient);
-            Ingredient ing = this.ingredients.get(index);
-            double currentAmount = ing.getIngredientAmount();
-            ing.setIngredientAmount(currentAmount + ingredient.getIngredientAmount());
-            this.ingredients.add(ingredient);
-        }
+        helper = new FridgeDatabaseHelper(context);
+        boolean inFridge = helper.isIngredientInFridge(name);
+        return  inFridge;
     }
 
 
-    public void removeIngredientByName(String name) {
-        for (Ingredient i: this.ingredients) {
-            if (i.getIngredientName().equals(name)){
-                this.ingredients.remove(i);
-            }
-        }
     }
-}
+
