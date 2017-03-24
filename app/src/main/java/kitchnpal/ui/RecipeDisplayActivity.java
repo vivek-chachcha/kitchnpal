@@ -11,6 +11,12 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
+import java.util.Locale;
+import android.widget.Toast;
+
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -26,7 +32,10 @@ import kitchnpal.servicerequest.MakeRequest;
 import kitchnpal.servicerequest.VolleySingleton;
 import kitchnpal.sql.UserDatabaseHelper;
 
-public class RecipeDisplayActivity extends AppCompatActivity {
+public class RecipeDisplayActivity extends AppCompatActivity implements OnInitListener {
+
+    private TextToSpeech myTTS;
+    private int MY_DATA_CHECK_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +72,7 @@ public class RecipeDisplayActivity extends AppCompatActivity {
         ArrayList<Recipe> myFavs = helper.getFavourites(user.getEmail());
         final MakeRequest mr = new MakeRequest();
         Recipe toDisplay = null;
-        for (Recipe r: myFavs) {
+        for (Recipe r : myFavs) {
             if (r.getId() == recipeId) {
                 mr.getRecipeDetails(user, recipeId, ingredientView, instructionView, queue, loader, mImageView);
                 toDisplay = r;
@@ -102,8 +111,7 @@ public class RecipeDisplayActivity extends AppCompatActivity {
                     Snackbar.make(view, "Added To Your Favourites", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                     toggleFav.setImageResource(R.drawable.fav_set);
-                }
-                else {
+                } else {
                     user.removeFavourite(recipe);
                     helper.updateUserFavourites(user);
                     Snackbar.make(view, "Removed From Your Favourites", Snackbar.LENGTH_LONG)
@@ -113,13 +121,58 @@ public class RecipeDisplayActivity extends AppCompatActivity {
             }
         });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+
+        FloatingActionButton textToSpeech = (FloatingActionButton) findViewById(R.id.fab);
+        textToSpeech.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Now in read-aloud mode", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+
+                List<String> instructions = user.getRecipe().getInstructions();
+                System.out.println("instructions = " + instructions);
+                String wholeList = instructions.toString();
+                speakWords(wholeList);
             }
+
+
         });
+        Intent checkTTSIntent = new Intent();
+        checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
+    }
+
+    private void speakWords(String speech) {
+
+        //speak straight away
+        myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == MY_DATA_CHECK_CODE) {
+            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                //the user has the necessary data - create the TTS
+                myTTS = new TextToSpeech(this, this);
+            }
+            else {
+                //no data - install it now
+                Intent installTTSIntent = new Intent();
+                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                startActivity(installTTSIntent);
+            }
+        }
+    }
+
+    public void onInit(int initStatus) {
+
+        //check for successful instantiation
+        if (initStatus == TextToSpeech.SUCCESS) {
+            if (myTTS.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
+                myTTS.setLanguage(Locale.US);
+        } else if (initStatus == TextToSpeech.ERROR) {
+            Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
+        }
     }
 }
+

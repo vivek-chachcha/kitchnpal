@@ -209,7 +209,6 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int id) {
 
                             // Remove ingredient
-                            //fridge.removeIngredientByName(myIngredients.get(position).getIngredientName());
                             helper.removeIngredient(myIngredients.get(position));
 
                             Intent i = new Intent(getContext(), MainActivity.class);
