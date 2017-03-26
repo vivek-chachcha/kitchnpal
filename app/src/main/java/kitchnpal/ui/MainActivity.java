@@ -255,35 +255,46 @@ public class MainActivity extends AppCompatActivity {
 
                     ArrayList<String> result = intent
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-                    String myText = result.get(0).substring(14).trim();
+                    if (result.get(0) != null) {
+                        String myResult = result.get(0);
+                        if (myResult.length() > 14) {
+                            myResult = myResult.substring(14);
+                        }
+                        final String myText = myResult;
 
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    LayoutInflater li = LayoutInflater.from(getApplicationContext());
-                    final View view1 = li.inflate(R.layout.name_search_popup, null);
-                    EditText input = (EditText) view1.findViewById(R.id.name_search_text);
-                    input.setText(myText);
-                    builder.setTitle("Search by Name")
-                            .setView(view1)
-                            .setPositiveButton("Search", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.dismiss();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                        LayoutInflater li = LayoutInflater.from(getApplicationContext());
+                        final View view1 = li.inflate(R.layout.name_search_popup, null);
+                        EditText input = (EditText) view1.findViewById(R.id.name_search_text);
+                        input.setText(myText);
+                        builder.setTitle("Search by Name")
+                                .setView(view1)
+                                .setPositiveButton("Search", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
 
-                                    String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
-                                    User user = User.getInstance();
-                                    user.setAccessToken(accessToken);
-                                    EditText input = (EditText) view1.findViewById(R.id.name_search_text);
-                                    String text = input.getText().toString().trim();
-                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                    i.putExtra("page", 1);
-                                    i.putExtra("VoiceResults", text);
-                                    startActivity(i);
-                                }})
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }});
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                                        String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
+                                        User user = User.getInstance();
+                                        user.setAccessToken(accessToken);
+                                        EditText input = (EditText) view1.findViewById(R.id.name_search_text);
+                                        input.setText(myText);
+                                        String text = input.getText().toString().trim();
+                                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                        i.putExtra("page", 0);
+                                        i.putExtra("VoiceResults", text);
+                                        startActivity(i);
+                                    }
+                                })
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                    } else {
+                        return;
+                    }
 
                 }
                 super.onActivityResult(requestCode, resultCode, intent);
