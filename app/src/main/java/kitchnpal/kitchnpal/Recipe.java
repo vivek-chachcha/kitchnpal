@@ -14,16 +14,13 @@ public class Recipe {
     private String recipeName;
     private ArrayList<Ingredient> ingredients;
     private ArrayList<String> instructions;
-    private Drawable recipeImage;
     private int id;
-    private KitchnPalService mr;
 
     public Recipe(String name, int id, ArrayList<Ingredient> ingreds, ArrayList<String> instructs) {
         recipeName = name;
         ingredients = ingreds;
         instructions = instructs;
         this.id = id;
-        mr  = new KitchnPalService();
     }
 
     public Recipe(String title, int id) {
@@ -36,21 +33,11 @@ public class Recipe {
     public List<String> getInstructions() { return instructions; }
     public int getId() { return id; }
 
-    public void setImage(Drawable d) {
-        recipeImage = d;
-    }
-
     public void setIngredients(ArrayList<Ingredient> ingreds) {
         this.ingredients = ingreds;
     }
 
     public void setInstructions(ArrayList<String> steps) {
         this.instructions = steps;
-    }
-
-    public void displayRecipe() {
-        for (int i = 0; i< instructions.size(); i++) {
-            //Do Something with each instruction
-        }
     }
 }

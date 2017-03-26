@@ -34,12 +34,7 @@ public class Fridge {
     }
 
     public boolean isIngredientInFridge(String name, Context context) {
-
         helper = new FridgeDatabaseHelper(context);
-        boolean inFridge = helper.isIngredientInFridge(name);
-        return  inFridge;
+        return helper.isIngredientInFridge(name);
     }
-
-
-    }
-
+}
