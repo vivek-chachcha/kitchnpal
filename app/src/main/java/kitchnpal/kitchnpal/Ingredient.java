@@ -19,7 +19,7 @@ public class Ingredient {
         quantityType = type;
     }
 
-    public String ingredientToString() {
+    public String ingredientToStringInFridge() {
         return this.getIngredientName() + " x " + this.getIngredientAmount() + " " + this.getQuantityTypeString();
     }
 
@@ -55,7 +55,7 @@ public class Ingredient {
         if (ingredients != null) {
             List<String> ingredientsString = new ArrayList<String>(ingredients.size());
             for (Ingredient i : ingredients) {
-                ingredientsString.add(i.ingredientToString());
+                ingredientsString.add(i.ingredientToStringInFridge());
             }
             return ingredientsString;
         }

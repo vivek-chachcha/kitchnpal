@@ -9,7 +9,7 @@ import java.util.List;
 
 public enum QuantityType {
 
-        UNIT("Unit(s)"),
+        UNIT("unit(s)"),
         LB("lb"),
         CUP("cup"),
         CUPS("cups"),
@@ -39,8 +39,12 @@ public enum QuantityType {
     }
 
     public static QuantityType stringToType(String s) {
+        if (s == null) {
+            return null;
+        }
+
         switch(s) {
-            case "Unit(s)":
+            case "unit(s)":
                 return UNIT;
             case "lb":
                 return LB;
