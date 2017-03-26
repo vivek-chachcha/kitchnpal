@@ -50,6 +50,9 @@
             android:label="Scan Ingredient Barcode"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
+            android:name="kitchnpal.ui.VoiceRecognitionTest"
+            android:label="Voice" />
+        <activity
             android:name="kitchnpal.ui.RecipeDisplayActivity"
             android:label="@string/title_activity_recipe_display"
             android:theme="@style/AppTheme.NoActionBar" ></activity>
