@@ -204,13 +204,13 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
 //                     }
                 });
 
-            }
+//             }
 
 
-        });
-        Intent checkTTSIntent = new Intent();
-        checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
-        startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
+//         });
+//         Intent checkTTSIntent = new Intent();
+//         checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+//         startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
     }
 
     private void speakWords(String speech) {
