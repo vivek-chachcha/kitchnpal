@@ -3,8 +3,10 @@ package kitchnpal.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -30,6 +32,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -60,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private final int REQ_CODE_SEARCH_INPUT = 100;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -93,8 +97,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                promptSpeechInput();
             }
         });
 
@@ -123,6 +126,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SEARCH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static class FridgeFragment extends ListFragment {
@@ -223,6 +242,34 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch (requestCode) {
+            case REQ_CODE_SEARCH_INPUT: {
+                if (resultCode == RESULT_OK && null != intent) {
+                    ArrayList<String> result = intent
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (result.get(0) != null) {
+                        String myResult = result.get(0);
+                        int type = getVoiceType(myResult);
+                        switch (type) {
+                            case 1:
+                                displaySearchResults(myResult);
+                                return;
+                            case 2:
+                                handleFridgeVoiceResult(myResult);
+                                return;
+                            default:
+                                displaySearchResults(myResult);
+                                return;
+                        }
+                    } else {
+                        return;
+                    }
+
+                }
+                super.onActivityResult(requestCode, resultCode, intent);
+                return;
+            }
+        }
         super.onActivityResult(requestCode, resultCode, intent);
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
@@ -285,6 +332,29 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+    }
+    
+    private int getVoiceType(String myResult) {
+        if (myResult.contains("I have")) {
+            return 2;
+        } else {
+            return  1;
+        }
+    }
+
+    private void displaySearchResults(String myResult) {
+        if (myResult.length() > 14) {
+            myResult = myResult.substring(14);
+        }
+
+        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+        i.putExtra("page", 0);
+        i.putExtra("VoiceResults", myResult.trim());
+        startActivity(i);
+    }
+
+    private void handleFridgeVoiceResult(String myResult) {
+
     }
 
     private static class SelectBtnListener implements View.OnClickListener {
@@ -398,6 +468,7 @@ public static class RecipesFragment extends ListFragment {
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static KitchnPalService mr = new KitchnPalService();
         private static UserDatabaseHelper userDbHelper;
+        private final int REQ_CODE_SEARCH_INPUT = 100;
 
         public SearchFragment() {
             mr = new KitchnPalService();
@@ -435,6 +506,16 @@ public static class RecipesFragment extends ListFragment {
             Button nameSearchBtn = (Button) view.findViewById(R.id.name_search);
             Button ingredientSearchBtn = (Button) view.findViewById(R.id.ingredient_search);
             Button allSearchBtn = (Button) view.findViewById(R.id.all_search);
+            
+            String voiceResults = getActivity().getIntent().getStringExtra("VoiceResults");
+            if (voiceResults != null && !voiceResults.equals("")) {
+                String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
+                User user = User.getInstance();
+                user.setAccessToken(accessToken);
+                displayNewNameResults(user, voiceResults, list);
+                String body = "Search Results for: " + voiceResults;
+                topView.setText(body);
+            }
 
             nameSearchBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
