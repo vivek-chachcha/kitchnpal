@@ -2,7 +2,6 @@ package kitchnpal.sql;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,11 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kitchnpal.kitchnpal.Diet;
-import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.Intolerance;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
-import kitchnpal.servicerequest.MakeRequest;
 
 public class UserDatabaseHelper extends DatabaseHelper {
 

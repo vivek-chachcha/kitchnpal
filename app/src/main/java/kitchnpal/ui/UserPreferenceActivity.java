@@ -23,7 +23,7 @@ import kitchnpal.kitchnpal.Intolerance;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.RecipePreference;
 import kitchnpal.kitchnpal.User;
-import kitchnpal.servicerequest.MakeRequest;
+import kitchnpal.servicerequest.UserService;
 import kitchnpal.servicerequest.VolleySingleton;
 import kitchnpal.sql.UserDatabaseHelper;
 
@@ -93,14 +93,14 @@ public class UserPreferenceActivity extends AppCompatActivity {
                 user.setNumCalPerDay(i);
                 dbHelper.updateUserCalories(user);
 
-                MakeRequest mr = new MakeRequest();
+                UserService us = new UserService();
                 RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
                 if (isNewUser) {
-                    mr.createUser(user, queue, dbHelper);
+                    us.createUser(user, queue, dbHelper);
                 } else {
                     String accessToken = dbHelper.getUserAccessToken(user.getEmail());
                     user.setAccessToken(accessToken);
-                    mr.updateUser(user, queue);
+                    us.updateUser(user, queue);
                 }
                 nextPage();
             }

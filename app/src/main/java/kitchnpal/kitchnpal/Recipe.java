@@ -1,13 +1,11 @@
 package kitchnpal.kitchnpal;
 
 import android.graphics.drawable.Drawable;
-import android.widget.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
-import kitchnpal.servicerequest.MakeRequest;
+import kitchnpal.servicerequest.KitchnPalService;
 
 /**
  * Created by matt on 2017-02-23.
@@ -18,14 +16,14 @@ public class Recipe {
     private ArrayList<String> instructions;
     private Drawable recipeImage;
     private int id;
-    private MakeRequest mr;
+    private KitchnPalService mr;
 
     public Recipe(String name, int id, ArrayList<Ingredient> ingreds, ArrayList<String> instructs) {
         recipeName = name;
         ingredients = ingreds;
         instructions = instructs;
         this.id = id;
-        mr  = new MakeRequest();
+        mr  = new KitchnPalService();
     }
 
     public Recipe(String title, int id) {

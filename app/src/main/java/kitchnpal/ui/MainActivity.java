@@ -2,17 +2,14 @@ package kitchnpal.ui;
 
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.speech.SpeechRecognizer;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -22,7 +19,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -48,7 +44,7 @@ import kitchnpal.kitchnpal.QuantityType;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
-import kitchnpal.servicerequest.MakeRequest;
+import kitchnpal.servicerequest.KitchnPalService;
 import kitchnpal.servicerequest.VolleySingleton;
 import kitchnpal.sql.FridgeDatabaseHelper;
 import kitchnpal.sql.UserDatabaseHelper;
@@ -248,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
             final FridgeDatabaseHelper fridgeDbHelper = new FridgeDatabaseHelper(activityContext);
             final Fridge fridge = Fridge.getInstance();
 
-            MakeRequest mr = new MakeRequest();
+            KitchnPalService mr = new KitchnPalService();
             RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
             mr.getIngredientByUpcCode(scanContent.trim(), queue, tv);
             builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
@@ -400,11 +396,11 @@ public static class RecipesFragment extends ListFragment {
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
-        private static MakeRequest mr = new MakeRequest();
+        private static KitchnPalService mr = new KitchnPalService();
         private static UserDatabaseHelper userDbHelper;
 
         public SearchFragment() {
-            mr = new MakeRequest();
+            mr = new KitchnPalService();
         }
 
         /**

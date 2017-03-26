@@ -13,7 +13,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import android.speech.tts.TextToSpeech;
@@ -31,7 +30,7 @@ import java.util.List;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
-import kitchnpal.servicerequest.MakeRequest;
+import kitchnpal.servicerequest.KitchnPalService;
 import kitchnpal.servicerequest.VolleySingleton;
 import kitchnpal.sql.UserDatabaseHelper;
 
@@ -74,7 +73,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         TextView ingredientView = (TextView)findViewById(R.id.ingredients);
         TextView instructionView = (TextView)findViewById(R.id.instructions);
         ArrayList<Recipe> myFavs = helper.getFavourites(user.getEmail());
-        final MakeRequest mr = new MakeRequest();
+        final KitchnPalService mr = new KitchnPalService();
         Recipe toDisplay = null;
         for (Recipe r : myFavs) {
             if (r.getId() == recipeId) {
