@@ -410,7 +410,41 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void handleFridgeVoiceResult(String myResult) {
-        
+        String quantity = myResult.substring(3);
+        QuantityType qt = quantity.stringToType(quantity);
+        ArrayList<QuantityType> qtList = new ArrayList<QuantityType>();
+
+        String ingredientName = myresult.substring(5);
+        double num = Double.parseDouble(ingredientName);
+        ArrayList<Double> doubleList = new ArrayList<Double>();
+
+        // for example: "I have 2lbs of bananas, 5 grams of butter, and 4 cups of flour"
+        // split = ['I have 2lbs of bananas','5 grams of butter', 'and 4 cups of flour']
+        if (myResult.contains(",")) {
+            String[] split = myResult.split(",");
+        }
+
+        if (split[0] == num && split[1] == qt) {
+            num = split[0];
+            quantity = split[1];
+            qtList.add(qt);
+            doubleList.add(num);
+        } else if (split[0] == "and") {
+                num = split[1];
+                quantity = split[2];
+                qtList.add(qt);
+                doubleList.add(num);
+            }
+         else {
+            (split[0] == "I") {
+                num = split[4];
+                quantity = split[5];
+                qtList.add(qt);
+                doubleList.add(num);
+
+            }
+        }
+
     }
 
     private static class SelectBtnListener implements View.OnClickListener {
