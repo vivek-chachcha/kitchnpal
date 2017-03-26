@@ -73,7 +73,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     static private Activity activity;
-    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private final int REQ_CODE_SEARCH_INPUT = 100;
+    private final int REQ_CODE_FRIDGE_INPUT = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,13 +99,13 @@ public class MainActivity extends AppCompatActivity {
         int defaultValue = 0;
         int page = getIntent().getIntExtra("page", defaultValue);
         mViewPager.setCurrentItem(page);
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                promptSpeechInput();
-            }
-        });
+//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                promptSpeechInput();
+//            }
+//        });
 
     }
 
@@ -133,21 +134,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void promptSpeechInput() {
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-                getString(R.string.speech_prompt));
-        try {
-            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-        } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
-                    getString(R.string.speech_not_supported),
-                    Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void promptSpeechInput() {
+//        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+////        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+//        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+//                getString(R.string.speech_prompt));
+//        try {
+//            startActivityForResult(intent, REQ_CODE_SEARCH_INPUT);
+//        } catch (ActivityNotFoundException a) {
+//            Toast.makeText(getApplicationContext(),
+//                    getString(R.string.speech_not_supported),
+//                    Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     public static class FridgeFragment extends ListFragment {
         /**
@@ -160,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
 
         private List<Ingredient> myIngredients;
         private List<String> ingredientsString;
+        private int REQ_CODE_FRIDGE_INPUT = 200;
 
         public FridgeFragment() {
         }
@@ -186,6 +188,13 @@ public class MainActivity extends AppCompatActivity {
             fridge = Fridge.getInstance();
             myIngredients = helper.getIngredients();
             ingredientsString = Ingredient.ingredientsToString(myIngredients);
+            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.speak);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    promptSpeechInput();
+                }
+            });
 
             return rootView;
         }
@@ -238,17 +247,31 @@ public class MainActivity extends AppCompatActivity {
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
-                        }});
+                        }
+                    });
 
             AlertDialog dialog = builder.create();
             dialog.show();
+        }
+        private void promptSpeechInput() {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                    getString(R.string.speech_prompt));
+            try {
+                startActivityForResult(intent, REQ_CODE_FRIDGE_INPUT);
+            } catch (ActivityNotFoundException a) {
+                Log.i("Activity Not Found", "NOT FOUND EXCEPTION");
+            }
         }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         switch (requestCode) {
-            case REQ_CODE_SPEECH_INPUT: {
+            case REQ_CODE_SEARCH_INPUT: {
                 if (resultCode == RESULT_OK && null != intent) {
                     final UserDatabaseHelper userDbHelper = new UserDatabaseHelper(this);
 
@@ -266,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
                         LayoutInflater li = LayoutInflater.from(getApplicationContext());
                         final View view1 = li.inflate(R.layout.name_search_popup, null);
                         EditText input = (EditText) view1.findViewById(R.id.name_search_text);
-                        input.setText(myText);
+                        input.setText(myText, TextView.BufferType.EDITABLE);
                         builder.setTitle("Search by Name")
                                 .setView(view1)
                                 .setPositiveButton("Search", new DialogInterface.OnClickListener() {
@@ -277,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                                         User user = User.getInstance();
                                         user.setAccessToken(accessToken);
                                         EditText input = (EditText) view1.findViewById(R.id.name_search_text);
-                                        input.setText(myText);
+                                        input.setText(myText, TextView.BufferType.EDITABLE);
                                         String text = input.getText().toString().trim();
                                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                                         i.putExtra("page", 0);
@@ -298,6 +321,13 @@ public class MainActivity extends AppCompatActivity {
 
                 }
                 super.onActivityResult(requestCode, resultCode, intent);
+                return;
+            }
+
+            case REQ_CODE_FRIDGE_INPUT: {
+                if (resultCode == RESULT_OK && null != intent) {
+                     
+                }
                 return;
             }
 
@@ -366,16 +396,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
-    private void displayNewNameResults(User user, String searchTerm, ListView list) {
-        ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1);
-
-        RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
-        MakeRequest mr = new MakeRequest();
-        mr.getRecipesWithSearchTerm(user, searchTerm, queue, arrayAdapter, list);
-    }
-
     private static class SelectBtnListener implements View.OnClickListener {
 
         private CharSequence[] options;
@@ -430,7 +450,6 @@ public static class RecipesFragment extends ListFragment {
         private ArrayList<Recipe> myFavs;
         private UserDatabaseHelper helper;
         private User user;
-        private final int REQ_CODE_SPEECH_INPUT = 100;
 
         public RecipesFragment() {
         }
@@ -488,6 +507,7 @@ public static class RecipesFragment extends ListFragment {
         private static final String ARG_SECTION_NUMBER = "section_number";
         private static MakeRequest mr = new MakeRequest();
         private static UserDatabaseHelper userDbHelper;
+        private final int REQ_CODE_SEARCH_INPUT = 100;
 
         public SearchFragment() {
             mr = new MakeRequest();
@@ -511,17 +531,16 @@ public static class RecipesFragment extends ListFragment {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView topView = (TextView) rootView.findViewById(R.id.section_label);
             userDbHelper = new UserDatabaseHelper(getActivity());
-
+            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    promptSpeechInput();
+                }
+            });
 
             String body = "Search Results for: ";
             topView.setText(body);
-//            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-//            fab.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    promptSpeechInput();
-//                }
-//            });
 
             return rootView;
         }
@@ -634,21 +653,19 @@ public static class RecipesFragment extends ListFragment {
             startActivity(i);
         }
 
-//        private void promptSpeechInput() {
-//            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-//                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-////        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-//            intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-//                    getString(R.string.speech_prompt));
-//            try {
-//                startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-//            } catch (ActivityNotFoundException a) {
-//                Toast.makeText(getApplicationContext(),
-//                        getString(R.string.speech_not_supported),
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        }
+        private void promptSpeechInput() {
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                    getString(R.string.speech_prompt));
+            try {
+                startActivityForResult(intent, REQ_CODE_SEARCH_INPUT);
+            } catch (ActivityNotFoundException a) {
+                Log.i("Activity Not Found", "NOT FOUND EXCEPTION");
+            }
+        }
     }
 
     /**
