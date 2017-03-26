@@ -37,8 +37,9 @@ import kitchnpal.sql.UserDatabaseHelper;
 public class RecipeDisplayActivity extends AppCompatActivity implements OnInitListener {
 
     private TextToSpeech myTTS;
-    private int MY_DATA_CHECK_CODE = 0;
+    private final int MY_DATA_CHECK_CODE = 0;
     private int currentStep = 0;
+    private final int REQ_CODE_RECIPE_INPUT = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,18 +215,44 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
     }
 
 
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQ_CODE_RECIPE_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    if (result.get(0) != null) {
+                        String myResult = result.get(0);
+                        
+                        //Do Stuff With Voice Result here
+                        if (myResult.trim().equalsIgnoreCase("next")) {
 
-        if (requestCode == MY_DATA_CHECK_CODE) {
-            if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
-                //the user has the necessary data - create the TTS
-                myTTS = new TextToSpeech(this, this);
+                        } else if (myResult.trim().equalsIgnoreCase("repeat")) {
+
+                        }
+                        else {
+                            
+                        }
+                    } else {
+                        return;
+                    }
+
+                }
+                super.onActivityResult(requestCode, resultCode, data);
+                return;
             }
-            else {
-                //no data - install it now
-                Intent installTTSIntent = new Intent();
-                installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
-                startActivity(installTTSIntent);
+            case MY_DATA_CHECK_CODE: {
+                if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                    //the user has the necessary data - create the TTS
+                    myTTS = new TextToSpeech(this, this);
+                }
+                else {
+                    //no data - install it now
+                    Intent installTTSIntent = new Intent();
+                    installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                    startActivity(installTTSIntent);
+                }
             }
         }
     }
@@ -252,6 +279,22 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
             myTTS.shutdown();
         }
         super.onDestroy();
+    }
+    
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_RECIPE_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 }
 
