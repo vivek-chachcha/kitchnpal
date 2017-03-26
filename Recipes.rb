@@ -15,7 +15,9 @@ def get_recipes(params)
 		"Accept" => "application/json"
 		}
 
-	if (user['preferences'] == 'lowcal')
+	if (ingredients != "")
+		response.body['results'].sort_by!{|recipe| recipe['missedIngredientCount']}
+	elsif (user['preferences'] == 'lowcal')
 		response.body['results'].sort_by!{|recipe| recipe['calories']}
 	else
 		response.body['results'].sort_by!{|recipe| recipe['pricePerServing']}
