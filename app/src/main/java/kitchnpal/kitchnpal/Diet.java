@@ -33,6 +33,9 @@ public enum Diet {
     }
 
     public static Diet stringToDiet(String s) {
+        if (s == null) {
+            return null;
+        }
         switch(s) {
             case "Pescetarian":
                 return PESCETARIAN;
