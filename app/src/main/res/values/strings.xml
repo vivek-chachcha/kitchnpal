@@ -81,6 +81,9 @@
     <string name="search_tab_body">Search for new recipes</string>
     <string name="fridge_tab_body">My Ingredients</string>
 
+    <string name="speech_prompt">Speak</string>
+    <string name="speech_not_supported">Unavailable</string>
+
     <string name="title_activity_user_preference">User Preferences</string>
     <string name="user_name">Name</string>
     <string name="user_calories">Calorie Intake Goal (per Day)</string>

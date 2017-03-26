@@ -2,11 +2,67 @@
 <items version="2" >
 
     <item
-        jar="/Users/matt/Documents/Kitchnpal2/app/build/intermediates/exploded-aar/com.android.volley/volley/1.0.0/jars/classes.jar"
+        jar="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/exploded-aar/com.android.support/animated-vector-drawable/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="de4db3785756bfb0915a9f59a9b3f2fea7407be4">
+        <dex dex="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/pre-dexed/debug/com.android.support-animated-vector-drawable-23.4.0_f25c2f4eda502094242c009c32e8aeddfbf9e907.jar" />
+    </item>
+    <item
+        jar="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/exploded-aar/com.android.volley/volley/1.0.0/jars/classes.jar"
         jumboMode="false"
         revision="23.0.2"
         sha1="2cd4b982617e544728de0782d718a58ce1b06e3f">
-        <dex dex="/Users/matt/Documents/Kitchnpal2/app/build/intermediates/pre-dexed/debug/com.android.volley-volley-1.0.0_7de35821dc54c19eff5a1f159592d0d004b7333b.jar" />
+        <dex dex="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/pre-dexed/debug/com.android.volley-volley-1.0.0_8dd09016540a9c4ee99040fed87b537572f0579f.jar" />
+    </item>
+    <item
+        jar="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ec75036c3c52e451d0cde50a5aedaf5fd32354a0">
+        <dex dex="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/pre-dexed/debug/com.android.support-recyclerview-v7-23.4.0_4ce5be16c478d95aeeaf2aa559aeb74b2c4c43c2.jar" />
+    </item>
+    <item
+        jar="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/libs/internal_impl-23.4.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ea3c07504d2c8f4b13aa17c45c1b68ed9c1c3674">
+        <dex dex="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/pre-dexed/debug/internal_impl-23.4.0_4876b758e4f460d289105f867e08adbab535b015.jar" />
+    </item>
+    <item
+        jar="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/exploded-aar/com.android.support/design/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="5326d9a850d491714fef8cbfaa9ea3416f0bf0d2">
+        <dex dex="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/pre-dexed/debug/com.android.support-design-23.4.0_b03b0b5fb81ed714b1db1819fe35912c6880920d.jar" />
+    </item>
+    <item
+        jar="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/exploded-aar/com.android.support/support-vector-drawable/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="c2c594cace5d83a3227b2b6e658ecbfd586d3ed9">
+        <dex dex="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/pre-dexed/debug/com.android.support-support-vector-drawable-23.4.0_e068c3c6efcaa881d3c071cb20fec36c0455bbb8.jar" />
+    </item>
+    <item
+        jar="/Users/linhphan/Library/Android/sdk/extras/android/m2repository/com/android/support/support-annotations/23.4.0/support-annotations-23.4.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="ffbe55fdb2bb456b1485831706a9eac3300bb6b8">
+        <dex dex="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/pre-dexed/debug/support-annotations-23.4.0_078213a48cb4daf8f8206231ee8a9a441eb3976e.jar" />
+    </item>
+    <item
+        jar="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="548f06de403a9409f00554b3ee12a9fdea0e236c">
+        <dex dex="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-23.4.0_c8d94776a021feda6c3df0fdb9c3870dcf3a4233.jar" />
+    </item>
+    <item
+        jar="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="67bd36ee9340ec7c254108936ad16b24bed160cc">
+        <dex dex="/Users/linhphan/Documents/KitchnPal/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-23.4.0_0b52653c0c0cd83fde595ecabcf4ca3eade03605.jar" />
     </item>
 
 </items>
