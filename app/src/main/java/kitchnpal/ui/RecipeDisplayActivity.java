@@ -132,71 +132,76 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         textToSpeech.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                        currentStep = 0;
-                        AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
-                        LayoutInflater li = LayoutInflater.from(activityContext);
-                        final View view1 = li.inflate(R.layout.recipe_voice_popup, null);
-                        builder.setTitle("Recipe now in read-aloud mode")
-                                .setView(view1)
-                                .setNegativeButton("Stop", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }});
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
+                Intent i = new Intent(getApplicationContext(), VoiceRecognitionTest.class);
+                startActivity(i);
+            }
+//             @Override
+//             public void onClick(View view) {
+//                         currentStep = 0;
+//                         AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
+//                         LayoutInflater li = LayoutInflater.from(activityContext);
+//                         final View view1 = li.inflate(R.layout.recipe_voice_popup, null);
+//                         builder.setTitle("Recipe now in read-aloud mode")
+//                                 .setView(view1)
+//                                 .setNegativeButton("Stop", new DialogInterface.OnClickListener() {
+//                                     public void onClick(DialogInterface dialog, int id) {
+//                                         dialog.cancel();
+//                                     }});
+//                         AlertDialog dialog = builder.create();
+//                         dialog.show();
 
 
-                final List<String> instructions = user.getRecipe().getInstructions();
+//                 final List<String> instructions = user.getRecipe().getInstructions();
 
 
-                speakWords(instructions.get(currentStep).replace("Directions", "").replace("[",""));
+//                 speakWords(instructions.get(currentStep).replace("Directions", "").replace("[",""));
 
 
-                Button repeat = (Button) view1.findViewById(R.id.instruction_repeat);
+//                 Button repeat = (Button) view1.findViewById(R.id.instruction_repeat);
 
-                Button next = (Button) view1.findViewById(R.id.instruction_next);
+//                 Button next = (Button) view1.findViewById(R.id.instruction_next);
 
-                Button previous = (Button) view1.findViewById(R.id.instruction_previous);
+//                 Button previous = (Button) view1.findViewById(R.id.instruction_previous);
 
-                repeat.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View view) {
-                        if (currentStep == 0){
-                            speakWords(instructions.get(currentStep).replace("Directions", "").replace("[",""));
-                        }
-                        else {
-                            speakWords(instructions.get(currentStep));
-                        }
-                    }
-                });
+//                 repeat.setOnClickListener(new View.OnClickListener() {
+//                     public void onClick(View view) {
+//                         if (currentStep == 0){
+//                             speakWords(instructions.get(currentStep).replace("Directions", "").replace("[",""));
+//                         }
+//                         else {
+//                             speakWords(instructions.get(currentStep));
+//                         }
+//                     }
+//                 });
 
-                next.setOnClickListener(new View.OnClickListener() {
-                                            public void onClick(View v) {
-                                                if (currentStep < instructions.size() - 1){
-                                                    currentStep += 1;
-                                                    speakWords(instructions.get(currentStep));
-                                                }
-                                                else {
-                                                    speakWords(instructions.get(instructions.size() - 1));
-                                                }
-                                            }
-                                        });
+//                 next.setOnClickListener(new View.OnClickListener() {
+//                                             public void onClick(View v) {
+//                                                 if (currentStep < instructions.size() - 1){
+//                                                     currentStep += 1;
+//                                                     speakWords(instructions.get(currentStep));
+//                                                 }
+//                                                 else {
+//                                                     speakWords(instructions.get(instructions.size() - 1));
+//                                                 }
+//                                             }
+//                                         });
 
-                previous.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        if (currentStep > 0) {
-                            currentStep -= 1;
+//                 previous.setOnClickListener(new View.OnClickListener() {
+//                     public void onClick(View v) {
+//                         if (currentStep > 0) {
+//                             currentStep -= 1;
 
-                            if (currentStep == 0) {
-                                speakWords(instructions.get(currentStep).replace("Directions", "").replace("[", ""));
-                            } else {
-                                speakWords(instructions.get(currentStep));
-                            }
-                        }
-                        else {
-                                speakWords(instructions.get(0).replace("Directions", "").replace("[", ""));
-                            }
+//                             if (currentStep == 0) {
+//                                 speakWords(instructions.get(currentStep).replace("Directions", "").replace("[", ""));
+//                             } else {
+//                                 speakWords(instructions.get(currentStep));
+//                             }
+//                         }
+//                         else {
+//                                 speakWords(instructions.get(0).replace("Directions", "").replace("[", ""));
+//                             }
 
-                    }
+//                     }
                 });
 
             }
