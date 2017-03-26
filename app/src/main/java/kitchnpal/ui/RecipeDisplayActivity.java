@@ -132,14 +132,13 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         textToSpeech.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                        // restart from beginning or start from where the user left off
                         currentStep = 0;
                         AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
                         LayoutInflater li = LayoutInflater.from(activityContext);
                         final View view1 = li.inflate(R.layout.recipe_voice_popup, null);
                         builder.setTitle("Recipe now in read-aloud mode")
                                 .setView(view1)
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                .setNegativeButton("Stop", new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
                                     }});
@@ -158,7 +157,6 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                 Button next = (Button) view1.findViewById(R.id.instruction_next);
 
                 Button previous = (Button) view1.findViewById(R.id.instruction_previous);
-                Button stop = (Button) view1.findViewById(R.id.instruction_stop);
 
                 repeat.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
@@ -201,12 +199,6 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                     }
                 });
 
-                stop.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        // stop voice mid-way?
-
-                    }
-                });
             }
 
 
@@ -248,6 +240,19 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         } else if (initStatus == TextToSpeech.ERROR) {
             Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+
+        //Close the Text to Speech Library
+        if(myTTS != null) {
+
+            myTTS.stop();
+            myTTS.shutdown();
+        }
+        super.onDestroy();
     }
 }
 
