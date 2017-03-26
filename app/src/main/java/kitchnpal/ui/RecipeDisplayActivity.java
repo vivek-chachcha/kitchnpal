@@ -1,5 +1,8 @@
 package kitchnpal.ui;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -7,10 +10,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-
 
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
@@ -24,7 +28,6 @@ import com.android.volley.toolbox.NetworkImageView;
 import java.util.ArrayList;
 import java.util.List;
 
-import kitchnpal.kitchnpal.Ingredient;
 import kitchnpal.kitchnpal.R;
 import kitchnpal.kitchnpal.Recipe;
 import kitchnpal.kitchnpal.User;
@@ -36,6 +39,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
 
     private TextToSpeech myTTS;
     private int MY_DATA_CHECK_CODE = 0;
+    private int currentStep = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,17 +126,87 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         });
 
 
+
         FloatingActionButton textToSpeech = (FloatingActionButton) findViewById(R.id.fab);
+        final Context activityContext = this;
         textToSpeech.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Now in read-aloud mode", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                        // restart from beginning or start from where the user left off
+                        currentStep = 0;
+                        AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
+                        LayoutInflater li = LayoutInflater.from(activityContext);
+                        final View view1 = li.inflate(R.layout.recipe_voice_popup, null);
+                        builder.setTitle("Recipe now in read-aloud mode")
+                                .setView(view1)
+                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }});
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
 
-                List<String> instructions = user.getRecipe().getInstructions();
-                System.out.println("instructions = " + instructions);
-                String wholeList = instructions.toString();
-                speakWords(wholeList);
+
+                final List<String> instructions = user.getRecipe().getInstructions();
+
+
+                speakWords(instructions.get(currentStep).replace("Directions", "").replace("[",""));
+
+
+                Button repeat = (Button) view1.findViewById(R.id.instruction_repeat);
+
+                Button next = (Button) view1.findViewById(R.id.instruction_next);
+
+                Button previous = (Button) view1.findViewById(R.id.instruction_previous);
+                Button stop = (Button) view1.findViewById(R.id.instruction_stop);
+
+                repeat.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View view) {
+                        if (currentStep == 0){
+                            speakWords(instructions.get(currentStep).replace("Directions", "").replace("[",""));
+                        }
+                        else {
+                            speakWords(instructions.get(currentStep));
+                        }
+                    }
+                });
+
+                next.setOnClickListener(new View.OnClickListener() {
+                                            public void onClick(View v) {
+                                                if (currentStep < instructions.size() - 1){
+                                                    currentStep += 1;
+                                                    speakWords(instructions.get(currentStep));
+                                                }
+                                                else {
+                                                    speakWords(instructions.get(instructions.size() - 1));
+                                                }
+                                            }
+                                        });
+
+                previous.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        if (currentStep > 0) {
+                            currentStep -= 1;
+
+                            if (currentStep == 0) {
+                                speakWords(instructions.get(currentStep).replace("Directions", "").replace("[", ""));
+                            } else {
+                                speakWords(instructions.get(currentStep));
+                            }
+                        }
+                        else {
+                                speakWords(instructions.get(0).replace("Directions", "").replace("[", ""));
+                            }
+
+                    }
+                });
+
+                stop.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        // stop voice mid-way?
+
+                    }
+                });
             }
 
 
@@ -147,6 +221,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         //speak straight away
         myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
     }
+
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
