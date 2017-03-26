@@ -3,9 +3,11 @@ package kitchnpal.ui;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -34,6 +36,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     static private Activity activity;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
         tabLayout.setTabTextColors(Color.parseColor("#D3D3D3"), Color.parseColor("#FF7F50"));
@@ -97,8 +102,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                promptSpeechInput();
             }
         });
 
@@ -127,6 +131,22 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public static class FridgeFragment extends ListFragment {
@@ -227,6 +247,50 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != intent) {
+                    final UserDatabaseHelper userDbHelper = new UserDatabaseHelper(this);
+
+
+                    ArrayList<String> result = intent
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    String myText = result.get(0).substring(14).trim();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    LayoutInflater li = LayoutInflater.from(getApplicationContext());
+                    final View view1 = li.inflate(R.layout.name_search_popup, null);
+                    EditText input = (EditText) view1.findViewById(R.id.name_search_text);
+                    input.setText(myText);
+                    builder.setTitle("Search by Name")
+                            .setView(view1)
+                            .setPositiveButton("Search", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+
+                                    String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
+                                    User user = User.getInstance();
+                                    user.setAccessToken(accessToken);
+                                    EditText input = (EditText) view1.findViewById(R.id.name_search_text);
+                                    String text = input.getText().toString().trim();
+                                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                    i.putExtra("page", 1);
+                                    i.putExtra("VoiceResults", text);
+                                    startActivity(i);
+                                }})
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }});
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+
+                }
+                super.onActivityResult(requestCode, resultCode, intent);
+                return;
+            }
+
+        }
         super.onActivityResult(requestCode, resultCode, intent);
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
 
@@ -291,6 +355,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+    private void displayNewNameResults(User user, String searchTerm, ListView list) {
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getApplicationContext(), android.R.layout.simple_list_item_1);
+
+        RequestQueue queue = VolleySingleton.getInstance(getApplicationContext()).getRequestQueue();
+        MakeRequest mr = new MakeRequest();
+        mr.getRecipesWithSearchTerm(user, searchTerm, queue, arrayAdapter, list);
+    }
+
     private static class SelectBtnListener implements View.OnClickListener {
 
         private CharSequence[] options;
@@ -345,6 +419,7 @@ public static class RecipesFragment extends ListFragment {
         private ArrayList<Recipe> myFavs;
         private UserDatabaseHelper helper;
         private User user;
+        private final int REQ_CODE_SPEECH_INPUT = 100;
 
         public RecipesFragment() {
         }
@@ -426,8 +501,17 @@ public static class RecipesFragment extends ListFragment {
             TextView topView = (TextView) rootView.findViewById(R.id.section_label);
             userDbHelper = new UserDatabaseHelper(getActivity());
 
+
             String body = "Search Results for: ";
             topView.setText(body);
+//            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+//            fab.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    promptSpeechInput();
+//                }
+//            });
+
             return rootView;
         }
 
@@ -439,6 +523,16 @@ public static class RecipesFragment extends ListFragment {
             Button nameSearchBtn = (Button) view.findViewById(R.id.name_search);
             Button ingredientSearchBtn = (Button) view.findViewById(R.id.ingredient_search);
             Button allSearchBtn = (Button) view.findViewById(R.id.all_search);
+
+            String voiceResults = getActivity().getIntent().getStringExtra("VoiceResults");
+            if (voiceResults != null && !voiceResults.equals("")) {
+                String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
+                User user = User.getInstance();
+                user.setAccessToken(accessToken);
+                displayNewNameResults(user, voiceResults, list);
+                String body = "Search Results for: " + voiceResults;
+                topView.setText(body);
+            }
 
             nameSearchBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -528,6 +622,22 @@ public static class RecipesFragment extends ListFragment {
             i.putExtra("recipe_id", recipeId);
             startActivity(i);
         }
+
+//        private void promptSpeechInput() {
+//            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+////        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+//            intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+//                    getString(R.string.speech_prompt));
+//            try {
+//                startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+//            } catch (ActivityNotFoundException a) {
+//                Toast.makeText(getApplicationContext(),
+//                        getString(R.string.speech_not_supported),
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        }
     }
 
     /**
