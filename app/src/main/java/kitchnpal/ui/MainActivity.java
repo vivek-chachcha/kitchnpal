@@ -99,13 +99,13 @@ public class MainActivity extends AppCompatActivity {
         int defaultValue = 0;
         int page = getIntent().getIntExtra("page", defaultValue);
         mViewPager.setCurrentItem(page);
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                promptSpeechInput();
-//            }
-//        });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                promptSpeechInput();
+            }
+        });
 
     }
 
@@ -134,21 +134,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-//    private void promptSpeechInput() {
-//        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-//                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-////        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-//        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
-//                getString(R.string.speech_prompt));
-//        try {
-//            startActivityForResult(intent, REQ_CODE_SEARCH_INPUT);
-//        } catch (ActivityNotFoundException a) {
-//            Toast.makeText(getApplicationContext(),
-//                    getString(R.string.speech_not_supported),
-//                    Toast.LENGTH_SHORT).show();
-//        }
-//    }
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SEARCH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
 
     public static class FridgeFragment extends ListFragment {
         /**
@@ -273,48 +273,22 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQ_CODE_SEARCH_INPUT: {
                 if (resultCode == RESULT_OK && null != intent) {
-                    final UserDatabaseHelper userDbHelper = new UserDatabaseHelper(this);
-
-
                     ArrayList<String> result = intent
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     if (result.get(0) != null) {
                         String myResult = result.get(0);
-                        if (myResult.length() > 14) {
-                            myResult = myResult.substring(14);
+                        int type = getVoiceType(myResult);
+                        switch (type) {
+                            case 1: 
+                                displaySearchResults(myResult);
+                                return;
+                            case 2:
+                                handleFridgeVoiceResult(myResult);
+                                return;
+                            default:
+                                displaySearchResults(myResult);
+                                return;
                         }
-                        final String myText = myResult;
-
-                        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                        LayoutInflater li = LayoutInflater.from(getApplicationContext());
-                        final View view1 = li.inflate(R.layout.name_search_popup, null);
-                        EditText input = (EditText) view1.findViewById(R.id.name_search_text);
-                        input.setText(myText, TextView.BufferType.EDITABLE);
-                        builder.setTitle("Search by Name")
-                                .setView(view1)
-                                .setPositiveButton("Search", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.dismiss();
-
-                                        String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
-                                        User user = User.getInstance();
-                                        user.setAccessToken(accessToken);
-                                        EditText input = (EditText) view1.findViewById(R.id.name_search_text);
-                                        input.setText(myText, TextView.BufferType.EDITABLE);
-                                        String text = input.getText().toString().trim();
-                                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                                        i.putExtra("page", 0);
-                                        i.putExtra("VoiceResults", text);
-                                        startActivity(i);
-                                    }
-                                })
-                                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
                     } else {
                         return;
                     }
@@ -323,14 +297,6 @@ public class MainActivity extends AppCompatActivity {
                 super.onActivityResult(requestCode, resultCode, intent);
                 return;
             }
-
-            case REQ_CODE_FRIDGE_INPUT: {
-                if (resultCode == RESULT_OK && null != intent) {
-                     
-                }
-                return;
-            }
-
         }
         super.onActivityResult(requestCode, resultCode, intent);
         IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
@@ -394,6 +360,57 @@ public class MainActivity extends AppCompatActivity {
             AlertDialog dialog = builder.create();
             dialog.show();
         }
+        
+    }
+    private int getVoiceType(String myResult) {
+        if (myResult.contains("I have")) {
+            return 2;
+        } else {
+            return  1;
+        }
+    }
+    
+    private void displaySearchResults(String myResult) {
+        if (myResult.length() > 14) {
+            myResult = myResult.substring(14);
+        }
+        final String myText = myResult;
+        final UserDatabaseHelper userDbHelper = new UserDatabaseHelper(this);
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater li = LayoutInflater.from(getApplicationContext());
+        final View view1 = li.inflate(R.layout.name_search_popup, null);
+        EditText input = (EditText) view1.findViewById(R.id.name_search_text);
+        input.setText(myText, TextView.BufferType.EDITABLE);
+        builder.setTitle("Search by Name")
+                .setView(view1)
+                .setPositiveButton("Search", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+
+                        String accessToken = userDbHelper.getUserAccessToken(User.getInstance().getEmail());
+                        User user = User.getInstance();
+                        user.setAccessToken(accessToken);
+                        EditText input = (EditText) view1.findViewById(R.id.name_search_text);
+                        input.setText(myText, TextView.BufferType.EDITABLE);
+                        String text = input.getText().toString().trim();
+                        Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                        i.putExtra("page", 0);
+                        i.putExtra("VoiceResults", text);
+                        startActivity(i);
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+    
+    private void handleFridgeVoiceResult(String myResult) {
+        
     }
 
     private static class SelectBtnListener implements View.OnClickListener {
@@ -531,13 +548,13 @@ public static class RecipesFragment extends ListFragment {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
             TextView topView = (TextView) rootView.findViewById(R.id.section_label);
             userDbHelper = new UserDatabaseHelper(getActivity());
-            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    promptSpeechInput();
-                }
-            });
+//            FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
+//            fab.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    promptSpeechInput();
+//                }
+//            });
 
             String body = "Search Results for: ";
             topView.setText(body);
