@@ -2,67 +2,54 @@ package kitchnpal.kitchnpal;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
- * Created by Mandy on 2017-03-26.
+ * Created by Jerry on 2017-03-26.
  */
 
 public class IngredientTest {
 
-    private Ingredient i = new Ingredient("Ingredient", 400, QuantityType.CUP);
+    Ingredient testIng = new Ingredient("Chicken", 3.0, QuantityType.CUPS);
+    Ingredient testIng2 = new Ingredient("Salt", 5.0, QuantityType.GRAMS);
 
     @Test
-    public void testIngredientToString() {
-        String iStr = i.ingredientToString();
-        assertEquals("Ingredient x 400.0 cup", iStr);
+    public void testIngredientToStringInFridge() throws Exception {
+        String result = testIng.ingredientToStringInFridge();
+        assertEquals("Chicken x 3.0 cups", result);
     }
 
     @Test
-    public void testIngredientName() {
-        String name = i.getIngredientName();
-        assertEquals("Ingredient", name);
+    public void testGetIngredientName() throws Exception {
+        String result = testIng.getIngredientName();
+        assertEquals("Chicken", result);
     }
 
     @Test
-    public void testIngredientQuantityType() {
-        QuantityType qt = i.getIngredientQuantityType();
-        assertEquals(QuantityType.CUP, qt);
-        String name = i.getQuantityTypeString();
-        assertEquals("cup", name);
+    public void testGetIngredientAmount() throws Exception {
+        double result = testIng.getIngredientAmount();
+        assertEquals(3.0, result, 0.01 );
     }
 
     @Test
-    public void testSetIngredientName() {
-        i.setIngredientName("New Ingredient");
-        assertEquals("New Ingredient", i.getIngredientName());
+    public void testGetIngredientQuantityType() throws Exception {
+        QuantityType result = testIng.getIngredientQuantityType();
+        assertEquals(QuantityType.CUPS, result);
     }
 
     @Test
-    public void testSetIngredientAmount() {
-        i.setIngredientAmount(300);
-        assertEquals((int) 300, (int) i.getIngredientAmount());
+    public void testGetQuantityTypeString() throws Exception {
+        String result = testIng.getQuantityTypeString();
+        assertEquals("cups", result);
     }
 
     @Test
-    public void testSetQuantityType() {
-        i.setQuantityType(QuantityType.GRAM);
-        assertEquals(QuantityType.GRAM, i.getIngredientQuantityType());
-    }
-
-    @Test
-    public void testIngredientsToString() {
-        List<Ingredient> ingredients = new ArrayList<>();
-        ingredients.add(new Ingredient("A", 1, QuantityType.CUP));
-        ingredients.add(new Ingredient("B", 2, QuantityType.LB));
-        ingredients.add(new Ingredient("C", 3, QuantityType.TABLESPOON));
-        List<String> ingredientStrs = Ingredient.ingredientsToString(ingredients);
-        assertEquals(3, ingredientStrs.size());
-        assertEquals("A x 1.0 cup", ingredientStrs.get(0));
-        assertEquals("B x 2.0 lb", ingredientStrs.get(1));
-        assertEquals("C x 3.0 tablespoon", ingredientStrs.get(2));
+    public void testIngredientsToString() throws Exception {
+        List<Ingredient> list2 = Arrays.asList(testIng, testIng2);
+        List<String> result = Ingredient.ingredientsToString(list2);
+        assertEquals(Arrays.asList("Chicken x 3.0 cups", "Salt x 5.0 grams"), result);
     }
 }
