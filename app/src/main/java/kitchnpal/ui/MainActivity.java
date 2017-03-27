@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Color;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -40,6 +41,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import kitchnpal.kitchnpal.Fridge;
 import kitchnpal.kitchnpal.Ingredient;
@@ -52,7 +54,7 @@ import kitchnpal.servicerequest.VolleySingleton;
 import kitchnpal.sql.FridgeDatabaseHelper;
 import kitchnpal.sql.UserDatabaseHelper;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TextToSpeech.OnInitListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -64,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private final int REQ_CODE_SEARCH_INPUT = 100;
+    private TextToSpeech myTTS;
+    private final int MY_DATA_CHECK_CODE = 0;
 
     /**
      * The {@link ViewPager} that will host the section contents.
@@ -100,7 +104,9 @@ public class MainActivity extends AppCompatActivity {
                 promptSpeechInput();
             }
         });
-
+        Intent checkTTSIntent = new Intent();
+        checkTTSIntent.setAction(TextToSpeech.Engine.ACTION_CHECK_TTS_DATA);
+        startActivityForResult(checkTTSIntent, MY_DATA_CHECK_CODE);
     }
 
 
@@ -245,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case REQ_CODE_SEARCH_INPUT: {
                 if (resultCode == RESULT_OK && null != intent) {
+                    myTTS = new TextToSpeech(this, this);
                     ArrayList<String> result = intent
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
                     if (result.get(0) != null) {
@@ -257,14 +264,31 @@ public class MainActivity extends AppCompatActivity {
                             case 2:
                                 handleFridgeVoiceResult(myResult);
                                 return;
+                            case 3:
+                                playErrorMessage();
+                                return;
                             default:
-                                displaySearchResults(myResult);
+                                playErrorMessage();
                                 return;
                         }
                     } else {
                         return;
                     }
 
+                }
+                super.onActivityResult(requestCode, resultCode, intent);
+                return;
+            }
+            case MY_DATA_CHECK_CODE: {
+                if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
+                    //the user has the necessary data - create the TTS
+                    myTTS = new TextToSpeech(this, this);
+                }
+                else {
+                    //no data - install it now
+                    Intent installTTSIntent = new Intent();
+                    installTTSIntent.setAction(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA);
+                    startActivity(installTTSIntent);
                 }
                 super.onActivityResult(requestCode, resultCode, intent);
                 return;
@@ -337,8 +361,28 @@ public class MainActivity extends AppCompatActivity {
     private int getVoiceType(String myResult) {
         if (myResult.contains("I have")) {
             return 2;
-        } else {
+        } else if (myResult.contains("I want to make") || myResult.contains("I wanna make")) {
             return  1;
+        } else {
+            return 3;
+        }
+    }
+
+    private void playErrorMessage() {
+        String speech = "That command is not supported.";
+        //speak straight away
+        myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+
+    }
+
+    public void onInit(int initStatus) {
+
+        //check for successful instantiation
+        if (initStatus == TextToSpeech.SUCCESS) {
+            if (myTTS.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
+                myTTS.setLanguage(Locale.US);
+        } else if (initStatus == TextToSpeech.ERROR) {
+            Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
     }
 
