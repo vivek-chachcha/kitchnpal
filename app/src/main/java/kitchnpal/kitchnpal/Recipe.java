@@ -35,11 +35,25 @@ public class Recipe {
         this.missedIngredientCount = missedIngredientCount;
     }
 
-    public String getName() { return recipeName; }
-    public List<Ingredient> getIngredients() { return ingredients; }
-    public List<String> getInstructions() { return instructions; }
-    public int getId() { return id; }
-    public int getMissedIngredientCount() { return missedIngredientCount; }
+    public String getName() {
+        return recipeName;
+    }
+
+    public List<Ingredient> getIngredients() {
+        return ingredients;
+    }
+
+    public List<String> getInstructions() {
+        return instructions;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getMissedIngredientCount() {
+        return missedIngredientCount;
+    }
 
     public void setIngredients(ArrayList<Ingredient> ingreds) {
         this.ingredients = ingreds;

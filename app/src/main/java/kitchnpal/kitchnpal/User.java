@@ -86,7 +86,9 @@ public class User {
         this.email = email;
     }
     
-    public Recipe getRecipe() { return this.currentRecipe; }
+    public Recipe getRecipe() {
+        return this.currentRecipe;
+    }
 
     public ArrayList<Recipe> getSearchResults() {
         return this.searchResults;
@@ -146,6 +148,5 @@ public class User {
 
     public void clearSearchResults() {
         this.searchResults = new ArrayList<>();
-
     }
 }

@@ -30,6 +30,9 @@ public enum RecipePreference {
     }
 
     public static RecipePreference stringToPreference(String s) {
+        if (s == null) {
+            return null;
+        }
         switch (s) {
             case "Lowest Calories":
                 return LOWCAL;
