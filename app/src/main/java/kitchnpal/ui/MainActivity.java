@@ -623,17 +623,13 @@ public static class RecipesFragment extends ListFragment {
 
 
         private void displayNewIngredientResults(User user, ArrayList<String> ingredients, ListView list) {
-            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
-
             RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
-            mr.getRecipesWithIngredients(user, ingredients, queue, arrayAdapter, list);
+            mr.getRecipesWithIngredients(user, ingredients, queue, getContext(), list);
         }
 
         private void displayNewNameResults(User user, String searchTerm, ListView list) {
-            ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1);
-
             RequestQueue queue = VolleySingleton.getInstance(getContext()).getRequestQueue();
-            mr.getRecipesWithSearchTerm(user, searchTerm, queue, arrayAdapter, list);
+            mr.getRecipesWithSearchTerm(user, searchTerm, queue, getContext(), list);
         }
 
         @Override
@@ -642,7 +638,8 @@ public static class RecipesFragment extends ListFragment {
 
             //Look at individual recipe
             Object p = l.getItemAtPosition(position);
-            String name = p.toString().trim();
+            String temp = p.toString().trim();
+            String name = temp.substring(temp.indexOf("title=") + 6, temp.lastIndexOf("}"));
             int recipeId = Integer.parseInt(mr.searchCache.get(name));
             Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
             i.putExtra("recipe_name", name);
