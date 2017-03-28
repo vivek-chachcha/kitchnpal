@@ -68,7 +68,7 @@ public class KitchnPalService {
         queue.add(jsonRequest);
     }
 
-    public void getRecipesWithSearchTerm(User user, String searchTerm, RequestQueue queue, final ArrayAdapter adapter, final ListView list) {
+    public void getRecipesWithSearchTerm(User user, String searchTerm, RequestQueue queue, final Context context, final ListView list) {
         User.getInstance().clearSearchResults();
         if (!searchTerm.equals("")) {
             searchTerm = searchTerm.replaceAll("\\s","+");
@@ -80,7 +80,7 @@ public class KitchnPalService {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            ArrayList<Recipe> results = getParsedRecipes(new JSONObject(response).getJSONArray("recipes"), adapter, list);
+                            ArrayList<Recipe> results = getParsedRecipes(new JSONObject(response).getJSONArray("recipes"), context, list, false);
                             User.getInstance().setSearchResults(results);
                         } catch(JSONException e) {
                             e.printStackTrace();
@@ -95,7 +95,7 @@ public class KitchnPalService {
         queue.add(jsonRequest);
     }
 
-    public void getRecipesWithIngredients(User user, ArrayList<String> ingredients, RequestQueue queue, final ArrayAdapter adapter, final ListView list) {
+    public void getRecipesWithIngredients(User user, ArrayList<String> ingredients, RequestQueue queue, final Context context, final ListView list) {
         User.getInstance().clearSearchResults();
 
         String url = "http://35.166.124.250:4567/recipes?accessToken=" + user.getAccessToken() + "&name=";
@@ -113,7 +113,7 @@ public class KitchnPalService {
                     @Override
                     public void onResponse(String response) {
                         try {
-                            ArrayList<Recipe> results = getParsedRecipes(new JSONObject(response).getJSONArray("recipes"), adapter, list);
+                            ArrayList<Recipe> results = getParsedRecipes(new JSONObject(response).getJSONArray("recipes"), context, list, true);
                             User.getInstance().setSearchResults(results);
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -171,29 +171,51 @@ public class KitchnPalService {
         }
     }
 
-    private ArrayList<Recipe> getParsedRecipes(JSONArray array, ArrayAdapter adapter, ListView list) {
+    private ArrayList<Recipe> getParsedRecipes(JSONArray array, Context context, ListView list, boolean ingSearch) {
         ArrayList<Recipe> results = new ArrayList<Recipe>();
         try {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject temp = array.getJSONObject(i);
                 String title = temp.getString("title").trim();
                 int id = temp.getInt("id");
-                Recipe recipe = new Recipe(title.trim(), id);
                 if (!searchCache.containsKey(title.trim())) {
                     searchCache.put(title.trim(), Integer.toString(id));
                 }
-
-                results.add(recipe);
+                if (ingSearch) {
+                    int missedIngredientCount = temp.getInt("missedIngredientCount");
+                    Recipe recipe = new Recipe(title.trim(), id, missedIngredientCount);
+                    results.add(recipe);
+                } else {
+                    Recipe recipe = new Recipe(title.trim(), id);
+                    results.add(recipe);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        String[] arr = new String[results.size()];
-        for (int i = 0; i < results.size(); i++) {
-            arr[i] = results.get(i).getName();
+        if (ingSearch) {
+            List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+            for (int i = 0; i < results.size(); i++) {
+                Map<String, String> datum = new HashMap<String, String>(2);
+                datum.put("title", results.get(i).getName());
+                datum.put("count", "  - Missing " + Integer.toString(results.get(i).getMissedIngredientCount()) + " Ingredients");
+                data.add(datum);
+            }
+            SimpleAdapter adapter = new SimpleAdapter(context, data,
+                    android.R.layout.simple_list_item_2,
+                    new String[] {"title", "count"},
+                    new int[] {android.R.id.text1,
+                            android.R.id.text2});
+            list.setAdapter(adapter);
         }
-        adapter.addAll(arr);
-        list.setAdapter(adapter);
+        else {
+            String[] arr = new String[results.size()];
+            for (int i = 0; i < results.size(); i++) {
+                arr[i] = results.get(i).getName();
+            }
+            ArrayAdapter adapter = new ArrayAdapter(context, android.R.layout.simple_list_item_1, arr);
+            list.setAdapter(adapter);
+        }
         return results;
     }
 
