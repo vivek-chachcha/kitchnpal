@@ -15,6 +15,7 @@ public class Recipe {
     private ArrayList<Ingredient> ingredients;
     private ArrayList<String> instructions;
     private int id;
+    private int missedIngredientCount;
 
     public Recipe(String name, int id, ArrayList<Ingredient> ingreds, ArrayList<String> instructs) {
         recipeName = name;
@@ -27,11 +28,18 @@ public class Recipe {
         recipeName = title;
         this.id = id;
     }
+    
+    public Recipe(String title, int id, int missedIngredientCount) {
+        recipeName = title;
+        this.id = id;
+        this.missedIngredientCount = missedIngredientCount;
+    }
 
     public String getName() { return recipeName; }
     public List<Ingredient> getIngredients() { return ingredients; }
     public List<String> getInstructions() { return instructions; }
     public int getId() { return id; }
+    public int getMissedIngredientCount() { return missedIngredientCount; }
 
     public void setIngredients(ArrayList<Ingredient> ingreds) {
         this.ingredients = ingreds;
