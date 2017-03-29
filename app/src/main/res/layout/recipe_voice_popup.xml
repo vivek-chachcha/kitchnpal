@@ -3,26 +3,38 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="25dp"
-    android:padding="25dp">
+    android:padding="25dp"
+    android:layout_gravity="center">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Voice commands can also be used. Valid voice commands include: 'Repeat', 'Next Step', 'Previous Step', or 'Stop Reading'."
+        android:layout_margin="10dp"/>
 
-    <Button android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Repeat"
-            android:id="@+id/instruction_repeat"
-            android:onClick="dismissListener"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Repeat"
+        android:id="@+id/instruction_repeat"
+        android:onClick="dismissListener"
+        android:layout_margin="10dp"/>
 
-    <Button android:layout_width="wrap_content"
+    <Button
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Next Step"
         android:id="@+id/instruction_next"
-        android:onClick="dismissListener"/>
+        android:onClick="dismissListener"
+        android:layout_margin="10dp"/>
 
-    <Button android:layout_width="wrap_content"
+    <Button
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Previous Step"
         android:id="@+id/instruction_previous"
-        android:onClick="dismissListener"/>
+        android:onClick="dismissListener"
+        android:layout_margin="10dp"/>
 
 
 </LinearLayout> 
