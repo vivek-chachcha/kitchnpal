@@ -265,10 +265,10 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                                 handleFridgeVoiceResult(myResult);
                                 return;
                             case 3:
-                                playErrorMessage();
+                                playErrorMessage("That command is not supported");
                                 return;
                             default:
-                                playErrorMessage();
+                                playErrorMessage("That command is not supported");
                                 return;
                         }
                     } else {
@@ -368,8 +368,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         }
     }
 
-    private void playErrorMessage() {
-        String speech = "That command is not supported.";
+    private void playErrorMessage(String speech) {
         //speak straight away
         myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 
