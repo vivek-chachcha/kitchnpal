@@ -5,6 +5,7 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -15,6 +16,21 @@ public class IngredientTest {
 
     Ingredient testIng = new Ingredient("Chicken", 3.0, QuantityType.CUPS);
     Ingredient testIng2 = new Ingredient("Salt", 5.0, QuantityType.GRAMS);
+
+    @Test
+    public void testIngredientToStringNull() throws Exception {
+        List<String> ingredients = Ingredient.ingredientsToString(null);
+        assertNull(ingredients);
+    }
+
+    @Test
+    public void testSetIngredient() throws Exception {
+        Ingredient i = new Ingredient("Ingredient A", 100, QuantityType.UNIT);
+        i.setIngredientAmount(200);
+        i.setIngredientName("Ingredient B");
+        i.setQuantityType(QuantityType.GRAM);
+        assertEquals("Ingredient B x 200.0 gram", i.ingredientToStringInFridge());
+    }
 
     @Test
     public void testIngredientToStringInFridge() throws Exception {
