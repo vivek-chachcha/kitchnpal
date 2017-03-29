@@ -101,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         int page = getIntent().getIntExtra("page", defaultValue);
         mViewPager.setCurrentItem(page);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setImageResource(R.drawable.mic);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

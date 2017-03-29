@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.UtteranceProgressListener;
@@ -96,6 +97,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         }
 
         final FloatingActionButton toggleFav = (FloatingActionButton) findViewById(R.id.toggleFavourite);
+        toggleFav.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFab)));
         boolean inThere = false;
         for (Recipe rec : myFavs) {
             if (recipeId == rec.getId()) {
@@ -105,7 +107,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         if (!inThere) {
             toggleFav.setImageResource(R.drawable.fav);
         } else {
-            toggleFav.setImageResource(R.drawable.fav_set);
+            toggleFav.setImageResource(R.drawable.fav_set_orange);
         }
         toggleFav.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +125,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                     helper.updateUserFavourites(user);
                     Snackbar.make(view, "Added To Your Favourites", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
-                    toggleFav.setImageResource(R.drawable.fav_set);
+                    toggleFav.setImageResource(R.drawable.fav_set_orange);
                 } else {
                     user.removeFavourite(recipe);
                     helper.updateUserFavourites(user);
@@ -135,6 +137,8 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         });
 
         FloatingActionButton textToSpeech = (FloatingActionButton) findViewById(R.id.fab);
+        textToSpeech.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.colorFab)));
+        textToSpeech.setImageResource(R.drawable.mic);
         final Context activityContext = this;
         textToSpeech.setOnClickListener(new View.OnClickListener() {
             @Override
