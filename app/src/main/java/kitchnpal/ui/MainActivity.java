@@ -457,52 +457,86 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     
     private void handleFridgeVoiceResult(String myResult) {
 
-        String unit = " ";
-        QuantityType qt = unit.stringToType(unit);
-        ArrayList<QuantityType> qtList = new ArrayList<QuantityType>();
+        String[] arr = myResult.trim().split(" ");
+        if (arr.length < 6) {
+            System.out.println("Unsupported command");
+        }
+        addIngredientToFridge(arr[5], arr[2], arr[3]);
+        System.out.println("Ingredients have been added to the fridge");
 
-        String ingredientName;
-        String amount = "";
-        double num = Double.parseDouble(amount);
-        ArrayList<Double> doubleList = new ArrayList<Double>();
-        ArrayList<String> ingredients = new ArrayList<String>();
-        // for example: "I have 2lbs of bananas, 5 grams of butter, and 4 cups of flour"
-        // split = ['I have 2lbs of bananas','5 grams of butter', 'and 4 cups of flour']
-        if (myResult.contains(" ")) {
-            String[] split = myResult.split(" ");
+        boolean multipleItems = false;
+        if (arr.length > 6) {
+            multipleItems = true;
         }
 
+        int multiplier = 0;
+        int index = 0;
 
-        // ["I", "have", "2", "lbs", "of", "apples"]
-        if (split.length() <= 6) {
-            ingredientName = split[5];
-            unit = split[3];
-            qt = unit.stringToType(unit);
-            num = split[2];
-            qtList.add(qt);
-            doubleList.add(num);
-            ingredients.add(ingredientName);
-        }
-
-        for (int i = 6; i <= split.length(); i++) {
-            // ["I", "have", "2", "lbs", "of", "apples", and, 5, grams, of, butter]
-            if (split.length() > 6 && split.contains("and")) {
-                String[] newArray = Arrays.copyOfRange(split, 7, split.length);
-                //returns [and ,5, grams, of, butter]
-                ingredientName = split[4];
-                unit = split[2];
-                qt = unit.stringToType(unit);
-                num = split[1];
-                qtList.add(qt);
-                doubleList.add(num);
-                ingredients.add(ingredientName);
-
+        while (multipleItems) {
+            if (arr[6 + index].equalsIgnoreCase("and") && arr.length > 11 + index) {
+                addIngredientToFridge(arr[10 + index], arr[7 + index], arr[8 + index]);
+                multiplier++;
+                index += (5 * multiplier);
+            } else {
+                multipleItems = false;
             }
-
         }
+    }
+
+    private void addIngredientToFridge(String name, String quantity, String type) {
+        double amount = Double.parseDouble(quantity);
+        QuantityType qt = QuantityType.stringToType(type);
+        Ingredient ingredient = new Ingredient(name, amount, qt);
+        FridgeDatabaseHelper helper = new FridgeDatabaseHelper(getApplicationContext());
+        helper.addIngredient(ingredient);
+    }
+
+//        String unit = " ";
+//        QuantityType qt = unit.stringToType(unit);
+//        ArrayList<QuantityType> qtList = new ArrayList<QuantityType>();
+//
+//        String ingredientName;
+//        String amount = "";
+//        double num = Double.parseDouble(amount);
+//        ArrayList<Double> doubleList = new ArrayList<Double>();
+//        ArrayList<String> ingredients = new ArrayList<String>();
+//        // for example: "I have 2lbs of bananas, 5 grams of butter, and 4 cups of flour"
+//        // split = ['I have 2lbs of bananas','5 grams of butter', 'and 4 cups of flour']
+//        if (myResult.contains(" ")) {
+//            String[] split = myResult.split(" ");
+//        }
+//
+//
+//        // ["I", "have", "2", "lbs", "of", "apples"]
+//        if (split.length() <= 6) {
+//            ingredientName = split[5];
+//            unit = split[3];
+//            qt = unit.stringToType(unit);
+//            num = split[2];
+//            qtList.add(qt);
+//            doubleList.add(num);
+//            ingredients.add(ingredientName);
+//        }
+//
+//        for (int i = 6; i <= split.length(); i++) {
+//            // ["I", "have", "2", "lbs", "of", "apples", and, 5, grams, of, butter]
+//            if (split.length() > 6 && split.contains("and")) {
+//                String[] newArray = Arrays.copyOfRange(split, 7, split.length);
+//                //returns [and ,5, grams, of, butter]
+//                ingredientName = split[4];
+//                unit = split[2];
+//                qt = unit.stringToType(unit);
+//                num = split[1];
+//                qtList.add(qt);
+//                doubleList.add(num);
+//                ingredients.add(ingredientName);
+//
+//            }
+//
+//        }
         
 
-    }
+
 
     private static class SelectBtnListener implements View.OnClickListener {
 
