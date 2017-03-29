@@ -1,5 +1,6 @@
 ENV['RACK_ENV'] = 'test'
 
+require 'json'
 require_relative 'KitchnPal'
 require 'test/unit'
 require 'rack/test'
@@ -17,8 +18,7 @@ class KitchnPalTest < Test::Unit::TestCase
 		assert last_response.ok?
 		assert last_response.body.include?("TestUser")
 		assert last_response.body.include?($email)
-		$user = last_response.body
-		puts $user
+		$user = JSON.parse(last_response.body)['user']
 	end
 
 	def test_create_user_no_params
@@ -37,8 +37,8 @@ class KitchnPalTest < Test::Unit::TestCase
 	end
 
 	def test_get_user_no_email
-		get "/users/", params = {:accessToken = $user['accessToken']}
-		assert last_response.body.include?("required parameters")
+		get "/users/", params = {:accessToken => $user['accessToken']}
+		assert !last_response.ok?
 	end
 
 	def test_get_user_no_accesstoken
@@ -47,19 +47,19 @@ class KitchnPalTest < Test::Unit::TestCase
 	end
 
 	def test_get_user_invalid_token
-		get "/users/" + $email, params = {:accessToken = $user['accessToken']+"123"}
+		get "/users/" + $email, params = {:accessToken => $user['accessToken']+"123"}
 		assert last_response.body.include?("invalid access token")
 	end
 
 	def test_get_user_invalid_email
-		get "/users/" + $email + $email, params = {:accessToken = $user["accessToken"]}
+		get "/users/" + $email + $email, params = {:accessToken => $user["accessToken"]}
 		assert last_response.body.include?("invalid user")
 	end
 
 	def test_get_user
-		get "/users/" + $email, params = {:accessToken = $user["accessToken"]}
+		get "/users/" + $email, params = {:accessToken => $user["accessToken"]}
 		assert last_response.body.include?("success")
-		assert last_response.body.include?($user)
+		assert JSON.parse(last_response.body)['user'] == $user.to_s
 	end
 
 end
