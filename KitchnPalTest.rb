@@ -62,4 +62,35 @@ class KitchnPalTest < Test::Unit::TestCase
 		assert JSON.parse(last_response.body)['user'] == $user.to_s
 	end
 
+	def test_update_user_no_access_token
+		put "/users/" + $email, params = {}
+		assert last_response.body.include?("Access token is not provided")
+	end
+
+	def test_update_user_invalid_access_token
+		put "/users/" + $email, params = {:accessToken => $user['accessToken']+"123"}
+		assert last_response.body.include?("invalid access token")
+	end
+
+	def test_update_user_no_email
+		put "/users/"
+		assert !last_response.ok?
+	end
+
+	def test_update_user_invalid_email
+		put "/users/" + $email + $email, params = {:accessToken => $user['accessToken']}
+		assert last_response.body.include?("User does not exist")
+	end
+	
+	def test_update_user
+		user2 = $user.dup
+		user2['name'] = "TestUser2"
+		user2['calPerDay'] = 500
+		put "/users/" + $email, params = user2
+		puts last_response.body
+		puts $user
+		assert JSON.parse(last_response.body)['user'] != $user
+		assert JSON.parse(last_response.body)['user'] == user2
+	end
+
 end
