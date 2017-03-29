@@ -134,8 +134,6 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
             }
         });
 
-
-
         FloatingActionButton textToSpeech = (FloatingActionButton) findViewById(R.id.fab);
         final Context activityContext = this;
         textToSpeech.setOnClickListener(new View.OnClickListener() {
@@ -205,10 +203,8 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                         else {
                                 speakWords(instructions.get(0).replace("Directions", "").replace("[", ""));
                             }
-
                     }
                 });
-
             }
 
 
@@ -232,7 +228,6 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
 
     }
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -245,7 +240,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                         String myResult = result.get(0);
                         
                         //Do Stuff With Voice Result here
-                        if (myResult.trim().equalsIgnoreCase("next step")) {
+                        if (myResult.trim().equalsIgnoreCase("next step") || myResult.toLowerCase().trim().contains("next")) {
                             if (currentStep < instructions.size() - 1){
                                 currentStep += 1;
                                 speakWords(instructions.get(currentStep));
@@ -254,7 +249,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                                 speakWords(instructions.get(instructions.size() - 1));
                             }
 
-                        } else if (myResult.trim().equalsIgnoreCase("repeat")) {
+                        } else if (myResult.trim().equalsIgnoreCase("repeat") || myResult.toLowerCase().trim().contains("repeat")) {
                             if (currentStep == 0){
                                 speakWords(instructions.get(currentStep).replace("Directions", "").replace("[",""));
                             }
@@ -263,7 +258,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                             }
 
                         }
-                        else if (myResult.trim().equalsIgnoreCase("previous step")) {
+                        else if (myResult.trim().equalsIgnoreCase("previous step") || myResult.toLowerCase().trim().contains("previous")) {
                             if (currentStep > 0) {
                                 currentStep -= 1;
 
@@ -277,7 +272,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                                 speakWords(instructions.get(0).replace("Directions", "").replace("[", ""));
                             }
                         }
-                        else if (myResult.trim().equalsIgnoreCase("stop reading")) {
+                        else if (myResult.trim().equalsIgnoreCase("stop reading") || myResult.toLowerCase().trim().contains("stop")) {
                             dialog.cancel();
                         }
                     } else {
@@ -332,10 +327,6 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         }
     }
 
-
-
-
-
     @Override
     protected void onDestroy() {
 
@@ -352,7 +343,6 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-//        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
         intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
                 getString(R.string.speech_prompt));
         try {
