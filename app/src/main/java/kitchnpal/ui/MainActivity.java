@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
+            Intent i = new Intent(getApplicationContext(), UserPreferenceActivity.class);
             startActivity(i);
             return true;
         }
@@ -588,6 +588,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 }
             }
         }
+        return null;
     }
 
     private static class SelectBtnListener implements View.OnClickListener {
