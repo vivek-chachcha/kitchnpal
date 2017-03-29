@@ -12,7 +12,7 @@ get '/users/:email' do
 	        end
 		result = get_user(params['email'])
 		if (result == nil)
-			return_msg[:status] = 'invalid user id'
+			return_msg[:status] = 'invalid user'
 		else
 			return_msg[:status] = 'success'
 			return_msg[:user] = result.to_s
