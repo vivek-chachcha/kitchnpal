@@ -93,4 +93,34 @@ class KitchnPalTest < Test::Unit::TestCase
 		assert JSON.parse(last_response.body)['user'] == user2
 	end
 
+        def test_get_recipes_no_accesstoken
+                get "/recipes"
+                assert last_response.body.include?("Access token is not provided")
+        end
+
+        def test_get_recipes_invalid_token
+                get "/recipes", params = {:accessToken => $user['accessToken']+"123"}
+                assert last_response.body.include?("invalid access token")
+        end
+
+        def test_get_recipe_no_accesstoken
+                get "/recipes/98730"
+                assert last_response.body.include?("Access token is not provided")
+        end
+
+        def test_get_recipe_invalid_token
+                get "/recipes/98730", params = {:accessToken => $user['accessToken']+"123"}
+                assert last_response.body.include?("invalid access token")
+        end
+
+	def test_get_recipe_invalid_id
+		get "/recipes/987302132140812409218123", params = {:accessToken => $user['accessToken']}
+		assert last_response.body.include?("Recipe ID not found")
+	end
+
+	def test_get_recipe
+		get "/recipes/98730", params = {:accessToken => $user['accessToken']}
+		assert last_response.body.include?("Jalapeno Burger")
+	end
+
 end
