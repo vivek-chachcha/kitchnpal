@@ -165,6 +165,8 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
 
                 Button previous = (Button) view1.findViewById(R.id.instruction_previous);
 
+
+
                 repeat.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
                         if (currentStep == 0){
@@ -222,6 +224,9 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"id");
         myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 
+        while (myTTS.isSpeaking()) {
+            // Do nothing
+        }
         promptSpeechInput();
 
     }
@@ -283,7 +288,23 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                 if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                     //the user has the necessary data - create the TTS
                     myTTS = new TextToSpeech(this, this);
-                    myTTS.setOnUtteranceProgressListener(utteranceProgressListener);
+                    myTTS.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onStart(String utteranceId) {
+
+                        }
+
+                        @Override
+                        public void onDone(String utteranceId) {
+
+                        }
+
+                        @Override
+                        public void onError(String utteranceId) {
+                            Log.e(TAG, "error on " + utteranceId);
+                        }
+                    });
+
                 }
                 else {
                     //no data - install it now
@@ -301,28 +322,13 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         if (initStatus == TextToSpeech.SUCCESS) {
             if (myTTS.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
                 myTTS.setLanguage(Locale.US);
+
         } else if (initStatus == TextToSpeech.ERROR) {
             Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
     }
 
-    UtteranceProgressListener utteranceProgressListener=new UtteranceProgressListener() {
 
-        @Override
-        public void onStart(String utteranceId) {
-            Log.d(TAG, "onStart ( utteranceId :"+utteranceId+" ) ");
-        }
-
-        @Override
-        public void onError(String utteranceId) {
-            Log.d(TAG, "onError ( utteranceId :"+utteranceId+" ) ");
-        }
-
-        @Override
-        public void onDone(String utteranceId) {
-            Log.d(TAG, "onDone ( utteranceId :"+utteranceId+" ) ");
-        }
-    };
 
 
 
