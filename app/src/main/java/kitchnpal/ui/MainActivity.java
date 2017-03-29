@@ -43,6 +43,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import kitchnpal.kitchnpal.Fridge;
@@ -410,40 +411,51 @@ public class MainActivity extends AppCompatActivity {
     }
     
     private void handleFridgeVoiceResult(String myResult) {
-        String quantity = myResult.substring(3);
-        QuantityType qt = quantity.stringToType(quantity);
+
+        String unit = " ";
+        QuantityType qt = unit.stringToType(unit);
         ArrayList<QuantityType> qtList = new ArrayList<QuantityType>();
 
-        String ingredientName = myresult.substring(5);
-        double num = Double.parseDouble(ingredientName);
+        String ingredientName;
+        String amount = "";
+        double num = Double.parseDouble(amount);
         ArrayList<Double> doubleList = new ArrayList<Double>();
-
+        ArrayList<String> ingredients = new ArrayList<String>();
         // for example: "I have 2lbs of bananas, 5 grams of butter, and 4 cups of flour"
         // split = ['I have 2lbs of bananas','5 grams of butter', 'and 4 cups of flour']
-        if (myResult.contains(",")) {
-            String[] split = myResult.split(",");
+        if (myResult.contains(" ")) {
+            String[] split = myResult.split(" ");
         }
 
-        if (split[0] == num && split[1] == qt) {
-            num = split[0];
-            quantity = split[1];
+
+        // ["I", "have", "2", "lbs", "of", "apples"]
+        if (split.length() <= 6) {
+            ingredientName = split[5];
+            unit = split[3];
+            qt = unit.stringToType(unit);
+            num = split[2];
             qtList.add(qt);
             doubleList.add(num);
-        } else if (split[0] == "and") {
+            ingredients.add(ingredientName);
+        }
+
+        for (int i = 6; i <= split.length(); i++) {
+            // ["I", "have", "2", "lbs", "of", "apples", and, 5, grams, of, butter]
+            if (split.length() > 6 && split.contains("and")) {
+                String[] newArray = Arrays.copyOfRange(split, 7, split.length);
+                //returns [and ,5, grams, of, butter]
+                ingredientName = split[4];
+                unit = split[2];
+                qt = unit.stringToType(unit);
                 num = split[1];
-                quantity = split[2];
                 qtList.add(qt);
                 doubleList.add(num);
-            }
-         else {
-            (split[0] == "I") {
-                num = split[4];
-                quantity = split[5];
-                qtList.add(qt);
-                doubleList.add(num);
+                ingredients.add(ingredientName);
 
             }
+
         }
+        
 
     }
 
