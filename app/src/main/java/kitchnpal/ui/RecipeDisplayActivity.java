@@ -48,6 +48,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
     private final int REQ_CODE_RECIPE_INPUT = 200;
     private List<String> instructions = new ArrayList<String>();
     private static final String TAG = "RecipeDisplayActivity";
+    private AlertDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +151,7 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
                                     }});
-                        AlertDialog dialog = builder.create();
+                        dialog = builder.create();
                         dialog.show();
 
 
@@ -275,6 +276,9 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                             else {
                                 speakWords(instructions.get(0).replace("Directions", "").replace("[", ""));
                             }
+                        }
+                        else if (myResult.trim().equalsIgnoreCase("stop reading")) {
+                            dialog.cancel();
                         }
                     } else {
                         return;

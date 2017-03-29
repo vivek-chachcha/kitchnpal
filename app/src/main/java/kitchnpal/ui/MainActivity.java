@@ -588,6 +588,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                 }
             }
         }
+        return "temporary fix";
     }
 
     private static class SelectBtnListener implements View.OnClickListener {
