@@ -4,7 +4,8 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign In or Register</string>
+    <string name="action_sign_in">Sign In</string>
+    <string name="action_register">Register</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -189,4 +190,5 @@
     <string name="name_search">Search by Name</string>
     <string name="ingredient_search">Search by Ingredients</string>
     <string name="all_search">Search All</string>
+    <string name="register_help_text"><![CDATA[Don\'t have an account?<br>Register <u>here</u>]]></string>
 </resources>
