@@ -265,9 +265,11 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                                 handleFridgeVoiceResult(myResult);
                                 return;
                             case 3:
+                                showErrorPopup(this);
                                 playErrorMessage();
                                 return;
                             default:
+                                showErrorPopup(this);
                                 playErrorMessage();
                                 return;
                         }
@@ -357,7 +359,20 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
             dialog.show();
         }
     }
-    
+
+    private void showErrorPopup(Context activity) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setMessage("Sorry, that command is not supported. \n\nPlease try again.")
+                .setTitle("Error")
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private int getVoiceType(String myResult) {
         if (myResult.contains("I have")) {
             return 2;
@@ -639,7 +654,10 @@ public static class RecipesFragment extends ListFragment {
             //Look at individual recipe
             Object p = l.getItemAtPosition(position);
             String temp = p.toString().trim();
-            String name = temp.substring(temp.indexOf("title=") + 6, temp.lastIndexOf("}"));
+            String name = temp;
+            if (temp.contains("title=")) {
+                name = temp.substring(temp.indexOf("title=") + 6, temp.lastIndexOf("}"));
+            }
             int recipeId = Integer.parseInt(mr.searchCache.get(name));
             Intent i = new Intent(getContext(), RecipeDisplayActivity.class);
             i.putExtra("recipe_name", name);
