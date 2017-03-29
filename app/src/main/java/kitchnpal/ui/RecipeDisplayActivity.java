@@ -7,11 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.speech.tts.UtteranceProgressListener;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +21,8 @@ import android.widget.TextView;
 
 import android.speech.tts.TextToSpeech;
 import android.speech.tts.TextToSpeech.OnInitListener;
+
+import java.util.HashMap;
 import java.util.Locale;
 import android.widget.Toast;
 
@@ -42,6 +46,8 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
     private final int MY_DATA_CHECK_CODE = 0;
     private int currentStep = 0;
     private final int REQ_CODE_RECIPE_INPUT = 200;
+    private List<String> instructions = new ArrayList<String>();
+    private static final String TAG = "RecipeDisplayActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,17 +154,18 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                         dialog.show();
 
 
-                final List<String> instructions = user.getRecipe().getInstructions();
+                instructions = user.getRecipe().getInstructions();
 
 
                 speakWords(instructions.get(currentStep).replace("Directions", "").replace("[",""));
-
 
                 Button repeat = (Button) view1.findViewById(R.id.instruction_repeat);
 
                 Button next = (Button) view1.findViewById(R.id.instruction_next);
 
                 Button previous = (Button) view1.findViewById(R.id.instruction_previous);
+
+
 
                 repeat.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View view) {
@@ -213,12 +220,21 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
     private void speakWords(String speech) {
 
         //speak straight away
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"id");
         myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
+
+        while (myTTS.isSpeaking()) {
+            // Do nothing
+        }
+        promptSpeechInput();
+
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         switch (requestCode) {
             case REQ_CODE_RECIPE_INPUT: {
                 if (resultCode == RESULT_OK && null != data) {
@@ -228,13 +244,37 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                         String myResult = result.get(0);
                         
                         //Do Stuff With Voice Result here
-                        if (myResult.trim().equalsIgnoreCase("next")) {
+                        if (myResult.trim().equalsIgnoreCase("next step")) {
+                            if (currentStep < instructions.size() - 1){
+                                currentStep += 1;
+                                speakWords(instructions.get(currentStep));
+                            }
+                            else {
+                                speakWords(instructions.get(instructions.size() - 1));
+                            }
 
                         } else if (myResult.trim().equalsIgnoreCase("repeat")) {
+                            if (currentStep == 0){
+                                speakWords(instructions.get(currentStep).replace("Directions", "").replace("[",""));
+                            }
+                            else {
+                                speakWords(instructions.get(currentStep));
+                            }
 
                         }
-                        else {
-                            
+                        else if (myResult.trim().equalsIgnoreCase("previous step")) {
+                            if (currentStep > 0) {
+                                currentStep -= 1;
+
+                                if (currentStep == 0) {
+                                    speakWords(instructions.get(currentStep).replace("Directions", "").replace("[", ""));
+                                } else {
+                                    speakWords(instructions.get(currentStep));
+                                }
+                            }
+                            else {
+                                speakWords(instructions.get(0).replace("Directions", "").replace("[", ""));
+                            }
                         }
                     } else {
                         return;
@@ -248,6 +288,23 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
                 if (resultCode == TextToSpeech.Engine.CHECK_VOICE_DATA_PASS) {
                     //the user has the necessary data - create the TTS
                     myTTS = new TextToSpeech(this, this);
+                    myTTS.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                        @Override
+                        public void onStart(String utteranceId) {
+
+                        }
+
+                        @Override
+                        public void onDone(String utteranceId) {
+
+                        }
+
+                        @Override
+                        public void onError(String utteranceId) {
+                            Log.e(TAG, "error on " + utteranceId);
+                        }
+                    });
+
                 }
                 else {
                     //no data - install it now
@@ -265,10 +322,14 @@ public class RecipeDisplayActivity extends AppCompatActivity implements OnInitLi
         if (initStatus == TextToSpeech.SUCCESS) {
             if (myTTS.isLanguageAvailable(Locale.US) == TextToSpeech.LANG_AVAILABLE)
                 myTTS.setLanguage(Locale.US);
+
         } else if (initStatus == TextToSpeech.ERROR) {
             Toast.makeText(this, "Sorry! Text To Speech failed...", Toast.LENGTH_LONG).show();
         }
     }
+
+
+
 
 
     @Override
