@@ -201,7 +201,7 @@ public class KitchnPalService {
             for (int i = 0; i < results.size(); i++) {
                 Map<String, String> datum = new HashMap<String, String>(2);
                 datum.put("title", results.get(i).getName());
-                datum.put("count", "  - Missing " + Integer.toString(results.get(i).getMissedIngredientCount()) + " Ingredients");
+                datum.put("count", "    Missing " + Integer.toString(results.get(i).getMissedIngredientCount()) + " Ingredients");
                 data.add(datum);
             }
             SimpleAdapter adapter = new SimpleAdapter(context, data,

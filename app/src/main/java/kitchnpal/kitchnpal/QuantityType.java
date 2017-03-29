@@ -8,19 +8,18 @@ import java.util.List;
  */
 
 public enum QuantityType {
+    UNIT("unit(s)"),
+    LB("lb"),
+    CUP("cup"),
+    CUPS("cups"),
+    TEASPOON("teaspoon"),
+    TEASPOONS("teaspoons"),
+    TABLESPOON("tablespoon"),
+    TABLESPOONS("tablespoons"),
+    GRAM("gram"),
+    GRAMS("grams");
 
-        UNIT("unit(s)"),
-        LB("lb"),
-        CUP("cup"),
-        CUPS("cups"),
-        TEASPOON("teaspoon"),
-        TEASPOONS("teaspoons"),
-        TABLESPOON("tablespoon"),
-        TABLESPOONS("tablespoons"),
-        GRAM("gram"),
-        GRAMS("grams");
-
-        private String  name;
+    private String name;
 
     QuantityType(String name) {
         this.name = name;
@@ -45,8 +44,13 @@ public enum QuantityType {
 
         switch(s) {
             case "unit(s)":
+            case "unit":
+            case "units":
                 return UNIT;
             case "lb":
+            case "pounds":
+            case "pound":
+            case "lbs":
                 return LB;
             case "cup":
                 return CUP;

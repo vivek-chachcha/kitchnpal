@@ -2,6 +2,8 @@ package kitchnpal.kitchnpal;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -11,6 +13,26 @@ import static org.junit.Assert.assertNull;
  */
 
 public class UserTest {
+
+    @Test
+    public void testUserRecipe() {
+        User user = User.getInstance();
+        Recipe r = new Recipe("Recipe A", 1);
+        user.setCurrentRecipe(r);
+        assertEquals(r, user.getRecipe());
+    }
+
+    @Test
+    public void testUserSearchResults() {
+        User user = User.getInstance();
+        user.clearSearchResults();
+        Recipe r = new Recipe("Recipe A", 1);
+        ArrayList<Recipe> recipes = new ArrayList<>();
+        recipes.add(r);
+        user.setSearchResults(recipes);
+        assertEquals(1, user.getSearchResults().size());
+        assertEquals(1, user.getSearchResults().get(0).getId());
+    }
 
     @Test
     public void testAccessToken() {

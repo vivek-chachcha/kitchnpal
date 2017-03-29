@@ -29,6 +29,21 @@ public class Fridge {
         return fridge;
     }
 
+    public void clearFridge() {
+        this.ingredients = new ArrayList<>();
+    }
+
+    public void addIngredient(Ingredient i) {
+        if (i != null) {
+            for (Ingredient ingredient : ingredients) {
+                if (ingredient.getIngredientName().equals(i.getIngredientName())) {
+                    return;
+                }
+            }
+            ingredients.add(i);
+        }
+    }
+
     public List<Ingredient> getIngredients() {
         return this.ingredients;
     }
