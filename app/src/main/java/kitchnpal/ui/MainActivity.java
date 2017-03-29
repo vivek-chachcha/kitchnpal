@@ -266,11 +266,11 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
                                 return;
                             case 3:
                                 showErrorPopup(this);
-                                playErrorMessage();
+                                playErrorMessage("That command is not supported");
                                 return;
                             default:
                                 showErrorPopup(this);
-                                playErrorMessage();
+                                playErrorMessage("That command is not supported");
                                 return;
                         }
                     } else {
@@ -383,8 +383,7 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
         }
     }
 
-    private void playErrorMessage() {
-        String speech = "That command is not supported.";
+    private void playErrorMessage(String speech) {
         //speak straight away
         myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 
