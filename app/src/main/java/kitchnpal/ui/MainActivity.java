@@ -391,9 +391,13 @@ public class MainActivity extends AppCompatActivity implements TextToSpeech.OnIn
     }
 
     private void playErrorMessage(String speech) {
-        //speak straight away
+        HashMap<String, String> params = new HashMap<String, String>();
+        params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"id");
         myTTS.speak(speech, TextToSpeech.QUEUE_FLUSH, null);
 
+        while (myTTS.isSpeaking()) {
+            // Do nothing
+        }
     }
 
     public void onInit(int initStatus) {
