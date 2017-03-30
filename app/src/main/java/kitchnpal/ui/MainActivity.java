@@ -42,6 +42,7 @@ import com.google.zxing.integration.android.IntentResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
