@@ -62,9 +62,7 @@ def update_user(params)
 	stmt = client.prepare("UPDATE User
 				SET name = ?, password = ?, calPerDay = ?, preferences = ?, diet = ?
                         	WHERE email = ?")
-        calPerDay = (params['calPerDay'] == nil) ? 0 : params['calPerDay']
-        preferences = (params['preferences'] == 'cheapest') ? 'cheapest' : 'lowcal'
-        results = stmt.execute(params['name'], params['password'], calPerDay, preferences, params['diet'], params['email'])
+        results = stmt.execute(params['name'], params['password'], params['calPerDay'], params['preferences'], params['diet'], params['email'])
         
 	#retrieve updated user
         results = client.query("SELECT * FROM User WHERE email = '#{params['email']}'")

@@ -86,9 +86,8 @@ class KitchnPalTest < Test::Unit::TestCase
 		user2 = $user.dup
 		user2['name'] = "TestUser2"
 		user2['calPerDay'] = 500
+		user2['diet'] = "vegan"
 		put "/users/" + $email, params = user2
-		puts last_response.body
-		puts $user
 		assert JSON.parse(last_response.body)['user'] != $user
 		assert JSON.parse(last_response.body)['user'] == user2
 	end
@@ -102,6 +101,36 @@ class KitchnPalTest < Test::Unit::TestCase
                 get "/recipes", params = {:accessToken => $user['accessToken']+"123"}
                 assert last_response.body.include?("invalid access token")
         end
+
+	def test_get_recipes
+		get "/recipes", params = {:accessToken => $user['accessToken'], :name => "Burger"}
+		assert last_response.ok?
+		recipes = JSON.parse(last_response.body)['recipes']
+		for recipe in recipes
+			assert recipe['title'].downcase.include?("burger")
+		end
+	end
+
+	def test_get_recipes_by_ingredients
+		get "/recipes", params = {:accessToken => $user['accessToken'], :ingredients => "apples, bananas"}
+		assert last_response.ok?
+		recipes = JSON.parse(last_response.body)['recipes']
+		for recipe in recipes
+			assert recipe['usedIngredientCount'] <= 2
+		end
+	end
+
+	def test_get_recipes_by_diet
+		$user['diet'] = "vegan"
+		put "/users/" + $email, params = $user
+		assert last_response.ok?
+		get "/recipes", params = {:accessToken => $user['accessToken']}
+		assert last_response.ok?
+		recipes = JSON.parse(last_response.body)['recipes']
+		for recipe in recipes
+			assert recipe['vegan']
+		end
+	end
 
         def test_get_recipe_no_accesstoken
                 get "/recipes/98730"
