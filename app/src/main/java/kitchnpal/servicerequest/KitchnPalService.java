@@ -284,7 +284,11 @@ public class KitchnPalService {
         try {
             for (int i = 0; i < ingredients.length(); i++) {
                 JSONObject obj = ingredients.getJSONObject(i);
-                results.add(new Ingredient(obj.getString("name"), obj.getDouble("amount"), QuantityType.stringToType(obj.getString("unit"))));
+                QuantityType qt = QuantityType.stringToType(obj.getString("unit"));
+                if (qt == null) {
+                    qt = QuantityType.UNIT;
+                }
+                results.add(new Ingredient(obj.getString("name"), obj.getDouble("amount"), qt));
             }
         } catch(Exception e) {
             e.printStackTrace();
