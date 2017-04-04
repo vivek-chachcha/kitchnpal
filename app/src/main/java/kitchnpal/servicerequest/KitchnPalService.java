@@ -279,7 +279,7 @@ public class KitchnPalService {
         return null;
     }
 
-    private ArrayList<Ingredient> parseIngredients(JSONArray ingredients) {
+    public ArrayList<Ingredient> parseIngredients(JSONArray ingredients) {
         ArrayList<Ingredient> results = new ArrayList<>();
         try {
             for (int i = 0; i < ingredients.length(); i++) {
@@ -296,7 +296,7 @@ public class KitchnPalService {
         return results;
     }
 
-    private ArrayList<String> parseInstructions(String raw) {
+    public ArrayList<String> parseInstructions(String raw) {
         ArrayList<String> results = new ArrayList<>();
         try {
             int marker = 0;
