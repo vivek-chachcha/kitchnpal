@@ -13,7 +13,8 @@ public enum QuantityType {
     CUPS("cup(s)"),
     TEASPOONS("teaspoon(s)"),
     TABLESPOONS("tablespoon(s)"),
-    GRAMS("gram(s)");
+    GRAMS("gram(s)"),
+    QUARTS("quart(s)");
 
     private String name;
 
@@ -55,16 +56,22 @@ public enum QuantityType {
                 return CUPS;
             case "teaspoon":
             case "teaspoons":
+            case "tsp":
             case "teaspoon(s)":
                 return TEASPOONS;
             case "tablespoon":
             case "tablespoons":
+            case "Tbsp":
             case "tablespoon(s)":
                 return TABLESPOONS;
             case "gram":
             case "grams":
             case "gram(s)":
                 return GRAMS;
+            case "quart":
+            case "quarts":
+            case "quart(s)":
+                return QUARTS;
             default:
                 return null;
         }

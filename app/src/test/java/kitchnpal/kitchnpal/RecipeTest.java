@@ -13,8 +13,8 @@ import static org.junit.Assert.assertNull;
 public class RecipeTest {
 
     private Ingredient i1 = new Ingredient("Ingredient A", 400, QuantityType.UNIT);
-    private Ingredient i2 = new Ingredient("Ingredient B", 200, QuantityType.CUP);
-    private Ingredient i3 = new Ingredient("Ingredient C", 100, QuantityType.GRAM);
+    private Ingredient i2 = new Ingredient("Ingredient B", 200, QuantityType.CUPS);
+    private Ingredient i3 = new Ingredient("Ingredient C", 100, QuantityType.GRAMS);
 
     private String instruction1 = "Instruction 1";
     private String instruction2 = "Instruction 2";
@@ -74,8 +74,8 @@ public class RecipeTest {
     @Test
     public void testChangeIngredients() {
         Ingredient i4 = new Ingredient("Ingredient D", 400, QuantityType.UNIT);
-        Ingredient i5 = new Ingredient("Ingredient E", 200, QuantityType.CUP);
-        Ingredient i6 = new Ingredient("Ingredient F", 100, QuantityType.GRAM);
+        Ingredient i5 = new Ingredient("Ingredient E", 200, QuantityType.CUPS);
+        Ingredient i6 = new Ingredient("Ingredient F", 100, QuantityType.GRAMS);
 
         ArrayList<Ingredient> ingredients = new ArrayList<>();
         ingredients.add(i4);

@@ -22,8 +22,8 @@ public class FridgeTest {
     public void testAddIngredientToFridge() throws Exception {
         Fridge f = Fridge.getInstance();
         f.clearFridge();
-        Ingredient i1 = new Ingredient("Ingredient A", 100, QuantityType.GRAM);
-        Ingredient i2 = new Ingredient("Ingredient B", 100, QuantityType.GRAM);
+        Ingredient i1 = new Ingredient("Ingredient A", 100, QuantityType.GRAMS);
+        Ingredient i2 = new Ingredient("Ingredient B", 100, QuantityType.GRAMS);
         f.addIngredient(i1);
         f.addIngredient(i2);
         assertEquals(2, f.getIngredients().size());
@@ -35,8 +35,8 @@ public class FridgeTest {
     public void testAddDuplicateIngredientToFridge() throws Exception {
         Fridge f = Fridge.getInstance();
         f.clearFridge();
-        Ingredient i1 = new Ingredient("Ingredient A", 100, QuantityType.GRAM);
-        Ingredient i2 = new Ingredient("Ingredient A", 100, QuantityType.GRAM);
+        Ingredient i1 = new Ingredient("Ingredient A", 100, QuantityType.GRAMS);
+        Ingredient i2 = new Ingredient("Ingredient A", 100, QuantityType.GRAMS);
         f.addIngredient(i1);
         f.addIngredient(i2);
         assertEquals(1, f.getIngredients().size());
@@ -47,7 +47,7 @@ public class FridgeTest {
     public void testAddNullIngredientToFridge() throws Exception {
         Fridge f = Fridge.getInstance();
         f.clearFridge();
-        Ingredient i1 = new Ingredient("Ingredient A", 100, QuantityType.GRAM);
+        Ingredient i1 = new Ingredient("Ingredient A", 100, QuantityType.GRAMS);
         f.addIngredient(i1);
         f.addIngredient(null);
         assertEquals(1, f.getIngredients().size());

@@ -28,14 +28,14 @@ public class IngredientTest {
         Ingredient i = new Ingredient("Ingredient A", 100, QuantityType.UNIT);
         i.setIngredientAmount(200);
         i.setIngredientName("Ingredient B");
-        i.setQuantityType(QuantityType.GRAM);
-        assertEquals("Ingredient B x 200.0 gram", i.ingredientToStringInFridge());
+        i.setQuantityType(QuantityType.GRAMS);
+        assertEquals("Ingredient B x 200.0 gram(s)", i.ingredientToStringInFridge());
     }
 
     @Test
     public void testIngredientToStringInFridge() throws Exception {
         String result = testIng.ingredientToStringInFridge();
-        assertEquals("Chicken x 3.0 cups", result);
+        assertEquals("Chicken x 3.0 cup(s)", result);
     }
 
     @Test
@@ -59,13 +59,13 @@ public class IngredientTest {
     @Test
     public void testGetQuantityTypeString() throws Exception {
         String result = testIng.getQuantityTypeString();
-        assertEquals("cups", result);
+        assertEquals("cup(s)", result);
     }
 
     @Test
     public void testIngredientsToString() throws Exception {
         List<Ingredient> list2 = Arrays.asList(testIng, testIng2);
         List<String> result = Ingredient.ingredientsToString(list2);
-        assertEquals(Arrays.asList("Chicken x 3.0 cups", "Salt x 5.0 grams"), result);
+        assertEquals(Arrays.asList("Chicken x 3.0 cup(s)", "Salt x 5.0 gram(s)"), result);
     }
 }
