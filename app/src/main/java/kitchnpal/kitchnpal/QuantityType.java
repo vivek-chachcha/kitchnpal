@@ -9,15 +9,11 @@ import java.util.List;
 
 public enum QuantityType {
     UNIT("unit(s)"),
-    LB("lb"),
-    CUP("cup"),
-    CUPS("cups"),
-    TEASPOON("teaspoon"),
-    TEASPOONS("teaspoons"),
-    TABLESPOON("tablespoon"),
-    TABLESPOONS("tablespoons"),
-    GRAM("gram"),
-    GRAMS("grams");
+    LB("lb(s)"),
+    CUPS("cup(s)"),
+    TEASPOONS("teaspoon(s)"),
+    TABLESPOONS("tablespoon(s)"),
+    GRAMS("gram(s)");
 
     private String name;
 
@@ -51,22 +47,23 @@ public enum QuantityType {
             case "pounds":
             case "pound":
             case "lbs":
+            case "lb(s)":
                 return LB;
             case "cup":
-                return CUP;
             case "cups":
+            case "cup(s)":
                 return CUPS;
             case "teaspoon":
-                return TEASPOON;
             case "teaspoons":
+            case "teaspoon(s)":
                 return TEASPOONS;
             case "tablespoon":
-                return TABLESPOON;
             case "tablespoons":
+            case "tablespoon(s)":
                 return TABLESPOONS;
             case "gram":
-                return GRAM;
             case "grams":
+            case "gram(s)":
                 return GRAMS;
             default:
                 return null;
