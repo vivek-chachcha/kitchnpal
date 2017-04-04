@@ -298,7 +298,7 @@ public class KitchnPalService {
             int marker = 0;
             while (marker < raw.length() - 4 || raw.indexOf(".", marker) >= raw.length()) {
                 String s = raw.substring(marker, raw.indexOf(".", marker));
-                results.add(s);
+                results.add(s.trim());
                 marker = raw.indexOf(".", marker) + 1;
             }
         } catch(Exception e) {
