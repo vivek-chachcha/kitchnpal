@@ -17,7 +17,7 @@ public class QuantityTypeTest {
     @Test
     public void testQuantityTypeSize() throws Exception {
         List<String> types = QuantityType.stringValues();
-        assertEquals(10, types.size());
+        assertEquals(7, types.size());
     }
 
     @Test
